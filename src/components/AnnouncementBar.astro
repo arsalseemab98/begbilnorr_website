@@ -1,0 +1,35 @@
+---
+import { supabase } from '../lib/supabase';
+
+interface AnnouncementData {
+  text: string;
+  link: string;
+  visible: boolean;
+}
+
+let announcement: AnnouncementData | null = null;
+
+try {
+  const { data } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'announcement_bar')
+    .single();
+
+  if (data?.value) {
+    announcement = data.value as AnnouncementData;
+  }
+} catch {
+  announcement = {
+    text: 'BEGBILNORR — Auktoriserad bilhandlare i Luleå',
+    link: '/kontakt',
+    visible: true,
+  };
+}
+---
+
+{announcement?.visible && (
+  <div class="announcement-bar">
+    <a href={announcement.link}>{announcement.text}</a>
+  </div>
+)}

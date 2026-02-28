@@ -1,0 +1,37 @@
+---
+import SEOHead from './SEOHead.astro';
+import AnnouncementBar from './AnnouncementBar.astro';
+import Navbar from './Navbar.astro';
+import Footer from './Footer.astro';
+import ContactModal from './ContactModal';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  priceAmount?: number;
+}
+
+const props = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <SEOHead {...props} />
+  <slot name="head" />
+</head>
+<body>
+  <AnnouncementBar />
+  <Navbar />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+  <ContactModal client:load />
+</body>
+</html>

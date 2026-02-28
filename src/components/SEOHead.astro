@@ -1,0 +1,67 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  priceAmount?: number;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = 'website',
+  ogImage = 'https://begbilnorr.se/images/og-hero.png',
+  noindex = false,
+  priceAmount,
+} = Astro.props;
+
+const siteUrl = 'https://begbilnorr.se';
+const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="theme-color" content="#E62E2D" />
+<meta name="author" content="Begbilnorr" />
+{noindex ? (
+  <meta name="robots" content="noindex, nofollow" />
+) : (
+  <meta name="robots" content="index, follow" />
+)}
+<link rel="canonical" href={canonicalUrl} />
+<link rel="icon" type="image/jpeg" href="/favicon.jpg" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content="Begbilnorr" />
+<meta property="og:locale" content="sv_SE" />
+{priceAmount && (
+  <>
+    <meta property="product:price:amount" content={String(priceAmount)} />
+    <meta property="product:price:currency" content="SEK" />
+  </>
+)}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+
+<!-- Geo -->
+<meta name="geo.region" content="SE-BD" />
+<meta name="geo.placename" content="Luleå" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />

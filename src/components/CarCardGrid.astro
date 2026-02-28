@@ -1,0 +1,14 @@
+---
+import type { Car } from '../types/car';
+import CarCard from './CarCard.astro';
+
+interface Props {
+  cars: Car[];
+}
+
+const { cars } = Astro.props;
+---
+
+<div class="car-grid">
+  {cars.map((car) => <CarCard car={car} />)}
+</div>

@@ -1,0 +1,244 @@
+---
+import Layout from '../../components/Layout.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import CarCard from '../../components/CarCard.astro';
+import { supabase } from '../../lib/supabase';
+import { formatPrice, formatMileage, calculateMonthlyPayment } from '../../lib/utils';
+import type { Car } from '../../types/car';
+
+const { slug } = Astro.params;
+
+const { data } = await supabase
+  .from('cars')
+  .select('*')
+  .eq('slug', slug)
+  .single();
+
+if (!data) {
+  return Astro.redirect('/bilar');
+}
+
+const car = data as Car;
+const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
+const mainImage = car.images?.[0] || '';
+
+const { data: relatedData } = await supabase
+  .from('cars')
+  .select('*')
+  .eq('is_active', true)
+  .eq('is_sold', false)
+  .neq('slug', slug)
+  .limit(3);
+
+const relatedCars = (relatedData || []) as Car[];
+
+const carSchema = {
+  "@context": "https://schema.org",
+  "@type": "Car",
+  "name": car.full_name,
+  "brand": { "@type": "Brand", "name": car.brand },
+  "model": car.model,
+  "vehicleModelDate": String(car.year),
+  "mileageFromOdometer": { "@type": "QuantitativeValue", "value": car.mileage, "unitCode": "SMI" },
+  "fuelType": car.fuel_type,
+  "vehicleTransmission": car.gearbox,
+  "offers": {
+    "@type": "Offer",
+    "price": car.price,
+    "priceCurrency": "SEK",
+    "availability": "https://schema.org/InStock",
+    "seller": { "@type": "AutoDealer", "name": "Begbilnorr", "url": "https://begbilnorr.se" }
+  },
+  "image": mainImage,
+  "url": `https://begbilnorr.se/bilar/${car.slug}`
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Hem", "item": "https://begbilnorr.se/" },
+    { "@type": "ListItem", "position": 2, "name": "Bilar", "item": "https://begbilnorr.se/bilar/" },
+    { "@type": "ListItem", "position": 3, "name": car.full_name, "item": `https://begbilnorr.se/bilar/${car.slug}` }
+  ]
+};
+---
+
+<Layout
+  title={`${car.full_name} – ${formatPrice(car.price)} | Begbilnorr Luleå`}
+  description={car.description || `Köp begagnad ${car.full_name} hos Begbilnorr i Luleå. ${formatPrice(car.price)}. Garanti och finansiering ingår.`}
+  ogType="product"
+  ogImage={mainImage}
+  priceAmount={car.price}
+>
+  <Fragment slot="head">
+    <StructuredData data={carSchema} />
+    <StructuredData data={breadcrumbSchema} />
+  </Fragment>
+
+  <div class="breadcrumb" style="padding:16px 0;background:var(--warm-gray);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="breadcrumb" style="padding:0;">
+        <a href="/">Hem</a>
+        <span class="separator">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+        <a href="/bilar">Bilar</a>
+        <span class="separator">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+        <span class="current">{car.full_name}</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="detail-section">
+    <div class="container">
+      <div class="detail-grid">
+        <div class="gallery">
+          <div class="gallery-main">
+            {mainImage ? (
+              <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} id="mainImage" />
+            ) : (
+              <span style="font-size:80px;opacity:0.35;">&#128663;</span>
+            )}
+            <div class="watermark">Begbilnorr</div>
+            {car.images?.length > 1 && (
+              <div class="image-count">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                {car.images.length} bilder
+              </div>
+            )}
+          </div>
+          {car.images?.length > 1 && (
+            <div class="gallery-thumbnails">
+              {car.images.slice(0, 4).map((img, i) => (
+                <div class={`gallery-thumb ${i === 0 ? 'active' : ''}`} data-src={img}>
+                  <img src={img} alt={`${car.full_name} bild ${i + 1}`} loading="lazy" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div class="car-info">
+          <div class="car-info-inner">
+            <div class="badge-row">
+              <span class="badge-stock">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                I lager
+              </span>
+              <span class="badge-location">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                Luleå
+              </span>
+            </div>
+
+            <h1>{car.full_name}</h1>
+            <div class="car-year">{car.year} &middot; {car.reg_no}</div>
+            <div class="car-price">{formatPrice(car.price)}</div>
+            <div class="car-monthly">fr. {monthly}</div>
+
+            <div class="car-buttons">
+              <button class="btn-primary" id="contactBtn" data-car-name={car.full_name} data-car-slug={car.slug}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                Intresserad? Kontakta oss
+              </button>
+              <a href="tel:+4692099986" class="btn-outline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Ring 0920-999 86
+              </a>
+              <a href={`https://wa.me/46727448034?text=Hej! Jag är intresserad av ${car.full_name} (${car.reg_no})`} class="btn-outline" target="_blank" rel="noopener">
+                <svg viewBox="0 0 448 512" width="18" height="18" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157z"/></svg>
+                WhatsApp
+              </a>
+            </div>
+
+            <div class="specs-grid">
+              <div class="spec-item">
+                <span class="spec-label">Miltal</span>
+                <span class="spec-value">{formatMileage(car.mileage)}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Årsmodell</span>
+                <span class="spec-value">{car.year}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Drivmedel</span>
+                <span class="spec-value">{car.fuel_type}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Växellåda</span>
+                <span class="spec-value">{car.gearbox}</span>
+              </div>
+              {car.body_type && (
+                <div class="spec-item">
+                  <span class="spec-label">Karosseri</span>
+                  <span class="spec-value">{car.body_type}</span>
+                </div>
+              )}
+              <div class="spec-item">
+                <span class="spec-label">Reg.nr</span>
+                <span class="spec-value">{car.reg_no}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {car.specifications && (
+        <div class="specifications-section">
+          <h2>Beskrivning</h2>
+          <div class="specifications-text">{car.specifications}</div>
+        </div>
+      )}
+
+      {car.equipment?.length > 0 && (
+        <div class="equipment-section">
+          <h2>Utrustning</h2>
+          <div class="equipment-grid">
+            {car.equipment.map((item) => (
+              <div class="equipment-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {relatedCars.length > 0 && (
+        <div class="description-section">
+          <h2>Liknande bilar</h2>
+          <div class="car-grid">
+            {relatedCars.map((rc) => <CarCard car={rc} />)}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.getElementById('contactBtn')?.addEventListener('click', () => {
+    const btn = document.getElementById('contactBtn') as HTMLElement;
+    window.dispatchEvent(
+      new CustomEvent('open-contact-modal', {
+        detail: {
+          carName: btn.dataset.carName || '',
+          carSlug: btn.dataset.carSlug || '',
+        },
+      })
+    );
+  });
+
+  document.querySelectorAll('.gallery-thumb').forEach((thumb) => {
+    thumb.addEventListener('click', () => {
+      const src = (thumb as HTMLElement).dataset.src;
+      const mainImg = document.querySelector('#mainImage') as HTMLImageElement;
+      if (mainImg && src) mainImg.src = src;
+      document.querySelectorAll('.gallery-thumb').forEach((t) => t.classList.remove('active'));
+      thumb.classList.add('active');
+    });
+  });
+</script>
