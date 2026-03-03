@@ -3,65 +3,498 @@ import Layout from '../components/Layout.astro';
 ---
 
 <Layout
-  title="Sälj din bil – Begbilnorr Luleå | Kostnadsfri värdering"
-  description="Sälj din bil till Begbilnorr i Luleå. Kostnadsfri värdering, snabb affär och bästa pris. Vi köper alla bilmärken."
+  title="Sälj din bil i Luleå — Snabb värdering | Begbilnorr"
+  description="Sälj din bil till Begbilnorr i Luleå. Kostnadsfri värdering och snabb affär — vi köper alla märken. Kontakta oss idag!"
 >
-  <div class="page-hero">
+  <!-- Page Hero -->
+  <section class="page-hero">
     <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+        SÄLJ DIN BIL
+      </div>
       <h1>Sälj din bil</h1>
-      <p>Kostnadsfri värdering och snabb affär</p>
+      <p>Kostnadsfri värdering och snabb affär -- vi ger dig bästa pris för din bil.</p>
+      <div class="hero-line"></div>
     </div>
-  </div>
+  </section>
 
-  <section class="about-section">
+  <!-- About Selling -->
+  <section class="sell-about">
     <div class="container">
-      <div class="about-grid">
-        <div class="about-content">
+      <div class="sell-grid">
+        <div class="sell-text">
           <h2>Vi köper din bil</h2>
-          <p>Vill du sälja eller byta in din bil? Vi erbjuder kostnadsfri värdering och ger dig ett rättvist bud — snabbt och enkelt. Vi köper alla bilmärken och modeller.</p>
+          <p>Vill du sälja eller byta in din bil? Vi erbjuder kostnadsfri värdering och ger dig ett rättvist bud -- snabbt och enkelt. Vi köper alla bilmärken och modeller.</p>
           <p>Processen är enkel: kontakta oss med uppgifter om din bil, så ger vi dig en preliminär värdering. Om du är nöjd med budet kan vi slutföra affären på plats.</p>
-          <div class="about-facts">
-            <div class="about-fact">
-              <div class="fact-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </div>
-              <div class="fact-text">Kostnadsfri värdering</div>
+
+          <div class="sell-features">
+            <div class="sell-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Kostnadsfri värdering</span>
             </div>
-            <div class="about-fact">
-              <div class="fact-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </div>
-              <div class="fact-text">Alla bilmärken — vi köper allt</div>
+            <div class="sell-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Alla bilmärken -- vi köper allt</span>
             </div>
-            <div class="about-fact">
-              <div class="fact-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </div>
-              <div class="fact-text">Snabb betalning</div>
+            <div class="sell-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Snabb betalning</span>
             </div>
-            <div class="about-fact">
-              <div class="fact-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </div>
-              <div class="fact-text">Inbyte mot bil hos oss</div>
+            <div class="sell-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Inbyte mot bil hos oss</span>
             </div>
           </div>
         </div>
-        <div class="about-image">
-          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-light)"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+        <div class="sell-image-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
         </div>
       </div>
     </div>
   </section>
 
-  <section style="padding:64px 0;background:var(--warm-gray);text-align:center;">
+  <!-- How It Works -->
+  <section class="how-it-works">
     <div class="container">
-      <h2 style="font-size:28px;font-weight:700;color:var(--dark);margin-bottom:16px;">Vill du sälja din bil?</h2>
-      <p style="font-size:16px;color:var(--gray);margin-bottom:28px;">Kontakta oss för en kostnadsfri värdering. Ring, maila eller skicka ett meddelande.</p>
-      <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
-        <a href="/kontakt" class="action-btn">Kontakta oss</a>
-        <a href="tel:+4692099986" class="outline-btn">Ring 0920-999 86</a>
+      <h2>Så fungerar det</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">
+            <span class="number">1</span>
+          </div>
+          <h3>Fyll i dina uppgifter</h3>
+          <p>Ange registreringsnummer och kontaktinfo så tar vi det därifrån.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">
+            <span class="number">2</span>
+          </div>
+          <h3>Vi värderar din bil</h3>
+          <p>Kostnadsfri värdering inom 24 timmar baserat på aktuellt marknadsvärde.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">
+            <span class="number">3</span>
+          </div>
+          <h3>Vi köper din bil</h3>
+          <p>Snabb betalning direkt till ditt konto. Vi hämtar bilen kostnadsfritt.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Valuation Form -->
+  <section class="valuation-section" id="vardering">
+    <div class="container">
+      <div class="valuation-card">
+        <div class="section-label" style="text-align:center;">KOSTNADSFRI VÄRDERING</div>
+        <h2>Beskriv din bil</h2>
+        <p class="valuation-subtitle">Fyll i uppgifterna så återkommer vi med en värdering inom 24 timmar.</p>
+
+        <form id="valuationForm">
+          <div class="form-group">
+            <label for="v-regnum">Registreringsnummer *</label>
+            <div class="reg-input-wrapper">
+              <input type="text" id="v-regnum" name="regNumber" placeholder="ABC 123" maxlength="7" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="v-brand">Märke *</label>
+              <input type="text" id="v-brand" name="brand" placeholder="T.ex. Volvo" required />
+            </div>
+            <div class="form-group">
+              <label for="v-model">Modell *</label>
+              <input type="text" id="v-model" name="model" placeholder="T.ex. XC60" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="v-year">Årsmodell *</label>
+              <input type="number" id="v-year" name="year" placeholder="T.ex. 2019" required />
+            </div>
+            <div class="form-group">
+              <label for="v-mileage">Miltal *</label>
+              <input type="text" id="v-mileage" name="mileage" placeholder="T.ex. 8 200 mil" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="v-name">Ditt namn *</label>
+              <input type="text" id="v-name" name="name" placeholder="Ditt namn" required />
+            </div>
+            <div class="form-group">
+              <label for="v-phone">Telefon *</label>
+              <input type="tel" id="v-phone" name="phone" placeholder="07X-XXX XX XX" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="v-email">E-post</label>
+            <input type="email" id="v-email" name="email" placeholder="din@email.se" />
+          </div>
+
+          <div class="form-group">
+            <label for="v-message">Övrigt</label>
+            <textarea id="v-message" name="message" placeholder="Beskriv bilens skick, utrustning etc." rows="4"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="valuationBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            Skicka för värdering
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Föredrar du att ringa?</h2>
+      <p>Kontakta oss direkt så hjälper vi dig med värderingen på en gång.</p>
+      <div class="cta-buttons">
+        <a href="tel:+4692099986" class="btn-primary">Ring 0920-999 86</a>
+        <a href="https://wa.me/46727448034" class="btn-outline" target="_blank" rel="noopener">WhatsApp</a>
       </div>
     </div>
   </section>
 </Layout>
+
+<style>
+  .sell-about {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+  }
+
+  .sell-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .sell-text h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .sell-text p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .sell-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .sell-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .sell-feature svg {
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .sell-image-placeholder {
+    background: linear-gradient(135deg, var(--bg-dark-5) 0%, var(--bg-dark-4) 100%);
+    border-radius: 8px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.1);
+    position: relative;
+  }
+
+  .sell-image-placeholder::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--red);
+  }
+
+  /* How It Works */
+  .how-it-works {
+    padding: 72px 0;
+    background: var(--bg-dark-3);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .how-it-works h2 {
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 48px;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+  }
+
+  .steps-grid::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 16.66%;
+    right: 16.66%;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    z-index: 0;
+  }
+
+  .step-card {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .step-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .step-number {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(230, 46, 45, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border: 3px solid var(--bg-dark-3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .step-card:hover .step-number {
+    box-shadow: 0 8px 24px rgba(230, 46, 45, 0.2);
+  }
+
+  .step-number .number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--red);
+  }
+
+  .step-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .step-card p {
+    font-size: 14.5px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  /* Registration Number Input */
+  .reg-input-wrapper {
+    position: relative;
+  }
+
+  .reg-input-wrapper input {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 2px;
+    padding-left: 52px;
+  }
+
+  .reg-input-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: #003DA5;
+    border-radius: 6px 0 0 6px;
+    z-index: 1;
+  }
+
+  .reg-input-wrapper::after {
+    content: 'S';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 2;
+  }
+
+  /* Valuation */
+  .valuation-section {
+    background: var(--bg-dark-3);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .valuation-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 48px;
+    text-align: center;
+  }
+
+  .valuation-card h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .valuation-subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 32px;
+  }
+
+  .valuation-card form {
+    text-align: left;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .sell-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .how-it-works {
+      padding: 48px 0;
+    }
+
+    .how-it-works h2 {
+      font-size: 26px;
+    }
+
+    .steps-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .steps-grid::before {
+      display: none;
+    }
+
+    .valuation-card {
+      padding: 32px 24px;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('valuationForm') as HTMLFormElement;
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('valuationBtn') as HTMLButtonElement;
+    const originalHTML = btn.innerHTML;
+    btn.textContent = 'Skickar...';
+    btn.disabled = true;
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email || 'ej angiven',
+          phone: data.phone,
+          message: `[VÄRDERING] Reg: ${data.regNumber || '-'}, ${data.brand} ${data.model} ${data.year}, ${data.mileage}. ${data.message || ''}`,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Fel');
+
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Tack! Vi återkommer med värdering.';
+      btn.style.background = '#22C55E';
+
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.background = '';
+        btn.disabled = false;
+        form.reset();
+      }, 4000);
+    } catch {
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
+      alert('Någonting gick fel. Försök igen eller ring oss på 0920-999 86.');
+    }
+  });
+</script>

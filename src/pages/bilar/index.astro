@@ -10,44 +10,78 @@ const fuel = url.searchParams.get('fuel') || '';
 const gearbox = url.searchParams.get('gearbox') || '';
 const sort = url.searchParams.get('sort') || 'newest';
 const search = url.searchParams.get('search') || '';
+const yearRange = url.searchParams.get('year') || '';
+const priceRange = url.searchParams.get('price') || '';
+const mileageRange = url.searchParams.get('mileage') || '';
 
-let query = supabase
-  .from('cars')
-  .select('*')
-  .eq('is_active', true)
-  .eq('is_sold', false);
+let allCars: Car[] = [];
+let brands: string[] = [];
 
-if (brand) query = query.ilike('brand', brand);
-if (fuel) query = query.ilike('fuel_type', `%${fuel}%`);
-if (gearbox) query = query.ilike('gearbox', `%${gearbox}%`);
-if (search) query = query.or(`full_name.ilike.%${search}%,brand.ilike.%${search}%,model.ilike.%${search}%`);
+try {
+  let query = supabase
+    .from('cars')
+    .select('*')
+    .eq('is_active', true)
+    .eq('is_sold', false);
 
-if (sort === 'price-asc') query = query.order('price', { ascending: true });
-else if (sort === 'price-desc') query = query.order('price', { ascending: false });
-else if (sort === 'year-desc') query = query.order('year', { ascending: false });
-else if (sort === 'mileage-asc') query = query.order('mileage', { ascending: true });
-else query = query.order('created_at', { ascending: false });
+  if (brand) query = query.ilike('brand', brand);
+  if (fuel) query = query.ilike('fuel_type', `%${fuel}%`);
+  if (gearbox) query = query.ilike('gearbox', `%${gearbox}%`);
+  if (search) query = query.or(`full_name.ilike.%${search}%,brand.ilike.%${search}%,model.ilike.%${search}%`);
 
-const { data: cars } = await query;
-const allCars = (cars || []) as Car[];
+  // Year range filter
+  if (yearRange) {
+    const [yearFrom, yearTo] = yearRange.split('-').map(Number);
+    if (yearFrom) query = query.gte('year', yearFrom);
+    if (yearTo) query = query.lte('year', yearTo);
+  }
 
-const { data: brandData } = await supabase
-  .from('cars')
-  .select('brand')
-  .eq('is_active', true)
-  .eq('is_sold', false);
+  // Price range filter
+  if (priceRange) {
+    const [priceFrom, priceTo] = priceRange.split('-').map(Number);
+    if (priceFrom) query = query.gte('price', priceFrom);
+    if (priceTo) query = query.lte('price', priceTo);
+  }
 
-const brands = [...new Set((brandData || []).map((c: { brand: string }) => c.brand))].sort();
+  // Mileage range filter
+  if (mileageRange) {
+    const [mileFrom, mileTo] = mileageRange.split('-').map(Number);
+    if (mileFrom) query = query.gte('mileage', mileFrom);
+    if (mileTo) query = query.lte('mileage', mileTo);
+  }
+
+  if (sort === 'price-asc') query = query.order('price', { ascending: true });
+  else if (sort === 'price-desc') query = query.order('price', { ascending: false });
+  else if (sort === 'year-desc') query = query.order('year', { ascending: false });
+  else if (sort === 'mileage-asc') query = query.order('mileage', { ascending: true });
+  else query = query.order('created_at', { ascending: false });
+
+  const { data: cars } = await query;
+  allCars = (cars || []) as Car[];
+
+  const { data: brandData } = await supabase
+    .from('cars')
+    .select('brand')
+    .eq('is_active', true)
+    .eq('is_sold', false);
+
+  brands = [...new Set((brandData || []).map((c: { brand: string }) => c.brand))].sort();
+} catch {
+  // Supabase not configured
+}
 ---
 
 <Layout
-  title="Alla begagnade bilar – Begbilnorr i Luleå | Köp bil med garanti"
-  description="Se alla begagnade bilar hos Begbilnorr i Luleå. Filtrera på märke, modell, pris och årsmodell. Alla bilar kvalitetskontrollerade med garanti."
+  title="Begagnade bilar Luleå — Köp bil med garanti | Begbilnorr"
+  description="Hitta din nästa bil hos Begbilnorr i Luleå. Kvalitetskontrollerade begagnade bilar med garanti. Filtrera på märke, modell och pris."
 >
-  <div class="page-header">
+  <!-- Page Hero -->
+  <section class="bilar-page-hero">
     <div class="container">
+      <div class="section-label" style="text-align:center;">VÅRT LAGER</div>
       <h1>Alla bilar</h1>
-      <div class="breadcrumb">
+      <p>Utforska vårt sortiment av kvalitetskontrollerade begagnade bilar med garanti.</p>
+      <div class="breadcrumb" style="justify-content:center;margin-top:20px;">
         <a href="/">Hem</a>
         <span class="separator">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -55,10 +89,11 @@ const brands = [...new Set((brandData || []).map((c: { brand: string }) => c.bra
         <span class="current">Alla bilar</span>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="container">
-    <div class="filter-section">
+  <!-- Filter Section -->
+  <section class="filter-area">
+    <div class="container">
       <form class="filter-card" method="get" action="/bilar">
         <div class="filter-search">
           <span class="search-icon">
@@ -66,13 +101,45 @@ const brands = [...new Set((brandData || []).map((c: { brand: string }) => c.bra
           </span>
           <input type="text" name="search" placeholder="Sök märke, modell..." value={search} />
         </div>
+
         <div class="filter-row">
           <div class="filter-select">
             <select name="brand">
-              <option value="">Alla märken</option>
+              <option value="">Märke</option>
               {brands.map((b) => (
                 <option value={b} selected={brand === b}>{b}</option>
               ))}
+            </select>
+          </div>
+          <div class="filter-select">
+            <select name="price">
+              <option value="">Prisintervall</option>
+              <option value="0-50000" selected={priceRange === '0-50000'}>0 - 50 000 kr</option>
+              <option value="50000-100000" selected={priceRange === '50000-100000'}>50 000 - 100 000 kr</option>
+              <option value="100000-200000" selected={priceRange === '100000-200000'}>100 000 - 200 000 kr</option>
+              <option value="200000-500000" selected={priceRange === '200000-500000'}>200 000 - 500 000 kr</option>
+              <option value="500000-0" selected={priceRange === '500000-0'}>500 000+ kr</option>
+            </select>
+          </div>
+          <div class="filter-select">
+            <select name="year">
+              <option value="">Årsmodell</option>
+              <option value="2020-2026" selected={yearRange === '2020-2026'}>2020 - 2026</option>
+              <option value="2015-2019" selected={yearRange === '2015-2019'}>2015 - 2019</option>
+              <option value="2010-2014" selected={yearRange === '2010-2014'}>2010 - 2014</option>
+              <option value="2005-2009" selected={yearRange === '2005-2009'}>2005 - 2009</option>
+              <option value="0-2004" selected={yearRange === '0-2004'}>2004 och äldre</option>
+            </select>
+          </div>
+          <div class="filter-select">
+            <select name="mileage">
+              <option value="">Miltal</option>
+              <option value="0-1000" selected={mileageRange === '0-1000'}>0 - 1 000 mil</option>
+              <option value="0-5000" selected={mileageRange === '0-5000'}>0 - 5 000 mil</option>
+              <option value="0-10000" selected={mileageRange === '0-10000'}>0 - 10 000 mil</option>
+              <option value="0-15000" selected={mileageRange === '0-15000'}>0 - 15 000 mil</option>
+              <option value="0-20000" selected={mileageRange === '0-20000'}>0 - 20 000 mil</option>
+              <option value="20000-0" selected={mileageRange === '20000-0'}>20 000+ mil</option>
             </select>
           </div>
           <div class="filter-select">
@@ -101,6 +168,7 @@ const brands = [...new Set((brandData || []).map((c: { brand: string }) => c.bra
             </select>
           </div>
         </div>
+
         <div class="filter-actions">
           <div style="display:flex;align-items:center;gap:16px;">
             <button type="submit" class="filter-btn">
@@ -109,20 +177,117 @@ const brands = [...new Set((brandData || []).map((c: { brand: string }) => c.bra
             </button>
             <a href="/bilar" class="clear-filter">Rensa filter</a>
           </div>
-          <span class="results-count"><strong>{allCars.length}</strong> bilar hittades</span>
+          <span class="results-count">Visar <strong>{allCars.length}</strong> bilar</span>
         </div>
       </form>
     </div>
+  </section>
 
+  <!-- Sort bar -->
+  <div class="container">
+    <div class="sort-bar">
+      <div class="sort-left">
+        <span class="sort-label">Sortera:</span>
+        <form method="get" action="/bilar" style="display:inline;">
+          {brand && <input type="hidden" name="brand" value={brand} />}
+          {fuel && <input type="hidden" name="fuel" value={fuel} />}
+          {gearbox && <input type="hidden" name="gearbox" value={gearbox} />}
+          {search && <input type="hidden" name="search" value={search} />}
+          {yearRange && <input type="hidden" name="year" value={yearRange} />}
+          {priceRange && <input type="hidden" name="price" value={priceRange} />}
+          {mileageRange && <input type="hidden" name="mileage" value={mileageRange} />}
+          <select name="sort" class="sort-select" onchange="this.form.submit()">
+            <option value="newest" selected={sort === 'newest'}>Senast inlagda</option>
+            <option value="price-asc" selected={sort === 'price-asc'}>Pris lågt-högt</option>
+            <option value="price-desc" selected={sort === 'price-desc'}>Pris högt-lågt</option>
+            <option value="year-desc" selected={sort === 'year-desc'}>Årsmodell nyast</option>
+            <option value="mileage-asc" selected={sort === 'mileage-asc'}>Lägst miltal</option>
+          </select>
+        </form>
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" title="Rutnät">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        </button>
+        <button class="view-btn" title="Lista">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Car Grid -->
+  <div class="container">
     <div class="car-grid">
       {allCars.map((car) => <CarCard car={car} />)}
     </div>
 
     {allCars.length === 0 && (
-      <div style="text-align:center;padding:64px 0;">
-        <p style="font-size:18px;color:var(--gray);">Inga bilar matchade din sökning.</p>
-        <a href="/bilar" style="color:var(--red);font-weight:600;margin-top:12px;display:inline-block;">Visa alla bilar</a>
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.2);margin-bottom:16px;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <p>Inga bilar matchade din sökning.</p>
+        <a href="/bilar">Visa alla bilar</a>
       </div>
     )}
   </div>
 </Layout>
+
+<style>
+  .bilar-page-hero {
+    background: var(--bg-dark-2);
+    padding: 60px 0 40px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .bilar-page-hero h1 {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  .bilar-page-hero p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.6);
+    max-width: 540px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .filter-area {
+    background: var(--bg-dark-2);
+    padding: 32px 0 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 64px 0;
+  }
+
+  .empty-state p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 12px;
+  }
+
+  .empty-state a {
+    color: var(--red);
+    font-weight: 600;
+    font-size: 15px;
+    transition: opacity 0.2s;
+  }
+
+  .empty-state a:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .bilar-page-hero h1 {
+      font-size: 36px;
+    }
+  }
+</style>

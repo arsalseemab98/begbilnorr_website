@@ -20,8 +20,13 @@ try {
     announcement = data.value as AnnouncementData;
   }
 } catch {
+  // Supabase error — use fallback
+}
+
+// Fallback when Supabase not configured or no data
+if (!announcement) {
   announcement = {
-    text: 'BEGBILNORR — Auktoriserad bilhandlare i Luleå',
+    text: 'NYHET — Garanti på alla våra bilar. Kontakta oss för mer information.',
     link: '/kontakt',
     visible: true,
   };
@@ -30,6 +35,30 @@ try {
 
 {announcement?.visible && (
   <div class="announcement-bar">
-    <a href={announcement.link}>{announcement.text}</a>
+    <a href={announcement.link}><span>NYHET</span> — Garanti på alla våra bilar. Kontakta oss för mer information.</a>
   </div>
 )}
+
+<!-- Top Info Bar -->
+<div class="top-info-bar">
+  <div class="container">
+    <div class="top-info-bar-left">
+      <a href="mailto:info@begbilnorr.se">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        info@begbilnorr.se
+      </a>
+      <a href="tel:092099986">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        0920 - 999 86
+      </a>
+    </div>
+    <div class="top-info-bar-right">
+      <a href="https://www.facebook.com/begbilnorr" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/begbilnorr" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+      </a>
+    </div>
+  </div>
+</div>

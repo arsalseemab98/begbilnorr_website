@@ -3,32 +3,40 @@ import Layout from '../components/Layout.astro';
 ---
 
 <Layout
-  title="Om Begbilnorr – Din lokala bilhandlare i Luleå sedan 2010"
-  description="Lär känna Begbilnorr – din trygga bilhandlare i Luleå sedan 2010. Vi erbjuder kvalitetskontrollerade begagnade bilar med garanti och personlig service."
+  title="Om oss — Begbilnorr Luleå | Din trygga bilhandlare"
+  description="Begbilnorr i Luleå — din trygga bilhandlare sedan 2010. Kvalitetskontrollerade bilar med garanti och personlig service i Norrbotten."
 >
-  <div class="page-hero">
+  <!-- Page Hero -->
+  <section class="page-hero">
     <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        VEM ÄR VI
+      </div>
       <h1>Om Begbilnorr</h1>
       <p>Din trygga bilhandlare i Luleå sedan 2010</p>
+      <div class="hero-line"></div>
     </div>
-  </div>
+  </section>
 
-  <section class="about-section">
+  <!-- About Content -->
+  <section class="about-content-section">
     <div class="container">
-      <div class="about-grid">
-        <div class="about-image">
-          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-light)"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-        </div>
-        <div class="about-content">
+      <div class="about-two-col">
+        <div class="about-text">
           <h2>Vår historia</h2>
           <p>Begbilnorr grundades 2010 med en enkel vision: att erbjuda kvalitetskontrollerade begagnade bilar med garanti och personlig service till kunderna i Norrbotten.</p>
-          <p>Idag har vi vuxit till att bli en av de mest pålitliga bilhandlarna i Luleå. Vi har sålt hundratals bilar och hjälpt tusentals kunder att hitta sin drömmbil — alltid med trygghet och transparens i fokus.</p>
+          <p>Idag har vi vuxit till att bli en av de mest pålitliga bilhandlarna i Luleå. Vi har sålt hundratals bilar och hjälpt tusentals kunder att hitta sin drömbil -- alltid med trygghet och transparens i fokus.</p>
           <p>Vi tror på långsiktiga relationer med våra kunder. Därför erbjuder vi alltid garanti, finansiering och personlig uppföljning efter köpet.</p>
+        </div>
+        <div class="about-image-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Stats -->
   <section class="stats-section">
     <div class="container">
       <div class="stats-grid">
@@ -52,32 +60,539 @@ import Layout from '../components/Layout.astro';
     </div>
   </section>
 
+  <!-- Values -->
   <section class="values-section">
     <div class="container">
-      <h2>Våra värderingar</h2>
+      <div class="section-label" style="text-align:center;">VÅRA VÄRDERINGAR</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Våra värderingar</h2>
       <div class="values-grid">
         <div class="value-card">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <div class="value-icon">
+            <!-- shield-check -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
           </div>
-          <h3>Trygghet</h3>
-          <p>Alla våra bilar genomgår en noggrann kvalitetskontroll och säljs med garanti. Du kan alltid känna dig trygg med ett köp hos oss.</p>
+          <h3>Kvalitet</h3>
+          <p>Varje bil genomgår en noggrann kontroll innan den erbjuds till försäljning. Vi kompromissar aldrig med kvaliteten och säkerställer att du får en bil du kan lita på.</p>
         </div>
         <div class="value-card">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="value-icon">
+            <!-- eye -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
-          <h3>Personlig service</h3>
-          <p>Vi tar oss tid för varje kund och anpassar oss efter dina behov. Hos oss är du aldrig bara ett nummer.</p>
+          <h3>Transparens</h3>
+          <p>Inga dolda kostnader eller överraskningar. Vi är alltid ärliga och öppna om bilens historik, skick och pris. Du ska alltid veta exakt vad du betalar för.</p>
         </div>
         <div class="value-card">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <div class="value-icon">
+            <!-- heart-handshake -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>
           </div>
-          <h3>Rättvisa priser</h3>
-          <p>Vi erbjuder konkurrenskraftiga priser utan dolda avgifter. Priset du ser är priset du betalar.</p>
+          <h3>Kundnöjdhet</h3>
+          <p>Din trygghet är vår prioritet. Vi erbjuder garanti, finansiering och personlig service för att göra ditt bilköp så smidigt och tryggt som möjligt.</p>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Team -->
+  <section class="team-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">VÅRT TEAM</div>
+      <h2 class="section-heading" style="text-align:center;">Möt teamet</h2>
+      <p class="team-subtitle">Personerna bakom Begbilnorr som jobbar för att ge dig bästa möjliga upplevelse</p>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">
+            <!-- user icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>Erik Lindström</h3>
+          <div class="team-role">VD / Ägare</div>
+          <p class="team-desc">Grundare av Begbilnorr med en livslång passion för bilar. Ansvarar för den övergripande verksamheten och kvalitetssäkringen.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">
+            <!-- user icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>Anna Bergström</h3>
+          <div class="team-role">Säljare</div>
+          <p class="team-desc">Erfaren bilsäljare med fokus på att hjälpa kunder hitta rätt bil. Kan allt om vårt sortiment och guidar dig genom hela köpprocessen.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">
+            <!-- user icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>Maria Johansson</h3>
+          <div class="team-role">Ekonomi / Administration</div>
+          <p class="team-desc">Håller ordning på ekonomi, finansiering och allt det administrativa. Hjälper dig med lånebeslut och pappersarbete.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location -->
+  <section class="location-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">BESÖK OSS</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Hitta oss</h2>
+      <div class="location-grid">
+        <div class="map-placeholder">
+          <div class="placeholder-icon">
+            <!-- map icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            <span>Karta - Luleå, Norrbotten</span>
+          </div>
+        </div>
+        <div class="location-info">
+          <div class="location-item">
+            <div class="loc-icon">
+              <!-- map-pin icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="loc-text">
+              <h4>Adress</h4>
+              <p>Luleå, Norrbotten</p>
+            </div>
+          </div>
+          <div class="location-item">
+            <div class="loc-icon">
+              <!-- phone icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="loc-text">
+              <h4>Telefon</h4>
+              <a href="tel:0920-99986">0920-999 86</a>
+            </div>
+          </div>
+          <div class="location-item">
+            <div class="loc-icon">
+              <!-- mail icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </div>
+            <div class="loc-text">
+              <h4>E-post</h4>
+              <a href="mailto:info@begbilnorr.se">info@begbilnorr.se</a>
+            </div>
+          </div>
+          <div class="location-item">
+            <div class="loc-icon">
+              <!-- clock icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="loc-text">
+              <h4>Öppettider</h4>
+              <p>Måndag - Fredag: 09:00 - 18:00</p>
+              <p>Lördag: 10:00 - 15:00</p>
+              <p>Söndag: Stängt</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Redo att hitta din nästa bil?</h2>
+      <p>Bläddra bland våra kvalitetskontrollerade bilar eller kontakta oss för personlig rådgivning.</p>
+      <div class="cta-buttons">
+        <a href="/bilar" class="btn-primary">Se alla bilar</a>
+        <a href="tel:0920-99986" class="btn-outline">Ring oss</a>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .about-content-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+  }
+
+  .about-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .about-text h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .about-image-placeholder {
+    background: linear-gradient(135deg, var(--bg-dark-5) 0%, var(--bg-dark-4) 100%);
+    border-radius: 8px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-image-placeholder::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--red);
+  }
+
+  /* Stats */
+  .stats-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--red);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+
+  /* Values */
+  .values-section {
+    background: var(--bg-dark-2);
+    padding: 100px 0;
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .value-card {
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 40px 28px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .value-card:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateY(-4px);
+  }
+
+  .value-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--red);
+    transition: all 0.3s;
+  }
+
+  .value-card:hover .value-icon {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .value-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .value-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* Team */
+  .team-section {
+    background: var(--bg-dark-3);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .team-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 48px;
+    margin-top: 12px;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .team-card {
+    text-align: center;
+    padding: 40px 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--bg-dark-2);
+    transition: all 0.4s ease;
+  }
+
+  .team-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(230,46,45,0.3);
+  }
+
+  .team-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bg-dark-5, #2a2a2a) 0%, var(--bg-dark-4, #222) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+    overflow: hidden;
+    color: rgba(255,255,255,0.2);
+  }
+
+  .team-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .team-card h3 {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .team-card .team-role {
+    font-size: 14px;
+    color: var(--red);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .team-card .team-desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+
+  /* Location */
+  .location-section {
+    background: var(--bg-dark-2);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .map-placeholder {
+    background: linear-gradient(135deg, var(--bg-dark-5, #2a2a2a) 0%, var(--bg-dark-4, #222) 100%);
+    border-radius: 8px;
+    height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .map-placeholder::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--red);
+  }
+
+  .map-placeholder .placeholder-icon {
+    color: rgba(255,255,255,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .map-placeholder .placeholder-icon span {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+  }
+
+  .location-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .location-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--bg-dark-3);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .location-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(230,46,45,0.3);
+  }
+
+  .loc-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--red);
+  }
+
+  .loc-text h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .loc-text p,
+  .loc-text a {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+
+  .loc-text a {
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .loc-text a:hover {
+    color: var(--red);
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .about-two-col {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .values-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .location-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-number {
+      font-size: 36px;
+    }
+
+    .team-avatar {
+      width: 100px;
+      height: 100px;
+    }
+
+    .map-placeholder {
+      height: 260px;
+    }
+  }
+</style>

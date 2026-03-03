@@ -8,11 +8,30 @@ import type { Car } from '../../types/car';
 
 const { slug } = Astro.params;
 
-const { data } = await supabase
-  .from('cars')
-  .select('*')
-  .eq('slug', slug)
-  .single();
+let data: any = null;
+let relatedCars: Car[] = [];
+
+try {
+  const result = await supabase
+    .from('cars')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  data = result.data;
+
+  if (data) {
+    const { data: relatedData } = await supabase
+      .from('cars')
+      .select('*')
+      .eq('is_active', true)
+      .eq('is_sold', false)
+      .neq('slug', slug)
+      .limit(3);
+    relatedCars = (relatedData || []) as Car[];
+  }
+} catch {
+  // Supabase not configured
+}
 
 if (!data) {
   return Astro.redirect('/bilar');
@@ -21,16 +40,6 @@ if (!data) {
 const car = data as Car;
 const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
 const mainImage = car.images?.[0] || '';
-
-const { data: relatedData } = await supabase
-  .from('cars')
-  .select('*')
-  .eq('is_active', true)
-  .eq('is_sold', false)
-  .neq('slug', slug)
-  .limit(3);
-
-const relatedCars = (relatedData || []) as Car[];
 
 const carSchema = {
   "@context": "https://schema.org",
@@ -65,7 +74,7 @@ const breadcrumbSchema = {
 ---
 
 <Layout
-  title={`${car.full_name} – ${formatPrice(car.price)} | Begbilnorr Luleå`}
+  title={`${car.full_name} -- ${formatPrice(car.price)} | Begbilnorr Luleå`}
   description={car.description || `Köp begagnad ${car.full_name} hos Begbilnorr i Luleå. ${formatPrice(car.price)}. Garanti och finansiering ingår.`}
   ogType="product"
   ogImage={mainImage}
@@ -76,9 +85,10 @@ const breadcrumbSchema = {
     <StructuredData data={breadcrumbSchema} />
   </Fragment>
 
-  <div class="breadcrumb" style="padding:16px 0;background:var(--warm-gray);border-bottom:1px solid var(--border);">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-bar">
     <div class="container">
-      <div class="breadcrumb" style="padding:0;">
+      <div class="breadcrumb">
         <a href="/">Hem</a>
         <span class="separator">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -92,35 +102,93 @@ const breadcrumbSchema = {
     </div>
   </div>
 
+  <!-- Detail Section -->
   <section class="detail-section">
     <div class="container">
       <div class="detail-grid">
+        <!-- Gallery -->
         <div class="gallery">
-          <div class="gallery-main">
+          <div class="gallery-main" id="galleryMain" data-images={JSON.stringify(car.images || [])}>
             {mainImage ? (
               <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} id="mainImage" />
             ) : (
-              <span style="font-size:80px;opacity:0.35;">&#128663;</span>
+              <span style="font-size:80px;opacity:0.2;">&#128663;</span>
             )}
             <div class="watermark">Begbilnorr</div>
             {car.images?.length > 1 && (
-              <div class="image-count">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                {car.images.length} bilder
+              <button class="gallery-arrow gallery-arrow-left" id="galleryPrev" aria-label="Föregående bild">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+            )}
+            {car.images?.length > 1 && (
+              <button class="gallery-arrow gallery-arrow-right" id="galleryNext" aria-label="Nästa bild">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            )}
+            {car.images?.length > 1 && (
+              <div class="image-count" id="imageCounter">
+                <span id="currentIndex">1</span> / {car.images.length}
               </div>
             )}
           </div>
           {car.images?.length > 1 && (
-            <div class="gallery-thumbnails">
-              {car.images.slice(0, 4).map((img, i) => (
-                <div class={`gallery-thumb ${i === 0 ? 'active' : ''}`} data-src={img}>
+            <div class="gallery-thumbnails" id="galleryThumbnails">
+              {car.images.map((img, i) => (
+                <div class={`gallery-thumb ${i === 0 ? 'active' : ''}`} data-src={img} data-index={i}>
                   <img src={img} alt={`${car.full_name} bild ${i + 1}`} loading="lazy" />
                 </div>
               ))}
             </div>
           )}
+
+          <!-- Request Details CTA (under gallery) -->
+          <div class="request-details-card">
+            <div class="rd-glow"></div>
+            <div class="rd-inner">
+              <div class="rd-visual">
+                <div class="rd-icon-stack">
+                  <div class="rd-icon rd-icon-camera">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                  </div>
+                  <div class="rd-icon rd-icon-doc">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 13H8"/><path d="M16 17H8"/><path d="M16 13h-2"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="rd-content">
+                <h3 class="rd-title">Vill du veta mer om denna bil?</h3>
+                <p class="rd-subtitle">Få exklusiv information skickad direkt till dig</p>
+                <div class="rd-checklist">
+                  <div class="rd-check-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    Detaljbilder från alla vinklar
+                  </div>
+                  <div class="rd-check-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    Komplett servicehistorik
+                  </div>
+                  <div class="rd-check-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    Besiktningsprotokoll
+                  </div>
+                </div>
+                <div class="rd-form">
+                  <div class="rd-input-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    <input type="tel" id="rdPhone" placeholder="Ditt mobilnummer" autocomplete="tel" />
+                  </div>
+                  <button type="button" class="rd-send-btn" id="rdSendBtn" data-car-name={car.full_name}>
+                    Skicka till mig
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+                  </button>
+                </div>
+                <p class="rd-privacy">Vi behandlar dina uppgifter enligt GDPR. Inga spam — bara det du bett om.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
+        <!-- Car Info -->
         <div class="car-info">
           <div class="car-info-inner">
             <div class="badge-row">
@@ -130,27 +198,34 @@ const breadcrumbSchema = {
               </span>
               <span class="badge-location">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                Luleå
+                Begbilnorr Luleå
               </span>
             </div>
 
             <h1>{car.full_name}</h1>
-            <div class="car-year">{car.year} &middot; {car.reg_no}</div>
+            <div class="car-year">Årsmodell {car.year} &middot; {car.reg_no}</div>
             <div class="car-price">{formatPrice(car.price)}</div>
-            <div class="car-monthly">fr. {monthly}</div>
+            <div class="car-monthly">från <span>{monthly}</span></div>
+
+            <!-- Prisberäknare / Finansiering -->
+            <button class="finance-modal-trigger" id="financeModalOpen" type="button" data-price={car.price} data-name={car.full_name}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+              Beräkna månadskostnad
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
 
             <div class="car-buttons">
               <button class="btn-primary" id="contactBtn" data-car-name={car.full_name} data-car-slug={car.slug}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 Intresserad? Kontakta oss
               </button>
-              <a href="tel:+4692099986" class="btn-outline">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                Ring 0920-999 86
-              </a>
               <a href={`https://wa.me/46727448034?text=Hej! Jag är intresserad av ${car.full_name} (${car.reg_no})`} class="btn-outline" target="_blank" rel="noopener">
                 <svg viewBox="0 0 448 512" width="18" height="18" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157z"/></svg>
                 WhatsApp
+              </a>
+              <a href="tel:+4692099986" class="btn-outline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Ring 0920-999 86
               </a>
             </div>
 
@@ -186,6 +261,7 @@ const breadcrumbSchema = {
         </div>
       </div>
 
+      <!-- Description -->
       {car.specifications && (
         <div class="specifications-section">
           <h2>Beskrivning</h2>
@@ -193,6 +269,7 @@ const breadcrumbSchema = {
         </div>
       )}
 
+      <!-- Equipment -->
       {car.equipment?.length > 0 && (
         <div class="equipment-section">
           <h2>Utrustning</h2>
@@ -207,8 +284,9 @@ const breadcrumbSchema = {
         </div>
       )}
 
+      <!-- Related Cars -->
       {relatedCars.length > 0 && (
-        <div class="description-section">
+        <div class="description-section" style="margin-top:64px;">
           <h2>Liknande bilar</h2>
           <div class="car-grid">
             {relatedCars.map((rc) => <CarCard car={rc} />)}
@@ -217,7 +295,682 @@ const breadcrumbSchema = {
       )}
     </div>
   </section>
+
+  <!-- Finance Modal -->
+  <div class="fm-overlay" id="financeModal">
+    <div class="fm-wrapper">
+      <div class="fm-top-border"></div>
+      <div class="fm-header">
+        <p><span>Räkna på månadskostnad</span></p>
+        <button class="fm-close" id="financeModalClose" type="button" aria-label="Stäng">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="fm-divider"></div>
+      <div class="fm-content">
+        <section class="fm-section">
+          <p class="fm-label fm-highlight">Bilpris</p>
+          <div class="fm-price-display" id="fmPriceDisplay"></div>
+        </section>
+        <section class="fm-section">
+          <p class="fm-label">Lånetid</p>
+          <div class="fm-duration-btns" id="fmDurationBtns">
+            <button type="button" data-months="96">8 år</button>
+            <button type="button" data-months="84">7 år</button>
+            <button type="button" data-months="72">6 år</button>
+            <button type="button" data-months="60" class="active">5 år</button>
+            <button type="button" data-months="48">4 år</button>
+            <button type="button" data-months="36">3 år</button>
+            <button type="button" data-months="24">2 år</button>
+          </div>
+        </section>
+        <section class="fm-section">
+          <p class="fm-label">Kontantinsats</p>
+          <p class="fm-equity-hint">Minst 20%. Du kan även använda värdet på din inbytesbil som insats</p>
+          <div class="fm-equity-input-row">
+            <input type="text" id="fmEquityInput" autocomplete="off" />
+            <span>kr</span>
+          </div>
+          <div class="fm-equity-marks">
+            <span id="fmEquityPercent">20%</span>
+            <span id="fmEquityAmount"></span>
+          </div>
+          <div class="fm-slider-wrap">
+            <input type="range" id="fmEquitySlider" min="0" max="100" step="1" value="20" class="fm-slider" />
+            <div class="fm-slider-labels">
+              <span>0%</span>
+              <span>20%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
+          </div>
+        </section>
+        <section class="fm-section fm-result-section">
+          <p class="fm-label fm-highlight">Månadskostnad med kontantinsats</p>
+          <div class="fm-result-big" id="fmMonthlyWith">0 kr/mån</div>
+          <div class="fm-result-detail">
+            <span>Lånebelopp</span>
+            <span id="fmLoanWith">0 kr</span>
+          </div>
+          <div class="fm-result-detail">
+            <span>Kontantinsats</span>
+            <span id="fmDownDisplay">0 kr (20%)</span>
+          </div>
+          <div class="fm-result-detail">
+            <span>Totalt att betala</span>
+            <span id="fmTotalWith">0 kr</span>
+          </div>
+        </section>
+        <section class="fm-section fm-result-section fm-result-alt">
+          <p class="fm-label fm-highlight">Månadskostnad utan kontantinsats</p>
+          <div class="fm-result-big" id="fmMonthlyWithout">0 kr/mån</div>
+          <div class="fm-result-detail">
+            <span>Lånebelopp</span>
+            <span id="fmLoanWithout">0 kr</span>
+          </div>
+          <div class="fm-result-detail">
+            <span>Totalt att betala</span>
+            <span id="fmTotalWithout">0 kr</span>
+          </div>
+        </section>
+        <section class="fm-section fm-summary">
+          <p class="fm-label fm-highlight">Summering</p>
+          <div class="fm-summary-row">
+            <span id="fmSummaryName"></span>
+            <span id="fmSummaryPrice"></span>
+          </div>
+          <div class="fm-summary-row fm-secondary">
+            <span>Ränta (fast)</span>
+            <span>8,95%</span>
+          </div>
+          <div class="fm-summary-row fm-secondary">
+            <span>Lånetid</span>
+            <span id="fmSummaryTerm">5 år</span>
+          </div>
+        </section>
+        <section class="fm-section fm-warning">
+          <div class="fm-warning-box">
+            <p class="fm-disclaimer-calc">Månadskostnaden är ett exempel och baseras på vald löptid med 8,95% ränta. Uppläggnings- och aviavgift tillkommer. Den faktiska räntan kan bli både lägre och högre beroende på din individuella kreditbedömning.</p>
+          </div>
+          <div class="fm-warning-box fm-warning-important">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            <p><strong>Att låna kostar pengar!</strong> Om du inte kan betala tillbaka skulden i tid riskerar du en betalningsanmärkning. Det kan leda till svårigheter att få hyra bostad, teckna abonnemang och få nya lån.</p>
+          </div>
+        </section>
+        <section class="fm-section fm-cta">
+          <input type="tel" id="fmPhone" placeholder="Ditt mobilnummer" autocomplete="off" />
+          <button type="button" class="fm-send-btn" id="fmSendBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Kontakta oss för offert
+          </button>
+          <p class="fm-policy">Beräkningen är uppskattad och inte bindande. Kontakta oss för exakt offert anpassad efter dig.</p>
+        </section>
+      </div>
+    </div>
+  </div>
 </Layout>
+
+<style>
+  .breadcrumb-bar {
+    padding: 16px 0;
+    background: var(--bg-dark-3);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Finance Modal Trigger Button */
+  .finance-modal-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    background: rgba(230,46,45,0.08);
+    border: 1px solid rgba(230,46,45,0.15);
+    border-radius: 8px;
+    color: var(--red-light);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--sans);
+  }
+  .finance-modal-trigger:hover {
+    background: rgba(230,46,45,0.14);
+    border-color: rgba(230,46,45,0.3);
+  }
+  .finance-modal-trigger svg:last-child {
+    margin-left: auto;
+  }
+
+  /* Finance Modal Overlay */
+  .fm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+    overflow-y: auto;
+  }
+  .fm-overlay.open {
+    display: flex;
+  }
+
+  .fm-wrapper {
+    background: #111;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    animation: fmSlideUp 0.3s ease-out;
+  }
+  @keyframes fmSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fm-top-border {
+    height: 4px;
+    background: linear-gradient(90deg, #E62E2D, #ff5a59);
+  }
+
+  .fm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+  }
+  .fm-header p {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .fm-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+  }
+  .fm-close:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .fm-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .fm-content {
+    padding: 0 20px 20px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+  }
+
+  .fm-section {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .fm-section:last-child {
+    border-bottom: none;
+  }
+
+  .fm-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.45);
+    margin: 0 0 10px;
+  }
+  .fm-label.fm-highlight {
+    color: var(--red-light);
+  }
+
+  .fm-price-display {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  /* Duration Buttons */
+  .fm-duration-btns {
+    display: flex;
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .fm-duration-btns button {
+    flex: 1;
+    padding: 10px 4px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--sans);
+  }
+  .fm-duration-btns button:last-child {
+    border-right: none;
+  }
+  .fm-duration-btns button:hover {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+  }
+  .fm-duration-btns button.active {
+    background: var(--red);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* Equity / Down Payment */
+  .fm-equity-hint {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin: 0 0 12px;
+  }
+
+  .fm-equity-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+  .fm-equity-input-row input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 0;
+    outline: none;
+    font-family: var(--sans);
+  }
+  .fm-equity-input-row span {
+    color: rgba(255,255,255,0.4);
+    font-size: 14px;
+  }
+
+  .fm-equity-marks {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .fm-equity-marks span {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* Slider */
+  .fm-slider-wrap {
+    position: relative;
+  }
+  .fm-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    outline: none;
+  }
+  .fm-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .fm-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .fm-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* Results */
+  .fm-result-section {
+    background: rgba(230,46,45,0.06);
+    border: 1px solid rgba(230,46,45,0.15);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+  .fm-result-alt {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.08);
+  }
+  .fm-result-big {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .fm-result-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .fm-result-detail span:last-child {
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Summary */
+  .fm-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .fm-summary-row:last-child { border-bottom: none; }
+  .fm-summary-row span:last-child { font-weight: 600; }
+  .fm-summary-row.fm-secondary {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+  }
+  .fm-summary-row.fm-secondary span:last-child {
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* Warning */
+  .fm-warning-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .fm-warning-box p {
+    margin: 0;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+  .fm-warning-important {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    border-color: rgba(255,180,0,0.2);
+    background: rgba(255,180,0,0.04);
+  }
+  .fm-warning-important svg {
+    flex-shrink: 0;
+    color: #ffb400;
+    margin-top: 2px;
+  }
+  .fm-warning-important p {
+    color: rgba(255,255,255,0.5);
+  }
+  .fm-disclaimer-calc {
+    font-style: italic;
+  }
+
+  /* CTA */
+  .fm-cta input[type="tel"] {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 10px;
+    font-family: var(--sans);
+    transition: border-color 0.2s;
+  }
+  .fm-cta input[type="tel"]:focus {
+    border-color: var(--red);
+  }
+  .fm-send-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--red);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+    font-family: var(--sans);
+  }
+  .fm-send-btn:hover {
+    background: var(--red-dark);
+  }
+  .fm-policy {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 10px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    .fm-overlay { padding: 20px 8px; }
+    .fm-duration-btns button { font-size: 11px; padding: 8px 2px; }
+    .fm-result-big { font-size: 22px; }
+  }
+
+  /* Request Details CTA */
+  .request-details-card {
+    position: relative;
+    margin-top: 24px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(230,46,45,0.06) 0%, rgba(20,20,20,1) 50%, rgba(230,46,45,0.04) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .rd-glow {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity: 0.8;
+  }
+  .rd-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding: 28px 24px;
+  }
+  .rd-visual {
+    flex-shrink: 0;
+  }
+  .rd-icon-stack {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .rd-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+  }
+  .rd-icon-camera {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--red), #ff5a59);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(230,46,45,0.35);
+  }
+  .rd-icon-doc {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .rd-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .rd-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 6px;
+    line-height: 1.2;
+  }
+  .rd-subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    margin: 0 0 20px;
+  }
+  .rd-checklist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    margin-bottom: 24px;
+  }
+  .rd-check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+  .rd-check-item svg {
+    color: var(--red-light);
+    flex-shrink: 0;
+  }
+  .rd-form {
+    display: flex;
+    gap: 10px;
+    max-width: 460px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .rd-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .rd-input-wrap:focus-within {
+    border-color: var(--red);
+    background: rgba(255,255,255,0.08);
+  }
+  .rd-input-wrap svg {
+    color: rgba(255,255,255,0.3);
+    flex-shrink: 0;
+  }
+  .rd-input-wrap input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    padding: 13px 0;
+    outline: none;
+    font-family: var(--sans);
+  }
+  .rd-input-wrap input::placeholder {
+    color: rgba(255,255,255,0.3);
+  }
+  .rd-send-btn {
+    padding: 13px 24px;
+    background: var(--red);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-family: var(--sans);
+  }
+  .rd-send-btn:hover {
+    background: var(--red-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(230,46,45,0.3);
+  }
+  .rd-send-btn svg {
+    transform: rotate(90deg);
+  }
+  .rd-privacy {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    margin: 12px 0 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .rd-inner {
+      padding: 28px 20px;
+    }
+    .rd-title {
+      font-size: 18px;
+    }
+    .rd-form {
+      flex-direction: column;
+    }
+    .rd-send-btn {
+      justify-content: center;
+    }
+  }
+</style>
 
 <script>
   document.getElementById('contactBtn')?.addEventListener('click', () => {
@@ -232,13 +985,198 @@ const breadcrumbSchema = {
     );
   });
 
+  // Gallery navigation
+  const galleryMain = document.getElementById('galleryMain') as HTMLElement;
+  const mainImg = document.querySelector('#mainImage') as HTMLImageElement;
+  const galleryImages: string[] = galleryMain ? JSON.parse(galleryMain.dataset.images || '[]') : [];
+  let currentIdx = 0;
+
+  function goToImage(idx: number) {
+    if (!mainImg || galleryImages.length === 0) return;
+    currentIdx = (idx + galleryImages.length) % galleryImages.length;
+    mainImg.src = galleryImages[currentIdx];
+    document.querySelectorAll('.gallery-thumb').forEach((t) => t.classList.remove('active'));
+    const activeThumb = document.querySelector(`.gallery-thumb[data-index="${currentIdx}"]`);
+    activeThumb?.classList.add('active');
+    activeThumb?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    const counter = document.getElementById('currentIndex');
+    if (counter) counter.textContent = String(currentIdx + 1);
+  }
+
+  document.getElementById('galleryPrev')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    goToImage(currentIdx - 1);
+  });
+
+  document.getElementById('galleryNext')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    goToImage(currentIdx + 1);
+  });
+
   document.querySelectorAll('.gallery-thumb').forEach((thumb) => {
     thumb.addEventListener('click', () => {
-      const src = (thumb as HTMLElement).dataset.src;
-      const mainImg = document.querySelector('#mainImage') as HTMLImageElement;
-      if (mainImg && src) mainImg.src = src;
-      document.querySelectorAll('.gallery-thumb').forEach((t) => t.classList.remove('active'));
-      thumb.classList.add('active');
+      const idx = parseInt((thumb as HTMLElement).dataset.index || '0', 10);
+      goToImage(idx);
     });
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') goToImage(currentIdx - 1);
+    if (e.key === 'ArrowRight') goToImage(currentIdx + 1);
+  });
+
+  // Finance Modal
+  const fmOpenBtn = document.getElementById('financeModalOpen') as HTMLElement;
+  const fmOverlay = document.getElementById('financeModal') as HTMLElement;
+  const fmCloseBtn = document.getElementById('financeModalClose');
+  const fmDurationBtns = document.getElementById('fmDurationBtns');
+  const fmEquitySlider = document.getElementById('fmEquitySlider') as HTMLInputElement;
+  const fmEquityInput = document.getElementById('fmEquityInput') as HTMLInputElement;
+  const fmSendBtn = document.getElementById('fmSendBtn');
+
+  if (fmOpenBtn && fmOverlay) {
+    const carPrice = parseInt(fmOpenBtn.dataset.price || '0', 10);
+    const carName = fmOpenBtn.dataset.name || '';
+    const RATE = 0.0895; // 8.95% fast ränta
+    let selectedMonths = 60;
+    let equityPercent = 20;
+
+    function fmFormatSEK(n: number): string {
+      return Math.round(n).toLocaleString('sv-SE') + ' kr';
+    }
+
+    function fmCalcMonthly(principal: number, months: number): number {
+      if (principal <= 0) return 0;
+      const mr = RATE / 12;
+      if (mr === 0) return principal / months;
+      return principal * (mr * Math.pow(1 + mr, months)) / (Math.pow(1 + mr, months) - 1);
+    }
+
+    function fmUpdate() {
+      const downAmount = Math.round(carPrice * equityPercent / 100);
+      const loanWith = carPrice - downAmount;
+      const loanWithout = carPrice;
+
+      const monthlyWith = fmCalcMonthly(loanWith, selectedMonths);
+      const monthlyWithout = fmCalcMonthly(loanWithout, selectedMonths);
+      const totalWith = monthlyWith * selectedMonths + downAmount;
+      const totalWithout = monthlyWithout * selectedMonths;
+
+      // Price display
+      const priceEl = document.getElementById('fmPriceDisplay');
+      if (priceEl) priceEl.textContent = fmFormatSEK(carPrice);
+
+      // Equity displays
+      const percentEl = document.getElementById('fmEquityPercent');
+      const amountEl = document.getElementById('fmEquityAmount');
+      if (percentEl) percentEl.textContent = equityPercent + '%';
+      if (amountEl) amountEl.textContent = fmFormatSEK(downAmount);
+      if (fmEquityInput) fmEquityInput.value = Math.round(downAmount).toLocaleString('sv-SE');
+
+      // With down payment
+      const mwEl = document.getElementById('fmMonthlyWith');
+      const lwEl = document.getElementById('fmLoanWith');
+      const dwEl = document.getElementById('fmDownDisplay');
+      const twEl = document.getElementById('fmTotalWith');
+      if (mwEl) mwEl.textContent = fmFormatSEK(monthlyWith) + '/mån';
+      if (lwEl) lwEl.textContent = fmFormatSEK(loanWith);
+      if (dwEl) dwEl.textContent = fmFormatSEK(downAmount) + ' (' + equityPercent + '%)';
+      if (twEl) twEl.textContent = fmFormatSEK(totalWith);
+
+      // Without down payment
+      const mwoEl = document.getElementById('fmMonthlyWithout');
+      const lwoEl = document.getElementById('fmLoanWithout');
+      const twoEl = document.getElementById('fmTotalWithout');
+      if (mwoEl) mwoEl.textContent = fmFormatSEK(monthlyWithout) + '/mån';
+      if (lwoEl) lwoEl.textContent = fmFormatSEK(loanWithout);
+      if (twoEl) twoEl.textContent = fmFormatSEK(totalWithout);
+
+      // Summary
+      const snEl = document.getElementById('fmSummaryName');
+      const spEl = document.getElementById('fmSummaryPrice');
+      const stEl = document.getElementById('fmSummaryTerm');
+      if (snEl) snEl.textContent = carName;
+      if (spEl) spEl.textContent = fmFormatSEK(carPrice);
+      if (stEl) stEl.textContent = (selectedMonths / 12) + ' år';
+    }
+
+    // Open modal
+    fmOpenBtn.addEventListener('click', () => {
+      fmOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      fmUpdate();
+    });
+
+    // Close modal
+    function fmClose() {
+      fmOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    fmCloseBtn?.addEventListener('click', fmClose);
+    fmOverlay.addEventListener('click', (e) => {
+      if (e.target === fmOverlay) fmClose();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && fmOverlay.classList.contains('open')) fmClose();
+    });
+
+    // Duration buttons
+    fmDurationBtns?.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('button');
+      if (!btn) return;
+      selectedMonths = parseInt(btn.dataset.months || '60', 10);
+      fmDurationBtns.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      fmUpdate();
+    });
+
+    // Equity slider
+    fmEquitySlider?.addEventListener('input', () => {
+      equityPercent = parseInt(fmEquitySlider.value, 10);
+      fmUpdate();
+    });
+
+    // Equity input
+    fmEquityInput?.addEventListener('input', () => {
+      const raw = fmEquityInput.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+      const val = parseInt(raw, 10) || 0;
+      equityPercent = Math.min(100, Math.max(0, Math.round((val / carPrice) * 100)));
+      fmEquitySlider.value = String(equityPercent);
+      fmUpdate();
+    });
+
+    // Send button - opens contact modal with pre-filled info
+    fmSendBtn?.addEventListener('click', () => {
+      const phone = (document.getElementById('fmPhone') as HTMLInputElement)?.value || '';
+      fmClose();
+      window.dispatchEvent(
+        new CustomEvent('open-contact-modal', {
+          detail: { carName, carSlug: '' }
+        })
+      );
+    });
+  }
+
+  // Request Details CTA
+  const rdSendBtn = document.getElementById('rdSendBtn');
+  rdSendBtn?.addEventListener('click', () => {
+    const phone = (document.getElementById('rdPhone') as HTMLInputElement)?.value?.trim();
+    if (!phone) {
+      const input = document.getElementById('rdPhone') as HTMLInputElement;
+      input?.focus();
+      const wrap = input?.closest('.rd-input-wrap') as HTMLElement;
+      if (wrap) {
+        wrap.style.borderColor = '#E62E2D';
+        setTimeout(() => { wrap.style.borderColor = ''; }, 2000);
+      }
+      return;
+    }
+    const carName = (rdSendBtn as HTMLElement).dataset.carName || '';
+    window.dispatchEvent(
+      new CustomEvent('open-contact-modal', {
+        detail: { carName, carSlug: '' }
+      })
+    );
   });
 </script>

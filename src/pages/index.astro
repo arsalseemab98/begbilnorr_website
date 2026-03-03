@@ -6,15 +6,19 @@ import CarCard from '../components/CarCard.astro';
 import { supabase } from '../lib/supabase';
 import type { Car } from '../types/car';
 
-const { data: cars } = await supabase
-  .from('cars')
-  .select('*')
-  .eq('is_active', true)
-  .eq('is_sold', false)
-  .order('created_at', { ascending: false })
-  .limit(6);
-
-const latestCars = (cars || []) as Car[];
+let latestCars: Car[] = [];
+try {
+  const { data: cars } = await supabase
+    .from('cars')
+    .select('*')
+    .eq('is_active', true)
+    .eq('is_sold', false)
+    .order('created_at', { ascending: false })
+    .limit(6);
+  latestCars = (cars || []) as Car[];
+} catch {
+  // Supabase not configured — show empty
+}
 
 const dealerSchema = {
   "@context": "https://schema.org",
@@ -48,100 +52,94 @@ const dealerSchema = {
 >
   <Fragment slot="head">
     <StructuredData data={dealerSchema} />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" is:inline defer></script>
   </Fragment>
 
   <Hero />
 
-  <section class="action-section">
+  <!-- SENAST INKOMNA BILAR -->
+  <section class="cars-section">
     <div class="container">
-      <h2>Hur kan vi hjälpa dig?</h2>
-      <div class="action-buttons">
-        <a href="/bilar" class="action-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
-          Köpa bil
-        </a>
-        <a href="/salj-bil" class="action-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
-          Sälja bil
-        </a>
-        <a href="/kontakt" class="action-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
-          Boka provkörning
-        </a>
-      </div>
-    </div>
-  </section>
+      <div class="section-label fade-up">VÅRT LAGER</div>
+      <h2 class="section-heading fade-up">Senast inkomna bilar</h2>
 
-  <section class="carousel-section">
-    <div class="container">
-      <div class="carousel-header">
-        <h2>Våra senast inkomna bilar</h2>
-      </div>
-      <div class="car-grid" style="padding-bottom: 0;">
+      <div class="car-grid">
         {latestCars.map((car) => <CarCard car={car} />)}
       </div>
+
+      <div class="cars-section-footer fade-up">
+        <a href="/bilar" class="see-all-btn">
+          Se alla bilar
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
     </div>
   </section>
 
-  <div class="full-inventory">
+  <!-- VARFÖR BEGBILNORR -->
+  <section class="why-section">
     <div class="container">
-      <a href="/bilar" class="outline-btn">
-        Hela sortimentet
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </a>
-    </div>
-  </div>
+      <div class="section-label fade-up" style="text-align:center;">VARFÖR VÄLJA OSS</div>
+      <h2 class="section-heading fade-up" style="text-align:center;margin-bottom:16px;">Varför Begbilnorr?</h2>
+      <p class="why-subtitle fade-up">Vi gör bilköpet enkelt, tryggt och personligt. Här är vad som skiljer oss från mängden.</p>
 
-  <section class="services-section">
-    <div class="container">
-      <h2>Våra tjänster</h2>
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+      <div class="why-grid">
+        <div class="why-card fade-up">
+          <div class="why-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
           </div>
-          <h3>Finansiering</h3>
-          <p>Förmånlig finansiering med snabbt lånebesked. Vi samarbetar med flera banker för att hitta den bästa lösningen för dig.</p>
+          <h3>Garanti på alla bilar</h3>
+          <p>Varje bil säljs med garanti så att du kan köra med trygghet från dag ett.</p>
         </div>
-        <div class="service-card">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+
+        <div class="why-card fade-up">
+          <div class="why-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
           </div>
-          <h3>Inbytesvärdering</h3>
-          <p>Få rättvist pris för din nuvarande bil. Vi ger dig ett snabbt och ärligt bud direkt på plats eller digitalt.</p>
+          <h3>Enkel finansiering</h3>
+          <p>Förmånliga vilkor genom våra bankpartners. Snabbt lånebesked och flexibla lösningar.</p>
         </div>
-        <div class="service-card">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+
+        <div class="why-card fade-up">
+          <div class="why-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
           </div>
           <h3>Hemleverans</h3>
-          <p>Vi levererar bilen hem till dig. Köp tryggt på distans och få din nya bil levererad till dörren, i hela Sverige.</p>
+          <p>Köp din bil på distans och få den levererad hem till dörren, var du än bor i Sverige.</p>
+        </div>
+
+        <div class="why-card fade-up">
+          <div class="why-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+          </div>
+          <h3>Inbyte & värdering</h3>
+          <p>Få en rättvis värdering på din nuvarande bil. Enkel inbytesprocess direkt hos oss.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="about-section">
+  <!-- OM BEGBILNORR -->
+  <section class="about-cta-section">
     <div class="container">
-      <div class="about-grid">
-        <div class="about-image">
-          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-light)"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-        </div>
-        <div class="about-content">
-          <h2>Om Begbilnorr</h2>
-          <p>Vi är en lokal bilhandlare i Luleå med passion för att leverera kvalitetsbilar till rättvisa priser. Sedan 2010 har vi hjälpt kunder i hela Norrbotten att hitta sin nästa bil — med trygghet, garanti och personlig service.</p>
+      <div class="about-cta-grid">
+        <div class="about-cta-content fade-up">
+          <div class="section-label">OM BEGBILNORR</div>
+          <h2>Lokalt förankrad, personligt engagerad</h2>
+          <p>Vi är en lokal bilhandlare i Luleå med passion för att leverera kvalitetsbilar till rättvisa priser. Sedan 2010 har vi hjälpt kunder i hela Norrbotten att hitta sin nästa bil.</p>
+
           <div class="about-facts">
             <div class="about-fact">
               <div class="fact-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
               </div>
-              <div class="fact-text">14 års erfarenhet av bilförsäljning</div>
+              <div class="fact-text">10+ års erfarenhet av bilförsäljning</div>
             </div>
             <div class="about-fact">
               <div class="fact-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
               </div>
-              <div class="fact-text">150+ bilar sålda per år</div>
+              <div class="fact-text">300+ bilar sålda per år</div>
             </div>
             <div class="about-fact">
               <div class="fact-icon">
@@ -150,8 +148,443 @@ const dealerSchema = {
               <div class="fact-text">Garanti på alla fordon</div>
             </div>
           </div>
+
+          <a href="/om-oss" class="about-cta-btn">
+            Läs mer om oss
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <div class="about-cta-image">
+          <div class="placeholder-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-inner fade-up">
+        <div class="section-label" style="text-align:center;">HÅLL DIG UPPDATERAD</div>
+        <h2>Missa inte din drömbil</h2>
+        <p>Vi lägger upp nya bilar varje vecka. Prenumerera för att vara först med att få veta när nya bilar kommer in.</p>
+        <form class="newsletter-form" id="newsletterForm">
+          <input type="email" placeholder="Din e-postadress" required />
+          <button type="submit">Prenumerera</button>
+        </form>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  /* Cars section */
+  .cars-section {
+    background: var(--bg-dark-2);
+    padding: 100px 0 80px;
+  }
+
+  .cars-section-footer {
+    text-align: center;
+  }
+
+  .see-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 40px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 2px;
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .see-all-btn:hover {
+    border-color: var(--white);
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* Why section */
+  .why-section {
+    background: var(--bg-dark-3);
+    padding: 100px 0;
+  }
+
+  .why-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    max-width: 540px;
+    margin: 0 auto 60px;
+    line-height: 1.7;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .why-card {
+    text-align: center;
+    padding: 40px 24px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    background: transparent;
+  }
+
+  .why-card:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-4px);
+  }
+
+  .why-card-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition: all 0.3s;
+    color: var(--red);
+  }
+
+  .why-card:hover .why-card-icon {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .why-card h3 {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .why-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* About CTA section */
+  .about-cta-section {
+    background: var(--bg-dark-3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-cta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 480px;
+  }
+
+  .about-cta-content {
+    padding: 80px 60px 80px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .about-cta-content h2 {
+    font-family: var(--serif);
+    font-size: 38px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .about-cta-content p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.8;
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+
+  .about-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 36px;
+  }
+
+  .about-fact {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.2s;
+  }
+
+  .about-fact:hover {
+    transform: translateX(4px);
+  }
+
+  .about-fact .fact-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--red);
+  }
+
+  .about-fact .fact-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .about-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: var(--red);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 2px;
+    transition: all 0.3s;
+    width: fit-content;
+    letter-spacing: 0.5px;
+  }
+
+  .about-cta-btn:hover {
+    background: var(--red-dark);
+    transform: translateY(-2px);
+  }
+
+  .about-cta-image {
+    background: linear-gradient(135deg, var(--bg-dark-5) 0%, var(--bg-dark-4) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .about-cta-image::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--red);
+  }
+
+  .placeholder-icon {
+    color: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+  }
+
+  /* Newsletter section */
+  .newsletter-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+  }
+
+  .newsletter-inner {
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .newsletter-inner h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .newsletter-inner > p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 0;
+  }
+
+  .newsletter-form input {
+    flex: 1;
+    padding: 16px 20px;
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-right: none;
+    border-radius: 2px 0 0 2px;
+    font-size: 15px;
+    font-family: var(--sans);
+    color: var(--white);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .newsletter-form input::placeholder {
+    color: rgba(255,255,255,0.3);
+  }
+
+  .newsletter-form input:focus {
+    border-color: var(--red);
+  }
+
+  .newsletter-form button {
+    padding: 16px 28px;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    border-radius: 0 2px 2px 0;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .newsletter-form button:hover {
+    background: var(--red-dark);
+  }
+
+  @media (max-width: 1024px) {
+    .why-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-cta-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .about-cta-content {
+      padding: 60px 0;
+    }
+
+    .about-cta-image {
+      min-height: 300px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cars-section {
+      padding: 64px 0 56px;
+    }
+
+    .why-section {
+      padding: 64px 0;
+    }
+
+    .why-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .why-card {
+      padding: 28px 16px;
+    }
+
+    .about-cta-content {
+      padding: 48px 0;
+    }
+
+    .about-cta-content h2 {
+      font-size: 30px;
+    }
+
+    .newsletter-section {
+      padding: 56px 0;
+    }
+
+    .newsletter-inner h2 {
+      font-size: 26px;
+    }
+
+    .newsletter-form {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .newsletter-form input {
+      border-right: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+    }
+
+    .newsletter-form button {
+      border-radius: 2px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .why-card {
+      padding: 24px 20px;
+    }
+  }
+</style>
+
+<script>
+  // Newsletter form
+  document.getElementById('newsletterForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const btn = form.querySelector('button') as HTMLButtonElement;
+    btn.textContent = 'Tack! Du är prenumerant.';
+    btn.style.background = '#22C55E';
+    setTimeout(() => {
+      btn.textContent = 'Prenumerera';
+      btn.style.background = '';
+      form.reset();
+    }, 3000);
+  });
+
+  // Scroll animations (fade-up)
+  (function() {
+    var fadeElements = document.querySelectorAll('.fade-up');
+    if (!fadeElements.length) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    fadeElements.forEach(function(el, index) {
+      (el as HTMLElement).style.transitionDelay = (index % 3) * 0.1 + 's';
+      observer.observe(el);
+    });
+  })();
+</script>

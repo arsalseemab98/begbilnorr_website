@@ -1,0 +1,1172 @@
+---
+export const prerender = true;
+
+import Layout from '../components/Layout.astro';
+import StructuredData from '../components/StructuredData.astro';
+
+const faqItems = [
+  {
+    question: "Hur lång tid tar det att höja Swish-gränsen?",
+    answer: "I de flesta fall aktiveras den nya gränsen omedelbart eller inom några timmar. Vissa banker kan behöva upp till en bankdag."
+  },
+  {
+    question: "Kostar det att höja Swish-gränsen?",
+    answer: "Nej, det är helt kostnadsfritt att ändra sin Swish-gräns hos alla banker."
+  },
+  {
+    question: "Kan jag sänka gränsen igen efter köpet?",
+    answer: "Ja, du kan när som helst ändra tillbaka din Swish-gräns till det belopp du vill ha. Det gör du på samma sätt som du höjde den."
+  },
+  {
+    question: "Vad är den högsta Swish-gränsen?",
+    answer: "De flesta banker tillåter en maxgräns på 150 000 kr per dygn. Kontakta din bank för exakta villkor — vissa banker kan erbjuda högre gränser."
+  },
+  {
+    question: "Kan jag Swisha flera gånger samma dag?",
+    answer: "Ja, du kan göra flera Swish-överföringar samma dag så länge det totala beloppet inte överstiger din dygnsgräns."
+  }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Så höjer du din Swish-gräns",
+  "description": "Steg-för-steg guide för att höja din Swish-gräns inför ett bilköp.",
+  "totalTime": "PT5M",
+  "tool": [
+    { "@type": "HowToTool", "name": "BankID" },
+    { "@type": "HowToTool", "name": "Bankapp eller internetbank" }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Logga in i din bank",
+      "text": "Öppna din banks app eller internetbank och logga in med BankID.",
+      "position": 1
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Hitta Swish-inställningar",
+      "text": "Navigera till Swish-inställningar eller betalningsgränser i din banks meny.",
+      "position": 2
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Ändra beloppsgränsen",
+      "text": "Ange det nya maxbeloppet du vill kunna Swisha per dygn och bekräfta ändringen.",
+      "position": 3
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Bekräfta med BankID",
+      "text": "Signera ändringen med BankID. Den nya gränsen aktiveras vanligtvis direkt.",
+      "position": 4
+    }
+  ]
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Hem", "item": "https://begbilnorr.se" },
+    { "@type": "ListItem", "position": 2, "name": "Swish-betalning", "item": "https://begbilnorr.se/swish" },
+    { "@type": "ListItem", "position": 3, "name": "Höja Swish-gräns" }
+  ]
+};
+
+const bankInstructions = [
+  {
+    id: "swedbank",
+    name: "Swedbank",
+    logo: "/banks/swedbank.svg",
+    alt: "Swedbank logotyp — höja Swish-gräns Swedbank",
+    standard: "3 000 kr/dag",
+    steps: "I appen: Profil → Swish → ändra beloppsgräns. Permanent max 10 000 kr/dag. Tillfällig höjning upp till 100 000 kr (gäller till midnatt). Signera med Mobilt BankID.",
+    maxLimit: "100 000 kr",
+    phone: "0771-22 11 22",
+    howTo: "App / Internetbank"
+  },
+  {
+    id: "handelsbanken",
+    name: "Handelsbanken",
+    logo: "/banks/handelsbanken.svg",
+    alt: "Handelsbanken logotyp — höja Swish-gräns Handelsbanken",
+    standard: "10 000 kr/dag",
+    steps: "I appen: Betala → Swish → höjning (max 30 000 kr permanent). Tillfällig höjning upp till 150 000 kr i internetbanken med kortläsare. Via appen/webben: 2 dagars väntetid. Ring 0771-77 88 99 så kan de i vissa fall höja samma dag.",
+    maxLimit: "150 000 kr",
+    phone: "0771-77 88 99",
+    howTo: "Internetbank / Ring (samma dag)"
+  },
+  {
+    id: "seb",
+    name: "SEB",
+    logo: "/banks/seb.svg",
+    alt: "SEB logotyp — höja Swish-gräns SEB",
+    standard: "Upp till 15 000 kr/dag",
+    steps: "I internetbanken: Betala och överföra → Swish. I appen: Konton & Kort → Swishöversikt. Max 15 000 kr via självbetjäning. Tillfällig höjning till 150 000 kr — ring kundtjänst.",
+    maxLimit: "150 000 kr",
+    phone: "0771-365 365",
+    howTo: "Ring kundtjänst"
+  },
+  {
+    id: "nordea",
+    name: "Nordea",
+    logo: "/banks/nordea.svg",
+    alt: "Nordea logotyp — höja Swish-gräns Nordea",
+    standard: "5 000 kr/betalning",
+    steps: "I appen: Swish & Inställningar → Hantera Swish → Höj tillfälligt din beloppsgräns. Välj giltighetstid 1–3 dagar. Max 100 000 kr. OBS: kan ej ändras under vald period.",
+    maxLimit: "100 000 kr",
+    phone: "0771-22 44 88",
+    howTo: "App (1–3 dagar)"
+  },
+  {
+    id: "danske-bank",
+    name: "Danske Bank",
+    logo: "/banks/danske-bank.svg",
+    alt: "Danske Bank logotyp — höja Swish-gräns Danske Bank",
+    standard: "5 000 kr/dag",
+    steps: "Logga in i Hembanken → Mobila tjänster → Swish → markera telefonnummer → justera beloppsgräns. Upp till 150 000 kr/dag direkt via självbetjäning — ingen telefonkontakt krävs.",
+    maxLimit: "150 000 kr",
+    phone: "0752-48 45 42",
+    howTo: "Hembanken (självbetjäning)"
+  },
+  {
+    id: "lansforsakringar",
+    name: "Länsförsäkringar",
+    logo: "/banks/lansforsakringar.svg",
+    alt: "Länsförsäkringar logotyp — höja Swish-gräns Länsförsäkringar",
+    standard: "Upp till 15 000 kr/vecka",
+    steps: "Gränser upp till 15 000 kr ändras på Mina sidor eller i appen under Swish. Tillfällig höjning över 15 000 kr (max 150 000 kr) — ring Telefonbanken.",
+    maxLimit: "150 000 kr",
+    phone: "0771-666 555",
+    howTo: "Ring Telefonbanken"
+  },
+  {
+    id: "skandia",
+    name: "Skandia",
+    logo: "/banks/skandia.svg",
+    alt: "Skandia logotyp — höja Swish-gräns Skandia",
+    standard: "Valbar, max 10 000 kr/dag",
+    steps: "I appen: Betala → Swish → Mina Swishanslutningar → pennikonen → ändra belopp (max 10 000 kr). Tillfällig höjning till 150 000 kr — ring Skandiabanken.",
+    maxLimit: "150 000 kr",
+    phone: "0771-55 55 00",
+    howTo: "Ring Skandiabanken"
+  },
+  {
+    id: "ica-banken",
+    name: "ICA Banken",
+    logo: "/banks/ica-banken.svg",
+    alt: "ICA Banken logotyp — höja Swish-gräns ICA Banken",
+    standard: "Upp till 15 000 kr/4 dagar",
+    steps: "I appen: tre prickar → Inställningar → Swish → Välj tillfälligt belopp. 15 001–60 000 kr: skanna pass/nationellt ID i appen. 60 001–150 000 kr: ring kundtjänst.",
+    maxLimit: "150 000 kr",
+    phone: "033-47 47 90",
+    howTo: "App (med ID-skanning) / Telefon"
+  }
+];
+---
+
+<Layout
+  title="Höja Swish-gräns — Guide per bank för bilköp | Begbilnorr"
+  description="Steg-för-steg guide för att höja din Swish-gräns inför bilköp. Välj din bank och få exakta instruktioner för Swedbank, SEB, Handelsbanken, Nordea och fler."
+>
+  <StructuredData data={faqSchema} />
+  <StructuredData data={howToSchema} />
+  <StructuredData data={breadcrumbSchema} />
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        HÖJA SWISH-GRÄNS
+      </div>
+      <h1>Så höjer du din Swish-gräns</h1>
+      <p>Planerar du att köpa bil med Swish? Välj din bank nedan och få exakta instruktioner.</p>
+      <div class="hero-swish-badge">
+        <img src="/banks/swish.svg" alt="Swish logotyp — betala bil med Swish" width="120" height="34" loading="eager" />
+      </div>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <!-- Bank Selector -->
+  <section class="bank-selector-section" id="valj-bank">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">VÄLJ DIN BANK</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:16px;">Vilken bank har du?</h2>
+      <p class="selector-subtitle">Klicka på din bank för att se exakta instruktioner för hur du höjer din Swish-gräns.</p>
+
+      <div class="bank-selector-grid">
+        {bankInstructions.map(bank => (
+          <button class="bank-selector-btn" data-bank-id={bank.id} type="button" aria-expanded="false" aria-controls={`detail-${bank.id}`}>
+            <img src={bank.logo} alt={bank.alt} width="100" height="34" loading="lazy" />
+            <span class="bank-selector-name">{bank.name}</span>
+          </button>
+        ))}
+      </div>
+
+      <!-- Bank Detail Panel (shown when a bank is selected) -->
+      <div class="bank-detail-panel" id="bank-detail-panel" aria-live="polite">
+        <div class="bank-detail-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          <p>Välj din bank ovan för att se instruktioner</p>
+        </div>
+
+        {bankInstructions.map(bank => (
+          <div class="bank-detail" id={`detail-${bank.id}`} data-bank-detail={bank.id} style="display:none;">
+            <div class="bank-detail-header">
+              <img src={bank.logo} alt={bank.alt} width="140" height="40" loading="lazy" />
+              <div class="bank-detail-meta">
+                <span class="bank-detail-standard">Standard: {bank.standard}</span>
+                <span class="bank-detail-max">Max: {bank.maxLimit}</span>
+              </div>
+            </div>
+            <div class="bank-detail-body">
+              <h3>Så höjer du gränsen hos {bank.name}</h3>
+              <p>{bank.steps}</p>
+              <div class="bank-detail-footer">
+                <div class="bank-detail-phone">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <span>Kundtjänst:</span>
+                  <a href={`tel:${bank.phone.replace(/[- ]/g, '')}`}>{bank.phone}</a>
+                </div>
+                <div class="bank-detail-method">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  <span>Höjs via: {bank.howTo}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Section -->
+  <section class="why-section">
+    <div class="container">
+      <div class="why-grid">
+        <div class="why-text">
+          <h2>Varför behöver du höja gränsen?</h2>
+          <p>De flesta banker har en standardgräns på 3 000–15 000 kr per Swish-överföring. Eftersom bilar ofta kostar mer än så behöver du höja din gräns innan du kan betala med Swish.</p>
+          <p>Det är enkelt, kostnadsfritt och tar bara några minuter att göra via din banks app eller internetbank.</p>
+          <div class="why-features">
+            <div class="why-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Kostnadsfritt att ändra</span>
+            </div>
+            <div class="why-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Aktiveras oftast direkt</span>
+            </div>
+            <div class="why-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Du kan sänka gränsen igen efteråt</span>
+            </div>
+          </div>
+        </div>
+        <div class="why-image">
+          <img src="/banks/swish.svg" alt="Swish betalning — höj din gräns för bilköp" width="200" height="57" loading="lazy" />
+          <div class="why-image-text">
+            <span class="why-image-amount">Upp till 150 000 kr</span>
+            <span class="why-image-desc">per Swish-betalning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step by step -->
+  <section class="guide-steps-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">STEG FÖR STEG</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Generell guide — alla banker</h2>
+      <div class="guide-steps">
+        <div class="guide-step">
+          <div class="guide-step-number">1</div>
+          <div class="guide-step-content">
+            <h3>Logga in i din bank</h3>
+            <p>Öppna din banks app eller internetbank och logga in med BankID. Du hittar Swish-inställningarna under betalningar eller inställningar.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-number">2</div>
+          <div class="guide-step-content">
+            <h3>Hitta Swish-inställningar</h3>
+            <p>Leta efter "Swish", "Betalningsgränser" eller "Beloppsgräns" i menyn. Placeringen varierar mellan banker — <a href="#valj-bank" class="inline-link">se bankspecifika instruktioner</a>.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-number">3</div>
+          <div class="guide-step-content">
+            <h3>Ändra beloppsgränsen</h3>
+            <p>Ange det nya maxbeloppet du vill kunna Swisha per dygn. De flesta banker tillåter upp till 150 000 kr.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-number">4</div>
+          <div class="guide-step-content">
+            <h3>Bekräfta med BankID</h3>
+            <p>Signera ändringen med ditt BankID. Den nya gränsen aktiveras vanligtvis omedelbart — du kan Swisha direkt.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limits Table -->
+  <section class="limits-overview-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">ÖVERSIKT</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:12px;">Swish-gränser per bank</h2>
+      <p class="limits-subtitle">Standardgräns, maxgräns och hur du höjer — för alla stora banker i Sverige.</p>
+      <div class="limits-table-wrapper">
+        <table class="limits-table">
+          <thead>
+            <tr>
+              <th>Bank</th>
+              <th>Standardgräns</th>
+              <th>Max tillfällig</th>
+              <th>Höjs via</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bankInstructions.map(bank => (
+              <tr>
+                <td class="bank-cell">
+                  <img src={bank.logo} alt={bank.alt} width="80" height="28" loading="lazy" />
+                  <span>{bank.name}</span>
+                </td>
+                <td>{bank.standard}</td>
+                <td>{bank.maxLimit}</td>
+                <td>{bank.howTo}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="hoja-cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Redo att köpa bil?</h2>
+      <p>Nu när du vet hur du höjer din Swish-gräns — kolla in våra bilar!</p>
+      <div class="cta-buttons">
+        <a href="/bilar" class="btn-primary">Se våra bilar</a>
+        <a href="/swish" class="btn-outline">Läs mer om Swish-betalning</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">VANLIGA FRÅGOR</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Frågor om Swish-gränser</h2>
+      <div class="faq-container">
+        {faqItems.map(item => (
+          <div class="faq-item">
+            <button class="faq-question" data-faq-toggle>
+              <span>{item.question}</span>
+              <div class="faq-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                {item.answer}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ========== ACCESSIBILITY: Inline link ========== */
+  .inline-link {
+    color: #ff6b6b;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s;
+  }
+
+  .inline-link:hover {
+    color: var(--white);
+  }
+
+  /* ========== ACCESSIBILITY: Section label contrast ========== */
+  .section-label {
+    color: #ff6b6b !important;
+  }
+
+  /* ========== HERO SWISH BADGE ========== */
+  .hero-swish-badge {
+    margin-top: 24px;
+    margin-bottom: 8px;
+  }
+
+  .hero-swish-badge img {
+    border-radius: 8px;
+    background: rgba(255,255,255,0.95);
+    padding: 6px 14px;
+  }
+
+  /* ========== BANK SELECTOR ========== */
+  .bank-selector-section {
+    background: var(--bg-dark-2);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .selector-subtitle {
+    text-align: center;
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 48px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .bank-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 800px;
+    margin: 0 auto 40px;
+  }
+
+  .bank-selector-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 12px;
+    background: var(--bg-dark-4);
+    border: 2px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: var(--sans);
+  }
+
+  .bank-selector-btn:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateY(-2px);
+    background: var(--bg-dark-5);
+  }
+
+  .bank-selector-btn.active {
+    border-color: var(--red);
+    background: rgba(230,46,45,0.06);
+    box-shadow: 0 4px 20px rgba(230,46,45,0.15);
+  }
+
+  .bank-selector-btn img {
+    border-radius: 6px;
+    height: 38px;
+    width: auto;
+    max-width: 130px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.95);
+    padding: 4px 10px;
+  }
+
+  .bank-selector-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .bank-selector-btn.active .bank-selector-name {
+    color: var(--red);
+  }
+
+  /* ========== BANK DETAIL PANEL ========== */
+  .bank-detail-panel {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .bank-detail-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .bank-detail-empty svg {
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .bank-detail-empty p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .bank-detail {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(230,46,45,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: slideDown 0.35s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .bank-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 32px;
+    background: var(--bg-dark-5);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .bank-detail-header img {
+    border-radius: 6px;
+    height: 40px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.95);
+    padding: 5px 12px;
+  }
+
+  .bank-detail-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .bank-detail-standard {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+  }
+
+  .bank-detail-max {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--red);
+    padding: 5px 12px;
+    background: rgba(230,46,45,0.1);
+    border-radius: 20px;
+  }
+
+  .bank-detail-body {
+    padding: 28px 32px;
+  }
+
+  .bank-detail-body h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+
+  .bank-detail-body p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .bank-detail-footer {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .bank-detail-phone,
+  .bank-detail-method {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .bank-detail-phone svg,
+  .bank-detail-method svg {
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .bank-detail-phone a {
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .bank-detail-phone a:hover {
+    color: var(--red);
+  }
+
+  /* ========== WHY SECTION ========== */
+  .why-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .why-text h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .why-text p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .why-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .why-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .why-feature svg {
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .why-image {
+    background: linear-gradient(135deg, var(--bg-dark-5) 0%, var(--bg-dark-4) 100%);
+    border-radius: 12px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    position: relative;
+    padding: 40px;
+  }
+
+  .why-image::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--red);
+    border-radius: 4px 0 0 4px;
+  }
+
+  .why-image img {
+    border-radius: 8px;
+    background: rgba(255,255,255,0.95);
+    padding: 8px 16px;
+  }
+
+  .why-image-text {
+    text-align: center;
+  }
+
+  .why-image-amount {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .why-image-desc {
+    display: block;
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ========== GUIDE STEPS ========== */
+  .guide-steps-section {
+    background: var(--bg-dark-2);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .guide-steps {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .guide-step {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 28px 32px;
+    transition: all 0.3s;
+  }
+
+  .guide-step:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateX(4px);
+  }
+
+  .guide-step-number {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: var(--red);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .guide-step-content h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .guide-step-content p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* ========== LIMITS TABLE ========== */
+  .limits-overview-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0 88px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .limits-subtitle {
+    text-align: center;
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 48px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .limits-table-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+
+  .limits-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .limits-table thead {
+    background: var(--bg-dark-5);
+  }
+
+  .limits-table th {
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .limits-table td {
+    padding: 16px 24px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .limits-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .limits-table tbody tr:hover {
+    background: rgba(230,46,45,0.04);
+  }
+
+  .bank-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .bank-cell img {
+    border-radius: 4px;
+    height: 28px;
+    width: auto;
+    max-width: 80px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.95);
+    padding: 3px 6px;
+  }
+
+  /* ========== CTA ========== */
+  .hoja-cta-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .hoja-cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .hoja-cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cta-buttons .btn-primary {
+    background: #c12626;
+  }
+
+  .cta-buttons .btn-primary:hover {
+    background: #a02020;
+  }
+
+  /* ========== FAQ ========== */
+  .faq-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0 88px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .faq-item.active {
+    border-color: rgba(230, 46, 45, 0.3);
+    box-shadow: 0 4px 20px rgba(230, 46, 45, 0.08);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    text-align: left;
+    transition: color 0.2s;
+  }
+
+  .faq-question:hover {
+    color: var(--red);
+  }
+
+  .faq-item.active .faq-question {
+    color: var(--red);
+  }
+
+  .faq-question .faq-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(230, 46, 45, 0.1);
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.3s;
+    color: var(--red);
+  }
+
+  .faq-item.active .faq-question .faq-icon {
+    transform: rotate(180deg);
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .faq-question .faq-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+  }
+
+  .faq-item.active .faq-answer {
+    max-height: 200px;
+  }
+
+  .faq-answer-inner {
+    padding: 0 24px 20px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 1024px) {
+    .bank-selector-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .limits-table-wrapper {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .bank-selector-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .bank-selector-section {
+      padding: 60px 0;
+    }
+
+    .bank-detail-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 20px 24px;
+    }
+
+    .bank-detail-meta {
+      flex-wrap: wrap;
+    }
+
+    .bank-detail-body {
+      padding: 20px 24px;
+    }
+
+    .bank-detail-footer {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .why-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .guide-steps-section {
+      padding: 60px 0;
+    }
+
+    .guide-step {
+      padding: 20px 24px;
+    }
+
+    .limits-overview-section {
+      padding: 48px 0 56px;
+    }
+
+    .faq-section {
+      padding: 48px 0 56px;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .limits-table th,
+    .limits-table td {
+      padding: 12px 12px;
+      font-size: 13px;
+    }
+
+    .bank-cell img {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .bank-selector-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .bank-selector-btn {
+      padding: 14px 8px;
+    }
+
+    .bank-selector-btn img {
+      max-width: 90px;
+      height: 28px;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    // Bank selector
+    var bankBtns = document.querySelectorAll('[data-bank-id]');
+    var bankDetails = document.querySelectorAll('[data-bank-detail]');
+    var emptyState = document.querySelector('.bank-detail-empty');
+
+    bankBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var bankId = this.getAttribute('data-bank-id');
+        var isActive = this.classList.contains('active');
+
+        // Reset all
+        bankBtns.forEach(function(b) {
+          b.classList.remove('active');
+          b.setAttribute('aria-expanded', 'false');
+        });
+        bankDetails.forEach(function(d) { d.style.display = 'none'; });
+
+        if (isActive) {
+          // Deselect — show empty state
+          emptyState.style.display = '';
+        } else {
+          // Select bank
+          this.classList.add('active');
+          this.setAttribute('aria-expanded', 'true');
+          emptyState.style.display = 'none';
+          var detail = document.querySelector('[data-bank-detail="' + bankId + '"]');
+          if (detail) {
+            detail.style.display = 'block';
+          }
+          // Scroll to detail panel smoothly
+          var panel = document.getElementById('bank-detail-panel');
+          if (panel) {
+            setTimeout(function() {
+              panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+          }
+        }
+      });
+    });
+
+    // Check URL hash for direct bank link
+    var hash = window.location.hash.replace('#', '');
+    if (hash) {
+      var targetBtn = document.querySelector('[data-bank-id="' + hash + '"]');
+      if (targetBtn) {
+        targetBtn.click();
+      }
+    }
+
+    // FAQ accordion
+    var faqButtons = document.querySelectorAll('[data-faq-toggle]');
+    faqButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var item = this.parentElement;
+        var isActive = item.classList.contains('active');
+        var allItems = document.querySelectorAll('.faq-item');
+        allItems.forEach(function(faqItem) {
+          faqItem.classList.remove('active');
+        });
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+  })();
+</script>

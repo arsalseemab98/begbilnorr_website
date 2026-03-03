@@ -1,38 +1,40 @@
 ---
 const pathname = Astro.url.pathname;
 
-const links = [
-  { href: '/bilar', label: 'Bilar' },
-  { href: '/salj-bil', label: 'Sälj din bil' },
-  { href: '/finansiering', label: 'Finansiering' },
-  { href: '/om-oss', label: 'Om oss' },
-  { href: '/kontakt', label: 'Kontakt' },
-];
+const isActive = (href: string) => {
+  if (href === '/') return pathname === '/' || pathname === '';
+  return pathname.startsWith(href);
+};
 ---
 
+<!-- ========== NAVBAR ========== -->
 <nav class="navbar">
   <div class="container">
     <a href="/" class="navbar-brand">
       <img
-        src="https://begbilnorr.se/wp-content/uploads/2024/11/cropped-begbilnorr_Logo_-_E-2__1_-removebg-preview.png"
+        src="/images/begbilnorr-logo-nav.webp"
         alt="Begbilnorr - Begagnade bilar i Luleå"
         class="brand-logo"
-        width="120"
-        height="45"
+        width="150"
+        height="90"
       />
     </a>
 
     <div class="navbar-links">
-      {links.map((link) => (
-        <a href={link.href} class={pathname.startsWith(link.href) ? 'active' : ''}>
-          {link.label}
-        </a>
-      ))}
+      <a href="/bilar" class={isActive('/bilar') ? 'active' : ''}>Bilar</a>
+      <a href="/salj-bil" class={isActive('/salj-bil') ? 'active' : ''}>Sälj din bil</a>
+      <a href="/finansiering" class={isActive('/finansiering') ? 'active' : ''}>Finansiering</a>
+      <a href="/swish" class={isActive('/swish') ? 'active' : ''}>Swish</a>
+      <a href="/om-oss" class={isActive('/om-oss') ? 'active' : ''}>Om oss</a>
+      <a href="/kontakt" class={isActive('/kontakt') ? 'active' : ''}>Kontakt</a>
     </div>
 
     <div class="navbar-icons">
-      <a href="tel:+4692099986" title="Ring oss">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <a href="#" title="Sparade bilar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      </a>
+      <a href="/bilar" title="Sök">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       </a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Meny">
         <span></span>
@@ -43,16 +45,102 @@ const links = [
   </div>
 </nav>
 
+<!-- ========== MOBILE MENU (slide-down) ========== -->
 <div class="mobile-menu" id="mobileMenu">
-  {links.map((link) => (
-    <a href={link.href}>{link.label}</a>
-  ))}
+  <div class="mobile-menu-inner">
+    <a href="/" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Hem</span>
+    </a>
+    <a href="/bilar" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+      <span>Bilar</span>
+    </a>
+    <a href="/salj-bil" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      <span>Sälj din bil</span>
+    </a>
+    <a href="/finansiering" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+      <span>Finansiering</span>
+    </a>
+    <a href="/swish" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+      <span>Betala med Swish</span>
+    </a>
+    <a href="/om-oss" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Om oss</span>
+    </a>
+    <a href="/kontakt" class="mobile-menu-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Kontakt</span>
+    </a>
+
+    <div class="mobile-menu-contact">
+      <a href="tel:0920-99986" class="mobile-menu-cta">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Ring oss: 0920-999 86
+      </a>
+    </div>
+  </div>
 </div>
+<div class="mobile-menu-overlay" id="mobileOverlay"></div>
+
+<!-- ========== BOTTOM NAV (mobile only) ========== -->
+<nav class="bottom-nav" id="bottomNav">
+  <a href="/" class={`bottom-nav-item${isActive('/') ? ' active' : ''}`} data-page="index">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Hem</span>
+  </a>
+  <a href="/bilar" class={`bottom-nav-item${isActive('/bilar') ? ' active' : ''}`} data-page="bilar">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+    <span>Bilar</span>
+  </a>
+  <a href="/salj-bil" class={`bottom-nav-item${isActive('/salj-bil') ? ' active' : ''}`} data-page="salj-bil">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    <span>Sälj</span>
+  </a>
+  <a href="/kontakt" class={`bottom-nav-item${isActive('/kontakt') ? ' active' : ''}`} data-page="kontakt">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <span>Kontakt</span>
+  </a>
+</nav>
 
 <script>
+  // Hamburger toggle
   const btn = document.getElementById('hamburgerBtn');
   const menu = document.getElementById('mobileMenu');
-  btn?.addEventListener('click', () => {
-    menu?.classList.toggle('active');
-  });
+  const overlay = document.getElementById('mobileOverlay');
+
+  function toggleMenu() {
+    const isOpen = menu?.classList.toggle('active');
+    btn?.classList.toggle('active');
+    overlay?.classList.toggle('active');
+    document.body.classList.toggle('menu-open', isOpen);
+  }
+
+  function closeMenu() {
+    menu?.classList.remove('active');
+    btn?.classList.remove('active');
+    overlay?.classList.remove('active');
+    document.body.classList.remove('menu-open');
+  }
+
+  btn?.addEventListener('click', toggleMenu);
+  overlay?.addEventListener('click', closeMenu);
+
+  // Bottom nav scroll hide/show
+  const bottomNav = document.getElementById('bottomNav');
+  let lastScroll = 0;
+
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    if (currentScroll > lastScroll && currentScroll > 100) {
+      bottomNav?.classList.add('hidden');
+    } else {
+      bottomNav?.classList.remove('hidden');
+    }
+    lastScroll = currentScroll;
+  }, { passive: true });
 </script>

@@ -12,6 +12,8 @@ export const GET: APIRoute = async () => {
     { url: '/om-oss', priority: '0.6', changefreq: 'monthly' },
     { url: '/finansiering', priority: '0.7', changefreq: 'monthly' },
     { url: '/salj-bil', priority: '0.7', changefreq: 'monthly' },
+    { url: '/swish', priority: '0.6', changefreq: 'monthly' },
+    { url: '/hoja-swish-grans', priority: '0.6', changefreq: 'monthly' },
   ];
 
   const { data: cars } = await supabase

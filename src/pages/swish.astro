@@ -1,0 +1,641 @@
+---
+export const prerender = true;
+
+import Layout from '../components/Layout.astro';
+import StructuredData from '../components/StructuredData.astro';
+
+const faqItems = [
+  {
+    question: "Kan jag betala hela bilen med Swish?",
+    answer: "Ja, om din Swish-gräns är tillräckligt hög. De flesta banker tillåter att du höjer gränsen till 150 000 kr eller mer. Kontakta din bank för att höja gränsen innan köpet."
+  },
+  {
+    question: "Kostar det något extra att betala med Swish?",
+    answer: "Nej, vi tar inga extra avgifter för Swish-betalning. Det är helt kostnadsfritt för dig som köpare."
+  },
+  {
+    question: "Hur snabbt går en Swish-betalning?",
+    answer: "Swish-betalningar är i regel klara inom några sekunder. Du får en bekräftelse direkt i appen och vi ser pengarna omedelbart."
+  },
+  {
+    question: "Kan jag dela upp betalningen i flera Swish-överföringar?",
+    answer: "Ja, om din Swish-gräns inte räcker för hela beloppet kan du göra flera överföringar. Vi kan även kombinera Swish med andra betalningsmetoder."
+  },
+  {
+    question: "Vad händer om Swish-betalningen misslyckas?",
+    answer: "Om betalningen misslyckas beror det oftast på att beloppet överstiger din Swish-gräns. Kontakta din bank för att höja gränsen, eller välj en annan betalningsmetod."
+  },
+  {
+    question: "Behöver jag ha med mig något speciellt vid betalning?",
+    answer: "Du behöver bara din mobiltelefon med BankID och Swish installerat. Se till att din Swish-gräns är tillräckligt hög innan du kommer till oss."
+  }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title="Betala bil med Swish — Begbilnorr Luleå | Snabbt & enkelt"
+  description="Betala din begagnade bil med Swish hos Begbilnorr i Luleå. Snabbt, säkert och utan avgifter. Läs om Swish-gränser och hur det fungerar."
+>
+  <StructuredData data={faqSchema} />
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
+        SWISH-BETALNING
+      </div>
+      <h1>Betala din bil med Swish</h1>
+      <p>Snabbt, säkert och utan avgifter — betala hela eller delar av bilköpet direkt med Swish.</p>
+      <div class="hero-swish-badge">
+        <img src="/banks/swish.svg" alt="Swish logotyp — betala bil med Swish hos Begbilnorr" width="140" height="40" loading="eager" />
+      </div>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="swish-steps-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">SÅ FUNGERAR DET</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Tre enkla steg</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <h3>Kontakta oss</h3>
+          <p>Hör av dig via telefon, WhatsApp eller besök oss på plats för att bestämma din bil och pris.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+          </div>
+          <h3>Få vårt Swish-nummer</h3>
+          <p>Vi ger dig vårt Swish-nummer. Kontrollera att din Swish-gräns räcker för beloppet.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <h3>Betala och hämta</h3>
+          <p>Swisha beloppet — pengarna kommer in direkt och du kan hämta din bil på en gång.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section class="swish-benefits-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">FÖRDELAR</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Varför betala med Swish?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3>Snabbt</h3>
+          <p>Betalningen tar bara några sekunder. Inga väntetider, inga bankdagar — pengarna är framme direkt.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Säkert</h3>
+          <p>Swish är kopplat till BankID och din bank. Varje betalning verifieras med din elektroniska identitet.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+          </div>
+          <h3>Inga avgifter</h3>
+          <p>Vi tar inte ut någon extra avgift för Swish-betalning. Du betalar exakt bilens pris — varken mer eller mindre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Swish Limits Table -->
+  <section class="swish-limits-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">SWISH-GRÄNSER</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:12px;">Standardgränser per bank</h2>
+      <p class="limits-subtitle">Standardgränserna är ofta låga, men alla banker tillåter tillfällig höjning — perfekt inför ett bilköp.</p>
+      <div class="limits-table-wrapper">
+        <table class="limits-table">
+          <thead>
+            <tr>
+              <th>Bank</th>
+              <th>Standardgräns</th>
+              <th>Tillfällig höjning (max)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="bank-cell"><img src="/banks/swedbank.svg" alt="Swedbank logotyp" width="70" height="24" loading="lazy" /><span>Swedbank</span></td>
+              <td>3 000 kr/dag</td>
+              <td>100 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/handelsbanken.svg" alt="Handelsbanken logotyp" width="70" height="24" loading="lazy" /><span>Handelsbanken</span></td>
+              <td>10 000 kr/dag</td>
+              <td>150 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/seb.svg" alt="SEB logotyp" width="70" height="24" loading="lazy" /><span>SEB</span></td>
+              <td>Upp till 15 000 kr/dag</td>
+              <td>150 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/nordea.svg" alt="Nordea logotyp" width="70" height="24" loading="lazy" /><span>Nordea</span></td>
+              <td>5 000 kr/betalning</td>
+              <td>100 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/danske-bank.svg" alt="Danske Bank logotyp" width="70" height="24" loading="lazy" /><span>Danske Bank</span></td>
+              <td>5 000 kr/dag</td>
+              <td>150 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/lansforsakringar.svg" alt="Länsförsäkringar logotyp" width="70" height="24" loading="lazy" /><span>Länsförsäkringar</span></td>
+              <td>Upp till 15 000 kr/vecka</td>
+              <td>150 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/skandia.svg" alt="Skandia logotyp" width="70" height="24" loading="lazy" /><span>Skandia</span></td>
+              <td>Valbar, max 10 000 kr/dag</td>
+              <td>150 000 kr</td>
+            </tr>
+            <tr>
+              <td class="bank-cell"><img src="/banks/ica-banken.svg" alt="ICA Banken logotyp" width="70" height="24" loading="lazy" /><span>ICA Banken</span></td>
+              <td>Upp till 15 000 kr/4 dagar</td>
+              <td>150 000 kr</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="limits-note">Gränserna kan variera. 150 000 kr är Swish-systemets maximala tak per transaktion. Se vår <a href="/hoja-swish-grans" style="color:var(--red);">guide för att höja gränsen</a> med instruktioner per bank.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="swish-cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Vill du veta mer?</h2>
+      <p>Behöver du höja din Swish-gräns? Läs vår guide eller kontakta oss för hjälp.</p>
+      <div class="cta-buttons">
+        <a href="/hoja-swish-grans" class="btn-primary">Höja Swish-gräns</a>
+        <a href="/kontakt" class="btn-outline">Kontakta oss</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-label" style="text-align:center;">VANLIGA FRÅGOR</div>
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Frågor om Swish-betalning</h2>
+      <div class="faq-container">
+        {faqItems.map(item => (
+          <div class="faq-item">
+            <button class="faq-question" data-faq-toggle>
+              <span>{item.question}</span>
+              <div class="faq-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                {item.answer}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ========== HERO SWISH BADGE ========== */
+  .hero-swish-badge {
+    margin-top: 24px;
+    margin-bottom: 8px;
+  }
+
+  .hero-swish-badge img {
+    border-radius: 8px;
+    background: rgba(255,255,255,0.95);
+    padding: 6px 14px;
+  }
+
+  /* ========== STEPS ========== */
+  .swish-steps-section {
+    background: var(--bg-dark-2);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .step-card {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 40px 28px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .step-card:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateY(-4px);
+  }
+
+  .step-number {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    background: var(--red);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .step-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px auto 20px;
+    color: var(--red);
+  }
+
+  .step-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .step-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* ========== BENEFITS ========== */
+  .swish-benefits-section {
+    background: var(--bg-dark-3);
+    padding: 100px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .benefit-card {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 40px 28px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .benefit-card:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateY(-4px);
+  }
+
+  .benefit-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--red);
+    transition: all 0.3s;
+  }
+
+  .benefit-card:hover .benefit-icon {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .benefit-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .benefit-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* ========== LIMITS TABLE ========== */
+  .swish-limits-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0 88px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .limits-subtitle {
+    text-align: center;
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 48px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .limits-table-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+
+  .limits-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .limits-table thead {
+    background: var(--bg-dark-5);
+  }
+
+  .limits-table th {
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .limits-table td {
+    padding: 16px 24px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .limits-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .limits-table tbody tr:hover {
+    background: rgba(230,46,45,0.04);
+  }
+
+  .limits-note {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 16px;
+  }
+
+  .bank-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bank-cell img {
+    border-radius: 4px;
+    height: 24px;
+    width: auto;
+    max-width: 70px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.95);
+    padding: 3px 6px;
+  }
+
+  /* ========== CTA ========== */
+  .swish-cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .swish-cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .swish-cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ========== FAQ (reused from finansiering) ========== */
+  .faq-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0 88px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .faq-item.active {
+    border-color: rgba(230, 46, 45, 0.3);
+    box-shadow: 0 4px 20px rgba(230, 46, 45, 0.08);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    text-align: left;
+    transition: color 0.2s;
+  }
+
+  .faq-question:hover {
+    color: var(--red);
+  }
+
+  .faq-item.active .faq-question {
+    color: var(--red);
+  }
+
+  .faq-question .faq-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(230, 46, 45, 0.1);
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.3s;
+    color: var(--red);
+  }
+
+  .faq-item.active .faq-question .faq-icon {
+    transform: rotate(180deg);
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .faq-question .faq-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+  }
+
+  .faq-item.active .faq-answer {
+    max-height: 200px;
+  }
+
+  .faq-answer-inner {
+    padding: 0 24px 20px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .steps-grid,
+    .benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .swish-steps-section,
+    .swish-benefits-section {
+      padding: 60px 0;
+    }
+
+    .swish-limits-section {
+      padding: 48px 0 56px;
+    }
+
+    .faq-section {
+      padding: 48px 0 56px;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .limits-table th,
+    .limits-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+
+    .bank-cell img {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    var faqButtons = document.querySelectorAll('[data-faq-toggle]');
+    faqButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var item = this.parentElement;
+        var isActive = item.classList.contains('active');
+        var allItems = document.querySelectorAll('.faq-item');
+        allItems.forEach(function(faqItem) {
+          faqItem.classList.remove('active');
+        });
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+  })();
+</script>

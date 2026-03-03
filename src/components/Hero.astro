@@ -3,8 +3,213 @@
 ---
 
 <section class="hero">
+  <div class="hero-shader-bg"></div>
   <div class="hero-content">
-    <h1>Välkommen till Begbilnorr</h1>
-    <p>Trygga bilaffärer i Norrbotten sedan 2010</p>
+    <div class="hero-overline">LULEÅS TRYGGASTE BILHANDLARE SEDAN 2010</div>
+    <h1>Din nästa bil börjar här</h1>
+    <p>Kvalitetskontrollerade begagnade bilar med garanti, finansiering och personlig service i Norrbotten.</p>
+    <div class="hero-buttons">
+      <a href="/bilar" class="hero-btn-primary">
+        Se våra bilar
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+      <a href="/salj-bil" class="hero-btn-outline">
+        Sälj din bil
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+      </a>
+    </div>
   </div>
 </section>
+
+<style>
+  .hero {
+    position: relative;
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    max-height: 900px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    background: var(--bg-dark-1);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160px;
+    background: linear-gradient(to top, var(--bg-dark-2) 0%, transparent 100%);
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 0 24px;
+    max-width: 800px;
+  }
+
+  .hero-overline {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--red);
+    margin-bottom: 20px;
+  }
+
+  .hero-content h1 {
+    font-family: var(--serif);
+    font-size: 64px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+
+  .hero-content p {
+    font-size: 18px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .hero-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hero-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--red);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 16px 36px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-btn-primary:hover {
+    background: var(--red-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(230,46,45,0.3);
+  }
+
+  .hero-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 15px 36px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-btn-outline:hover {
+    border-color: var(--white);
+    background: rgba(255,255,255,0.08);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      height: calc(100vh - 80px);
+      min-height: 440px;
+    }
+
+    .hero-content h1 {
+      font-size: 38px;
+    }
+
+    .hero-content p {
+      font-size: 16px;
+    }
+
+    .hero-overline {
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    .hero-buttons {
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .hero-btn-primary,
+    .hero-btn-outline {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      min-height: 400px;
+    }
+
+    .hero-content h1 {
+      font-size: 30px;
+    }
+
+    .hero-content p {
+      font-size: 15px;
+    }
+  }
+</style>
+
+<script>
+  // Three.js Hero Shader
+  (function() {
+    var container = document.querySelector('.hero-shader-bg');
+    if (!container || typeof THREE === 'undefined') return;
+    var camera = new THREE.Camera();
+    camera.position.z = 1;
+    var scene = new THREE.Scene();
+    var geometry = new THREE.PlaneGeometry(2, 2);
+    var uniforms = { time: { type: "f", value: 1.0 }, resolution: { type: "v2", value: new THREE.Vector2() } };
+    var material = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: 'void main(){gl_Position=vec4(position,1.0);}',
+      fragmentShader: 'precision highp float;uniform vec2 resolution;uniform float time;void main(void){vec2 uv=(gl_FragCoord.xy*2.0-resolution.xy)/min(resolution.x,resolution.y);float t=time*0.05;float lw=0.002;vec3 c=vec3(0.0);for(int j=0;j<3;j++){for(int i=0;i<5;i++){c[j]+=lw*float(i*i)/abs(fract(t-0.01*float(j)+float(i)*0.01)*5.0-length(uv)+mod(uv.x+uv.y,0.2));}}gl_FragColor=vec4(c,1.0);}'
+    });
+    scene.add(new THREE.Mesh(geometry, material));
+    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    function resize(){var w=container.clientWidth,h=container.clientHeight;renderer.setSize(w,h);uniforms.resolution.value.set(w*window.devicePixelRatio,h*window.devicePixelRatio);}
+    resize();window.addEventListener('resize',resize);
+    (function animate(){requestAnimationFrame(animate);uniforms.time.value+=0.05;renderer.render(scene,camera);})();
+  })();
+</script>
