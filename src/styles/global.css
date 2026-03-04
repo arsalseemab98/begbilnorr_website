@@ -484,6 +484,7 @@ body.menu-open {
 
 .car-card-image {
     position: relative;
+    z-index: 3;
     height: 220px;
     background: var(--bg-dark-5);
     display: flex;

@@ -111,6 +111,13 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
         });
       });
 
+      // Click on image navigates to detail page
+      img?.addEventListener('click', () => {
+        const card = el.closest('.car-card') as HTMLElement;
+        const href = card?.dataset.href;
+        if (href) window.location.href = href;
+      });
+
       // Touch swipe
       let startX = 0;
       let startY = 0;
