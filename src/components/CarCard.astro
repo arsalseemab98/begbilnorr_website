@@ -95,11 +95,44 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
       const nextBtn = el.querySelector('.carousel-next');
       let idx = 0;
 
+      // Preload cache
+      const preloaded = new Set<string>();
+      function preload(i: number) {
+        const src = images[i];
+        if (!src || preloaded.has(src)) return;
+        preloaded.add(src);
+        const p = new Image();
+        p.src = src;
+      }
+      // Preload next 2 images immediately
+      preload(1);
+      preload(2);
+
       function go(newIdx: number) {
         idx = (newIdx + images.length) % images.length;
-        img.src = images[idx];
+        const src = images[idx];
         dots.forEach((d, i) => d.classList.toggle('active', i === idx));
         if (countEl) countEl.textContent = `${idx + 1} / ${images.length}`;
+
+        // If already cached, swap instantly
+        if (preloaded.has(src)) {
+          img.classList.remove('loading');
+          img.src = src;
+        } else {
+          // Show loading state, then swap when ready
+          img.classList.add('loading');
+          const loader = new Image();
+          loader.onload = () => {
+            preloaded.add(src);
+            img.src = src;
+            img.classList.remove('loading');
+          };
+          loader.src = src;
+        }
+
+        // Preload neighbors
+        preload((idx + 1) % images.length);
+        preload((idx + 2) % images.length);
       }
 
       prevBtn?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); go(idx - 1); });
