@@ -35,6 +35,7 @@ src/
 │   ├── Layout.astro        — Wrapper (SEOHead, Navbar, Footer)
 │   ├── Navbar.astro        — Navbar + mobil-meny + bottom-nav
 │   ├── Footer.astro        — Footer med FAB-knappar
+│   ├── CarCard.astro       — Bilkort med bildkarusell (pilar, dots, swipe)
 │   ├── SEOHead.astro       — Meta-taggar (OG, Twitter, canonical)
 │   └── StructuredData.astro — JSON-LD injection
 ├── pages/
@@ -67,6 +68,14 @@ src/
 - Prerender: swish.astro, hoja-swish-grans.astro (statisk HTML från CDN)
 - StructuredData: FAQPage, HowTo, AutoDealer schemas
 - Sitemap: Dynamisk med bilar + statiska sidor
+
+## Bildkarusell (CarCard)
+- Pilar vänster/höger — syns vid hover (desktop), alltid synliga (mobil)
+- Dot-indikatorer — klickbara, visar aktiv bild
+- Räknare "1 / 8" — nere till höger
+- Touch swipe — svep vänster/höger på mobil
+- Max 8 bilder per kort för prestanda
+- CSS i `global.css` under "CAR CARD CAROUSEL"
 
 ## Bildoptimering
 - Navbar-logo: `/images/begbilnorr-logo-nav.webp` (4KB, 150x90)
