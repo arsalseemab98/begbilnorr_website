@@ -9,13 +9,16 @@ export function formatPrice(price: number): string {
   return price.toLocaleString('sv-SE') + ' kr';
 }
 
-export function calculateMonthlyPayment(price: number): string {
-  if (price <= 50000) return '1 000 kr/mån';
-  if (price <= 100000) return '1 500 kr/mån';
-  if (price <= 150000) return '2 000 kr/mån';
-  if (price <= 200000) return '2 500 kr/mån';
-  if (price <= 300000) return '3 000 kr/mån';
-  return '4 000 kr/mån';
+export function calculateMonthlyPayment(price: number, downPaymentPercent = 20, months = 72, annualRate = 0.0895): string {
+  const downPayment = price * (downPaymentPercent / 100);
+  const principal = price - downPayment;
+  if (principal <= 0) return '0 kr/mån';
+  const monthlyRate = annualRate / 12;
+  const monthly = monthlyRate > 0
+    ? (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months))
+    : principal / months;
+  const rounded = Math.round(monthly);
+  return rounded.toLocaleString('sv-SE') + ' kr/mån';
 }
 
 export function formatMileage(mileage: number): string {
