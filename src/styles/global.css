@@ -1199,7 +1199,6 @@ body.menu-open {
     width: auto;
     object-fit: contain;
     margin-bottom: 16px;
-    filter: brightness(0) invert(1);
 }
 
 .footer-col .footer-desc {
