@@ -315,13 +315,13 @@ const breadcrumbSchema = {
         <section class="fm-section">
           <p class="fm-label">Lånetid</p>
           <div class="fm-duration-btns" id="fmDurationBtns">
+            <button type="button" data-months="144" class="active">12 år</button>
             <button type="button" data-months="96">8 år</button>
             <button type="button" data-months="84">7 år</button>
             <button type="button" data-months="72">6 år</button>
-            <button type="button" data-months="60" class="active">5 år</button>
+            <button type="button" data-months="60">5 år</button>
             <button type="button" data-months="48">4 år</button>
             <button type="button" data-months="36">3 år</button>
-            <button type="button" data-months="24">2 år</button>
           </div>
         </section>
         <section class="fm-section">
@@ -386,6 +386,14 @@ const breadcrumbSchema = {
           <div class="fm-summary-row fm-secondary">
             <span>Lånetid</span>
             <span id="fmSummaryTerm">5 år</span>
+          </div>
+        </section>
+        <section class="fm-section fm-flex-tip">
+          <div class="fm-flex-tip-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <div>
+              <strong>Flexibel betalning</strong> — De flesta betalar mer än minibeloppet och blir snabbare klara. Tuff månad? Betala bara minibeloppet. Nästa månad kan du betala extra.
+            </div>
           </div>
         </section>
         <section class="fm-section fm-warning">
@@ -547,26 +555,20 @@ const breadcrumbSchema = {
   /* Duration Buttons */
   .fm-duration-btns {
     display: flex;
-    gap: 0;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 6px;
-    overflow: hidden;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   .fm-duration-btns button {
-    flex: 1;
-    padding: 10px 4px;
-    background: transparent;
-    border: none;
-    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
     color: rgba(255,255,255,0.6);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
     font-family: var(--sans);
-  }
-  .fm-duration-btns button:last-child {
-    border-right: none;
   }
   .fm-duration-btns button:hover {
     background: rgba(255,255,255,0.05);
@@ -713,6 +715,27 @@ const breadcrumbSchema = {
     color: rgba(255,255,255,0.6);
   }
 
+  /* Flex tip */
+  .fm-flex-tip-box {
+    display: flex;
+    gap: 10px;
+    background: rgba(46, 204, 113, 0.08);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.6);
+  }
+  .fm-flex-tip-box svg {
+    flex-shrink: 0;
+    color: #2ecc71;
+    margin-top: 1px;
+  }
+  .fm-flex-tip-box strong {
+    color: #2ecc71;
+  }
+
   /* Warning */
   .fm-warning-box {
     background: rgba(255,255,255,0.03);
@@ -793,7 +816,7 @@ const breadcrumbSchema = {
 
   @media (max-width: 480px) {
     .fm-overlay { padding: 20px 8px; }
-    .fm-duration-btns button { font-size: 11px; padding: 8px 2px; }
+    .fm-duration-btns button { font-size: 11px; padding: 7px 10px; }
     .fm-result-big { font-size: 22px; }
   }
 
@@ -1039,7 +1062,7 @@ const breadcrumbSchema = {
     const carPrice = parseInt(fmOpenBtn.dataset.price || '0', 10);
     const carName = fmOpenBtn.dataset.name || '';
     const RATE = 0.0895; // 8.95% fast ränta
-    let selectedMonths = 60;
+    let selectedMonths = 144;
     let equityPercent = 20;
 
     function fmFormatSEK(n: number): string {
