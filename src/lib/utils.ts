@@ -9,7 +9,7 @@ export function formatPrice(price: number): string {
   return price.toLocaleString('sv-SE') + ' kr';
 }
 
-export function calculateMonthlyPayment(price: number, downPaymentPercent = 20, months = 72, annualRate = 0.0895): string {
+export function calculateMonthlyPayment(price: number, downPaymentPercent = 20, months = 144, annualRate = 0.0895): string {
   const downPayment = price * (downPaymentPercent / 100);
   const principal = price - downPayment;
   if (principal <= 0) return '0 kr/mån';

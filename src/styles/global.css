@@ -3369,6 +3369,29 @@ body.menu-open {
     font-size: 13px;
 }
 
+.calc-flex-tip {
+    display: flex;
+    gap: 10px;
+    background: rgba(46, 204, 113, 0.08);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 16px 0 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.6);
+}
+
+.calc-flex-tip svg {
+    flex-shrink: 0;
+    color: #2ecc71;
+    margin-top: 1px;
+}
+
+.calc-flex-tip strong {
+    color: #2ecc71;
+}
+
 .calc-rate-info {
     font-size: 11px;
     color: rgba(255,255,255,0.3);

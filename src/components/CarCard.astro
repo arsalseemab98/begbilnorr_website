@@ -257,8 +257,9 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
             <button data-val="36" type="button">3 år</button>
             <button data-val="48" type="button">4 år</button>
             <button data-val="60" type="button">5 år</button>
-            <button data-val="72" class="active" type="button">6 år</button>
+            <button data-val="72" type="button">6 år</button>
             <button data-val="84" type="button">7 år</button>
+            <button data-val="144" class="active" type="button">12 år</button>
           </div>
         </div>
         <div class="calc-result-box">
@@ -275,6 +276,12 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
             <span id="calcTotal"></span>
           </div>
         </div>
+        <div class="calc-flex-tip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div>
+            <strong>Flexibel betalning</strong> — De flesta väljer att betala mer än minimibeloppet varje månad. Har du en tuff månad? Betala bara minibeloppet. Nästa månad kan du betala extra och korta ner lånetiden.
+          </div>
+        </div>
         <div class="calc-rate-info">Ränta: 8,95% (rörlig). Exemplet är vägledande.</div>
         <a href="/finansiering" class="calc-link">Fullständig kalkylator &rarr;</a>
       </div>
@@ -283,7 +290,7 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
 
     let price = 0;
     let down = 20;
-    let months = 72;
+    let months = 144;
 
     function fmt(n: number): string {
       return Math.round(n).toLocaleString('sv-SE') + ' kr';
@@ -334,13 +341,13 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
     (window as any).__openCalc = (p: number, name: string) => {
       price = p;
       down = 20;
-      months = 72;
+      months = 144;
       // Reset active chips
       modal.querySelectorAll('#calcDown button').forEach(b => {
         b.classList.toggle('active', (b as HTMLElement).dataset.val === '20');
       });
       modal.querySelectorAll('#calcTerm button').forEach(b => {
-        b.classList.toggle('active', (b as HTMLElement).dataset.val === '72');
+        b.classList.toggle('active', (b as HTMLElement).dataset.val === '144');
       });
       (document.getElementById('calcCarName') as HTMLElement).textContent = name;
       (document.getElementById('calcPrice') as HTMLElement).textContent = fmt(price);
