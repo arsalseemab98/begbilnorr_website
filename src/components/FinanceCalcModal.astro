@@ -1,0 +1,175 @@
+---
+// Shared finance calculator modal — single source of truth
+// Opened via: window.__openCalc(price, carName)
+---
+
+<div id="calcModal" class="calc-modal-overlay">
+  <div class="calc-modal">
+    <button class="calc-close" aria-label="Stäng">&times;</button>
+    <h3 class="calc-title" id="calcCarName"></h3>
+    <div class="calc-price" id="calcPrice"></div>
+
+    <div class="calc-field">
+      <label>Kontantinsats</label>
+      <div class="calc-chips" id="calcDown">
+        <button data-val="0" type="button">0%</button>
+        <button data-val="10" type="button">10%</button>
+        <button data-val="20" class="active" type="button">20%</button>
+        <button data-val="30" type="button">30%</button>
+        <button data-val="50" type="button">50%</button>
+      </div>
+      <div class="calc-down-amount" id="calcDownAmount"></div>
+    </div>
+
+    <div class="calc-field">
+      <label>Löptid</label>
+      <div class="calc-chips" id="calcTerm">
+        <button data-val="36" type="button">3 år</button>
+        <button data-val="48" type="button">4 år</button>
+        <button data-val="60" type="button">5 år</button>
+        <button data-val="72" type="button">6 år</button>
+        <button data-val="84" type="button">7 år</button>
+        <button data-val="144" class="active" type="button">12 år</button>
+      </div>
+    </div>
+
+    <div class="calc-result-box">
+      <div class="calc-result-row">
+        <span>Månadskostnad</span>
+        <span class="calc-result-val" id="calcMonthly"></span>
+      </div>
+      <div class="calc-result-row calc-sub">
+        <span>Lånebelopp</span>
+        <span id="calcLoan"></span>
+      </div>
+      <div class="calc-result-row calc-sub">
+        <span>Totalt att betala</span>
+        <span id="calcTotal"></span>
+      </div>
+    </div>
+
+    <div class="calc-flex-tip">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <div>
+        <strong>Flexibel betalning</strong> — De flesta väljer att betala mer än minimibeloppet varje månad. Har du en tuff månad? Betala bara minibeloppet. Nästa månad kan du betala extra och korta ner lånetiden.
+      </div>
+    </div>
+
+    <div class="calc-rate-info">Ränta: 8,95% (rörlig). Exemplet är vägledande.</div>
+    <a href="/finansiering" class="calc-link">Fullständig kalkylator &rarr;</a>
+  </div>
+</div>
+
+<script>
+  const CALC_RATE = 0.0895;
+  const CALC_DEFAULT_DOWN = 20;
+  const CALC_DEFAULT_MONTHS = 144;
+
+  function initFinanceCalc() {
+    const modal = document.getElementById('calcModal');
+    if (!modal || (modal as any).__calcInit) return;
+    (modal as any).__calcInit = true;
+
+    let price = 0;
+    let down = CALC_DEFAULT_DOWN;
+    let months = CALC_DEFAULT_MONTHS;
+
+    function fmt(n: number): string {
+      return Math.round(n).toLocaleString('sv-SE') + ' kr';
+    }
+
+    function calc() {
+      const downAmt = price * down / 100;
+      const principal = price - downAmt;
+      const mr = CALC_RATE / 12;
+      const monthly = principal > 0
+        ? principal * (mr * Math.pow(1 + mr, months)) / (Math.pow(1 + mr, months) - 1)
+        : 0;
+      const total = monthly * months + downAmt;
+
+      const downEl = document.getElementById('calcDownAmount');
+      const monthlyEl = document.getElementById('calcMonthly');
+      const loanEl = document.getElementById('calcLoan');
+      const totalEl = document.getElementById('calcTotal');
+      if (downEl) downEl.textContent = fmt(downAmt);
+      if (monthlyEl) monthlyEl.textContent = fmt(monthly) + '/mån';
+      if (loanEl) loanEl.textContent = fmt(principal);
+      if (totalEl) totalEl.textContent = fmt(total);
+    }
+
+    // Chip handlers
+    modal.querySelectorAll('#calcDown button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        modal.querySelectorAll('#calcDown button').forEach(b => b.classList.remove('active'));
+        (btn as HTMLElement).classList.add('active');
+        down = Number((btn as HTMLElement).dataset.val);
+        calc();
+      });
+    });
+    modal.querySelectorAll('#calcTerm button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        modal.querySelectorAll('#calcTerm button').forEach(b => b.classList.remove('active'));
+        (btn as HTMLElement).classList.add('active');
+        months = Number((btn as HTMLElement).dataset.val);
+        calc();
+      });
+    });
+
+    // Close
+    modal.querySelector('.calc-close')?.addEventListener('click', () => {
+      modal.classList.remove('open');
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        modal.classList.remove('open');
+      }
+    });
+
+    // Global open function
+    (window as any).__openCalc = (p: number, name: string) => {
+      price = p;
+      down = CALC_DEFAULT_DOWN;
+      months = CALC_DEFAULT_MONTHS;
+      modal.querySelectorAll('#calcDown button').forEach(b => {
+        b.classList.toggle('active', (b as HTMLElement).dataset.val === String(CALC_DEFAULT_DOWN));
+      });
+      modal.querySelectorAll('#calcTerm button').forEach(b => {
+        b.classList.toggle('active', (b as HTMLElement).dataset.val === String(CALC_DEFAULT_MONTHS));
+      });
+      const nameEl = document.getElementById('calcCarName');
+      const priceEl = document.getElementById('calcPrice');
+      if (nameEl) nameEl.textContent = name;
+      if (priceEl) priceEl.textContent = fmt(price);
+      calc();
+      modal.classList.add('open');
+    };
+  }
+
+  // Bind all calc trigger buttons on the page
+  function bindCalcTriggers() {
+    document.querySelectorAll('[data-calc-trigger]').forEach(btn => {
+      if ((btn as HTMLElement).dataset.calcBound) return;
+      (btn as HTMLElement).dataset.calcBound = '1';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const el = e.currentTarget as HTMLElement;
+        const p = Number(el.dataset.price);
+        const name = el.dataset.name || '';
+        (window as any).__openCalc?.(p, name);
+      });
+    });
+  }
+
+  initFinanceCalc();
+  bindCalcTriggers();
+  document.addEventListener('astro:after-swap', () => {
+    initFinanceCalc();
+    bindCalcTriggers();
+  });
+</script>

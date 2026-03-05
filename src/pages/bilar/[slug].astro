@@ -208,7 +208,7 @@ const breadcrumbSchema = {
             <div class="car-monthly">från <span>{monthly}</span></div>
 
             <!-- Prisberäknare / Finansiering -->
-            <button class="finance-modal-trigger" id="financeModalOpen" type="button" data-price={car.price} data-name={car.full_name}>
+            <button class="finance-modal-trigger" data-calc-trigger type="button" data-price={car.price} data-name={car.full_name}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
               Beräkna månadskostnad
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -296,8 +296,8 @@ const breadcrumbSchema = {
     </div>
   </section>
 
-  <!-- Finance Modal -->
-  <div class="fm-overlay" id="financeModal">
+  <!-- Finance Modal (removed — now uses shared FinanceCalcModal via Layout) -->
+  <div class="fm-overlay" id="financeModal" style="display:none;">
     <div class="fm-wrapper">
       <div class="fm-top-border"></div>
       <div class="fm-header">
@@ -1048,138 +1048,6 @@ const breadcrumbSchema = {
     if (e.key === 'ArrowLeft') goToImage(currentIdx - 1);
     if (e.key === 'ArrowRight') goToImage(currentIdx + 1);
   });
-
-  // Finance Modal
-  const fmOpenBtn = document.getElementById('financeModalOpen') as HTMLElement;
-  const fmOverlay = document.getElementById('financeModal') as HTMLElement;
-  const fmCloseBtn = document.getElementById('financeModalClose');
-  const fmDurationBtns = document.getElementById('fmDurationBtns');
-  const fmEquitySlider = document.getElementById('fmEquitySlider') as HTMLInputElement;
-  const fmEquityInput = document.getElementById('fmEquityInput') as HTMLInputElement;
-  const fmSendBtn = document.getElementById('fmSendBtn');
-
-  if (fmOpenBtn && fmOverlay) {
-    const carPrice = parseInt(fmOpenBtn.dataset.price || '0', 10);
-    const carName = fmOpenBtn.dataset.name || '';
-    const RATE = 0.0895; // 8.95% fast ränta
-    let selectedMonths = 144;
-    let equityPercent = 20;
-
-    function fmFormatSEK(n: number): string {
-      return Math.round(n).toLocaleString('sv-SE') + ' kr';
-    }
-
-    function fmCalcMonthly(principal: number, months: number): number {
-      if (principal <= 0) return 0;
-      const mr = RATE / 12;
-      if (mr === 0) return principal / months;
-      return principal * (mr * Math.pow(1 + mr, months)) / (Math.pow(1 + mr, months) - 1);
-    }
-
-    function fmUpdate() {
-      const downAmount = Math.round(carPrice * equityPercent / 100);
-      const loanWith = carPrice - downAmount;
-      const loanWithout = carPrice;
-
-      const monthlyWith = fmCalcMonthly(loanWith, selectedMonths);
-      const monthlyWithout = fmCalcMonthly(loanWithout, selectedMonths);
-      const totalWith = monthlyWith * selectedMonths + downAmount;
-      const totalWithout = monthlyWithout * selectedMonths;
-
-      // Price display
-      const priceEl = document.getElementById('fmPriceDisplay');
-      if (priceEl) priceEl.textContent = fmFormatSEK(carPrice);
-
-      // Equity displays
-      const percentEl = document.getElementById('fmEquityPercent');
-      const amountEl = document.getElementById('fmEquityAmount');
-      if (percentEl) percentEl.textContent = equityPercent + '%';
-      if (amountEl) amountEl.textContent = fmFormatSEK(downAmount);
-      if (fmEquityInput) fmEquityInput.value = Math.round(downAmount).toLocaleString('sv-SE');
-
-      // With down payment
-      const mwEl = document.getElementById('fmMonthlyWith');
-      const lwEl = document.getElementById('fmLoanWith');
-      const dwEl = document.getElementById('fmDownDisplay');
-      const twEl = document.getElementById('fmTotalWith');
-      if (mwEl) mwEl.textContent = fmFormatSEK(monthlyWith) + '/mån';
-      if (lwEl) lwEl.textContent = fmFormatSEK(loanWith);
-      if (dwEl) dwEl.textContent = fmFormatSEK(downAmount) + ' (' + equityPercent + '%)';
-      if (twEl) twEl.textContent = fmFormatSEK(totalWith);
-
-      // Without down payment
-      const mwoEl = document.getElementById('fmMonthlyWithout');
-      const lwoEl = document.getElementById('fmLoanWithout');
-      const twoEl = document.getElementById('fmTotalWithout');
-      if (mwoEl) mwoEl.textContent = fmFormatSEK(monthlyWithout) + '/mån';
-      if (lwoEl) lwoEl.textContent = fmFormatSEK(loanWithout);
-      if (twoEl) twoEl.textContent = fmFormatSEK(totalWithout);
-
-      // Summary
-      const snEl = document.getElementById('fmSummaryName');
-      const spEl = document.getElementById('fmSummaryPrice');
-      const stEl = document.getElementById('fmSummaryTerm');
-      if (snEl) snEl.textContent = carName;
-      if (spEl) spEl.textContent = fmFormatSEK(carPrice);
-      if (stEl) stEl.textContent = (selectedMonths / 12) + ' år';
-    }
-
-    // Open modal
-    fmOpenBtn.addEventListener('click', () => {
-      fmOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      fmUpdate();
-    });
-
-    // Close modal
-    function fmClose() {
-      fmOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    fmCloseBtn?.addEventListener('click', fmClose);
-    fmOverlay.addEventListener('click', (e) => {
-      if (e.target === fmOverlay) fmClose();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && fmOverlay.classList.contains('open')) fmClose();
-    });
-
-    // Duration buttons
-    fmDurationBtns?.addEventListener('click', (e) => {
-      const btn = (e.target as HTMLElement).closest('button');
-      if (!btn) return;
-      selectedMonths = parseInt(btn.dataset.months || '60', 10);
-      fmDurationBtns.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      fmUpdate();
-    });
-
-    // Equity slider
-    fmEquitySlider?.addEventListener('input', () => {
-      equityPercent = parseInt(fmEquitySlider.value, 10);
-      fmUpdate();
-    });
-
-    // Equity input
-    fmEquityInput?.addEventListener('input', () => {
-      const raw = fmEquityInput.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-      const val = parseInt(raw, 10) || 0;
-      equityPercent = Math.min(100, Math.max(0, Math.round((val / carPrice) * 100)));
-      fmEquitySlider.value = String(equityPercent);
-      fmUpdate();
-    });
-
-    // Send button - opens contact modal with pre-filled info
-    fmSendBtn?.addEventListener('click', () => {
-      const phone = (document.getElementById('fmPhone') as HTMLInputElement)?.value || '';
-      fmClose();
-      window.dispatchEvent(
-        new CustomEvent('open-contact-modal', {
-          detail: { carName, carSlug: '' }
-        })
-      );
-    });
-  }
 
   // Request Details CTA
   const rdSendBtn = document.getElementById('rdSendBtn');
