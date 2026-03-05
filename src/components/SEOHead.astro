@@ -21,6 +21,7 @@ const {
 
 const siteUrl = 'https://begbilnorr.se';
 const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
+const buildId = Date.now().toString(36);
 ---
 
 <meta charset="UTF-8" />
@@ -35,11 +36,11 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
   <meta name="robots" content="index, follow" />
 )}
 <link rel="canonical" href={canonicalUrl} />
-<link rel="icon" href="/favicon.ico?v=2" sizes="any" />
-<link rel="icon" type="image/png" href="/favicon-32.png?v=2" sizes="32x32" />
-<link rel="icon" type="image/png" href="/favicon-16.png?v=2" sizes="16x16" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180" />
-<link rel="icon" type="image/png" href="/icon-192.png?v=2" sizes="192x192" />
+<link rel="icon" href={`/favicon.ico?v=${buildId}`} sizes="any" />
+<link rel="icon" type="image/png" href={`/favicon-32.png?v=${buildId}`} sizes="32x32" />
+<link rel="icon" type="image/png" href={`/favicon-16.png?v=${buildId}`} sizes="16x16" />
+<link rel="apple-touch-icon" href={`/apple-touch-icon.png?v=${buildId}`} sizes="180x180" />
+<link rel="icon" type="image/png" href={`/icon-192.png?v=${buildId}`} sizes="192x192" />
 
 <!-- Open Graph -->
 <meta property="og:type" content={ogType} />
