@@ -8,6 +8,7 @@ export default defineConfig({
   adapter: vercel({
     isr: {
       expiration: 60,
+      exclude: ['/api/cars', '/api/upload', '/api/newsletter-send', '/api/newsletter-subscribe', '/api/contact', '/admin'],
     },
   }),
   integrations: [react()],
