@@ -1,12 +1,19 @@
 ---
-import Layout from '../components/Layout.astro';
+export const prerender = false;
 ---
 
-<Layout
-  title="Admin – Begbilnorr"
-  description="Adminpanel"
-  noindex={true}
->
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin – Begbilnorr</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-body">
   <!-- LOGIN OVERLAY -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
@@ -337,7 +344,25 @@ import Layout from '../components/Layout.astro';
   </div>
 </Layout>
 
-<style>
+<style is:global>
+  /* ========== BASE ========== */
+  :root {
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --red: #E62E2D;
+    --red-dark: #C72625;
+    --white: #fff;
+    --gray: #9ca3af;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .admin-body {
+    font-family: var(--sans);
+    background: #0a0a0a;
+    color: #fff;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+
   /* ========== LOGIN ========== */
   .login-overlay {
     position: fixed;
@@ -1828,4 +1853,5 @@ import Layout from '../components/Layout.astro';
     initAdmin();
   }
 </script>
-</Layout>
+</body>
+</html>
