@@ -14,15 +14,15 @@ import Layout from '../components/Layout.astro';
         <img src="/images/begbilnorr-logo-nav.webp" alt="Begbilnorr" height="40" />
       </div>
       <h1 class="login-title">Adminpanel</h1>
-      <p class="login-subtitle">Logga in för att hantera webbplatsen</p>
+      <p class="login-subtitle">Logga in for att hantera webbplatsen</p>
       <form id="loginForm" autocomplete="off">
         <div class="login-field">
-          <label for="loginUser">Användarnamn</label>
-          <input type="text" id="loginUser" name="username" required autocomplete="username" placeholder="Användarnamn" />
+          <label for="loginUser">Anvandarnamn</label>
+          <input type="text" id="loginUser" name="username" required autocomplete="username" placeholder="Anvandarnamn" />
         </div>
         <div class="login-field">
-          <label for="loginPass">Lösenord</label>
-          <input type="password" id="loginPass" name="password" required autocomplete="current-password" placeholder="Lösenord" />
+          <label for="loginPass">Losenord</label>
+          <input type="password" id="loginPass" name="password" required autocomplete="current-password" placeholder="Losenord" />
         </div>
         <button type="submit" class="login-btn" id="loginBtn">Logga in</button>
         <p class="login-error" id="loginError"></p>
@@ -31,133 +31,307 @@ import Layout from '../components/Layout.astro';
     </div>
   </div>
 
-  <div class="admin-page" id="adminContent" style="display:none;">
-    <div class="container">
-      <div class="admin-header-row">
-        <h1 class="admin-title">Admin</h1>
-        <button class="logout-btn" id="logoutBtn" type="button">
+  <!-- ADMIN PANEL -->
+  <div class="admin-shell" id="adminContent" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">
+        <img src="/images/begbilnorr-logo-nav.webp" alt="Begbilnorr" height="28" />
+        <span class="sidebar-badge">Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-tab="dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="sidebar-link" data-tab="cars">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+          <span>Bilar</span>
+        </button>
+        <button class="sidebar-link" data-tab="submissions">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+          <span>Formulär</span>
+        </button>
+        <button class="sidebar-link" data-tab="newsletter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <span>Nyhetsbrev</span>
+        </button>
+        <button class="sidebar-link" data-tab="settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Inställningar</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="sidebar-logout" id="logoutBtn" type="button">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Logga ut
+          <span>Logga ut</span>
         </button>
       </div>
+    </aside>
 
-      <!-- Tab navigation -->
-      <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="cars">Bilar</button>
-        <button class="tab-btn" data-tab="submissions">Formulär</button>
-        <button class="tab-btn" data-tab="newsletter">Nyhetsbrev</button>
-        <button class="tab-btn" data-tab="settings">Inställningar</button>
-      </div>
-
-      <!-- Cars tab -->
-      <div class="tab-content active" id="tab-cars">
-        <section class="admin-card">
-          <div class="section-header">
-            <h2>Bilar i lager</h2>
-            <div class="section-controls">
-              <select id="carFilter" class="source-filter">
-                <option value="active">Aktiva</option>
-                <option value="sold">Sålda</option>
-                <option value="inactive">Inaktiva</option>
-                <option value="all">Alla</option>
-              </select>
-              <button class="refresh-btn" id="refreshCarsBtn" type="button">Uppdatera</button>
-            </div>
-          </div>
-          <div class="car-stats" id="carStats"></div>
-          <div class="cars-list" id="carsList">
-            <p class="loading-text">Laddar bilar...</p>
-          </div>
-        </section>
-      </div>
-
-      <!-- Submissions tab -->
-      <div class="tab-content" id="tab-submissions">
-        <section class="admin-card">
-          <div class="section-header">
-            <h2>Formulärinlämningar</h2>
-            <div class="section-controls">
-              <select id="sourceFilter" class="source-filter">
-                <option value="alla">Alla källor</option>
-                <option value="kontakt">Kontaktsidan</option>
-                <option value="kontakt-footer">Kontakt (footer)</option>
-                <option value="vardering">Värdering</option>
-                <option value="salj-bil-footer">Sälj bil (footer)</option>
-                <option value="bevakning">Bevakning</option>
-                <option value="newsletter">Newsletter</option>
-                <option value="newsletter-footer">Newsletter (footer)</option>
-              </select>
-              <button class="refresh-btn" id="refreshBtn" type="button">Uppdatera</button>
-            </div>
-          </div>
-          <div class="submissions-stats" id="stats"></div>
-          <div class="submissions-list" id="submissionsList">
-            <p class="loading-text">Laddar...</p>
-          </div>
-        </section>
-      </div>
-
-      <!-- Newsletter tab -->
-      <div class="tab-content" id="tab-newsletter">
-        <section class="admin-card" style="margin-bottom:24px;">
-          <h2 style="margin-bottom:16px;">Lägg till prenumerant</h2>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input type="email" id="nlAddEmail" placeholder="E-postadress" style="flex:1;min-width:200px;" />
-            <input type="text" id="nlAddName" placeholder="Namn (valfritt)" style="flex:1;min-width:150px;" />
-            <button class="submit-btn" id="nlAddBtn" type="button" style="white-space:nowrap;">Lägg till</button>
-          </div>
-          <p id="nlAddMsg" class="status-msg"></p>
-        </section>
-
-        <section class="admin-card">
-          <div class="section-header">
-            <h2>Prenumeranter</h2>
-            <div class="section-controls">
-              <select id="nlFilter" class="source-filter">
-                <option value="all">Alla</option>
-                <option value="active">Aktiva</option>
-                <option value="inactive">Avregistrerade</option>
-              </select>
-              <button class="refresh-btn" id="nlExportBtn" type="button">Exportera CSV</button>
-              <button class="refresh-btn" id="refreshNlBtn" type="button">Uppdatera</button>
-            </div>
-          </div>
-          <div class="submissions-stats" id="nlStats"></div>
-          <div class="submissions-list" id="nlList">
-            <p class="loading-text">Laddar...</p>
-          </div>
-        </section>
-      </div>
-
-      <!-- Settings tab -->
-      <div class="tab-content" id="tab-settings">
-        <section class="admin-card">
-          <h2>Announcement Bar</h2>
-          <div class="form-group">
-            <label for="ann-text">Text</label>
-            <input type="text" id="ann-text" placeholder="Annonstext..." />
-          </div>
-          <div class="form-group">
-            <label for="ann-link">Länk</label>
-            <input type="text" id="ann-link" placeholder="/kontakt" />
-          </div>
-          <div class="form-group" style="display:flex;align-items:center;gap:12px;">
-            <input type="checkbox" id="ann-visible" style="width:auto;padding:0;" />
-            <label for="ann-visible" style="margin-bottom:0;">Synlig</label>
-          </div>
-          <button class="submit-btn" id="saveBtn" type="button">Spara</button>
-          <p id="statusMsg" class="status-msg"></p>
-        </section>
-      </div>
+    <!-- Mobile top bar -->
+    <div class="admin-topbar" id="adminTopbar">
+      <button class="topbar-menu" id="sidebarToggle" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+      <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      <button class="topbar-logout" id="logoutBtnMobile" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
     </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main content -->
+    <main class="admin-main">
+      <!-- Dashboard -->
+      <div class="tab-content active" id="tab-dashboard">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <p class="page-desc">Översikt av begbilnorr.se</p>
+        </div>
+        <div class="stats-grid" id="dashboardStats">
+          <div class="stat-card">
+            <div class="stat-icon green"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statActiveCars">-</span>
+              <span class="stat-label">Aktiva bilar</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statSoldCars">-</span>
+              <span class="stat-label">Sålda bilar</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statSubscribers">-</span>
+              <span class="stat-label">Prenumeranter</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statSubmissions">-</span>
+              <span class="stat-label">Formulär</span>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Senaste inlämningar</h3>
+            </div>
+            <div class="card-body" id="dashRecentSubmissions">
+              <p class="empty-text">Laddar...</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Senaste bilar</h3>
+            </div>
+            <div class="card-body" id="dashRecentCars">
+              <p class="empty-text">Laddar...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cars -->
+      <div class="tab-content" id="tab-cars">
+        <div class="page-header">
+          <div>
+            <h1>Bilar</h1>
+            <p class="page-desc">Hantera billagret</p>
+          </div>
+          <button class="btn btn-primary" id="addCarBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            Lägg till bil
+          </button>
+        </div>
+        <div class="toolbar">
+          <select id="carFilter" class="select">
+            <option value="active">Aktiva</option>
+            <option value="sold">Sålda</option>
+            <option value="inactive">Inaktiva</option>
+            <option value="all">Alla</option>
+          </select>
+          <div class="toolbar-right">
+            <div class="car-stats-inline" id="carStats"></div>
+            <button class="btn btn-ghost" id="refreshCarsBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="cars-grid" id="carsList">
+          <p class="empty-text">Laddar bilar...</p>
+        </div>
+      </div>
+
+      <!-- Submissions -->
+      <div class="tab-content" id="tab-submissions">
+        <div class="page-header">
+          <div>
+            <h1>Formulär</h1>
+            <p class="page-desc">Kontaktformulär och inlämningar</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <select id="sourceFilter" class="select">
+            <option value="alla">Alla källor</option>
+            <option value="kontakt">Kontaktsidan</option>
+            <option value="kontakt-footer">Kontakt (footer)</option>
+            <option value="vardering">Värdering</option>
+            <option value="salj-bil-footer">Sälj bil (footer)</option>
+            <option value="bevakning">Bevakning</option>
+            <option value="newsletter">Newsletter</option>
+            <option value="newsletter-footer">Newsletter (footer)</option>
+          </select>
+          <button class="btn btn-ghost" id="refreshBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+          </button>
+        </div>
+        <div class="submissions-stats" id="stats"></div>
+        <div class="list-container" id="submissionsList">
+          <p class="empty-text">Laddar...</p>
+        </div>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="tab-content" id="tab-newsletter">
+        <div class="page-header">
+          <div>
+            <h1>Nyhetsbrev</h1>
+            <p class="page-desc">Hantera prenumeranter och skicka nyhetsbrev</p>
+          </div>
+        </div>
+
+        <!-- Newsletter sub-tabs -->
+        <div class="sub-tabs">
+          <button class="sub-tab active" data-subtab="nl-subscribers">Prenumeranter</button>
+          <button class="sub-tab" data-subtab="nl-send">Skicka nyhetsbrev</button>
+        </div>
+
+        <!-- Subscribers subtab -->
+        <div class="sub-content active" id="subtab-nl-subscribers">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-body">
+              <h3 style="margin-bottom:12px;font-size:15px;font-weight:600;">Lägg till prenumerant</h3>
+              <div class="inline-form">
+                <input type="email" id="nlAddEmail" placeholder="E-postadress" class="input" />
+                <input type="text" id="nlAddName" placeholder="Namn (valfritt)" class="input" />
+                <button class="btn btn-primary" id="nlAddBtn" type="button">Lägg till</button>
+              </div>
+              <p id="nlAddMsg" class="form-msg"></p>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <select id="nlFilter" class="select">
+              <option value="all">Alla</option>
+              <option value="active">Aktiva</option>
+              <option value="inactive">Avregistrerade</option>
+            </select>
+            <div class="toolbar-right">
+              <button class="btn btn-ghost" id="nlExportBtn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Exportera CSV
+              </button>
+              <button class="btn btn-ghost" id="refreshNlBtn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="nl-stats" id="nlStats"></div>
+          <div class="list-container" id="nlList">
+            <p class="empty-text">Laddar...</p>
+          </div>
+        </div>
+
+        <!-- Send newsletter subtab -->
+        <div class="sub-content" id="subtab-nl-send">
+          <div class="card">
+            <div class="card-body">
+              <h3 style="margin-bottom:16px;font-size:16px;font-weight:600;">Komponera nyhetsbrev</h3>
+              <div class="form-group">
+                <label for="nlSubject">Ämne</label>
+                <input type="text" id="nlSubject" class="input" placeholder="t.ex. Nya bilar i lager!" />
+              </div>
+              <div class="form-group">
+                <label for="nlContent">Innehåll (HTML)</label>
+                <textarea id="nlContent" class="input textarea" rows="12" placeholder="Skriv ditt nyhetsbrev här..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Mallar</label>
+                <div class="template-btns">
+                  <button class="btn btn-ghost" id="tplNewCars" type="button">Nya bilar</button>
+                  <button class="btn btn-ghost" id="tplOffer" type="button">Erbjudande</button>
+                  <button class="btn btn-ghost" id="tplGeneral" type="button">Allmänt</button>
+                </div>
+              </div>
+              <div class="nl-actions">
+                <div class="nl-test">
+                  <input type="email" id="nlTestEmail" class="input" placeholder="Test-epost" style="max-width:240px;" />
+                  <button class="btn btn-outline" id="nlTestBtn" type="button">Skicka test</button>
+                </div>
+                <button class="btn btn-primary btn-lg" id="nlSendBtn" type="button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                  Skicka till alla prenumeranter
+                </button>
+              </div>
+              <p id="nlSendMsg" class="form-msg"></p>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px;">
+            <div class="card-header"><h3>Förhandsvisning</h3></div>
+            <div class="card-body">
+              <div class="preview-frame" id="nlPreview">
+                <p class="empty-text">Skriv innehåll ovan för att se förhandsvisning</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="tab-content" id="tab-settings">
+        <div class="page-header">
+          <h1>Inställningar</h1>
+          <p class="page-desc">Webbplatsinställningar</p>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Announcement Bar</h3></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="ann-text">Text</label>
+              <input type="text" id="ann-text" class="input" placeholder="Annonstext..." />
+            </div>
+            <div class="form-group">
+              <label for="ann-link">Länk</label>
+              <input type="text" id="ann-link" class="input" placeholder="/kontakt" />
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="ann-visible" />
+                <span>Synlig</span>
+              </label>
+            </div>
+            <button class="btn btn-primary" id="saveBtn" type="button">Spara</button>
+            <p id="statusMsg" class="form-msg"></p>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <!-- Edit car modal -->
+  <!-- Add/Edit car modal -->
   <div class="modal-overlay" id="carModalOverlay"></div>
   <div class="modal" id="carModal">
     <div class="modal-header">
-      <h3 id="carModalTitle">Redigera bil</h3>
-      <button class="modal-close" id="carModalClose">&times;</button>
+      <h3 id="carModalTitle">Lägg till bil</h3>
+      <button class="modal-close" id="carModalClose" type="button">&times;</button>
     </div>
     <div class="modal-body" id="carModalBody"></div>
   </div>
@@ -168,310 +342,453 @@ import Layout from '../components/Layout.astro';
   .login-overlay {
     position: fixed;
     inset: 0;
-    background: var(--bg-dark-1, #0a0a0a);
+    background: #0a0a0a;
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
   }
-
-  .login-overlay.hidden {
-    display: none;
-  }
-
+  .login-overlay.hidden { display: none; }
   .login-card {
-    background: var(--bg-dark-3, #1a1a1a);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: 16px;
     padding: 40px 36px;
     max-width: 400px;
     width: 100%;
     text-align: center;
   }
+  .login-logo { margin-bottom: 24px; }
+  .login-logo img { height: 36px; opacity: 0.9; }
+  .login-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .login-subtitle { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 28px; }
+  .login-field { margin-bottom: 16px; text-align: left; }
+  .login-field label { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .login-field input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff; font-size: 15px; font-family: var(--sans); outline: none; transition: border-color 0.2s; }
+  .login-field input:focus { border-color: var(--red); }
+  .login-field input::placeholder { color: rgba(255,255,255,0.2); }
+  .login-btn { width: 100%; padding: 14px; background: var(--red); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: var(--sans); cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .login-btn:hover { background: var(--red-dark); }
+  .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .login-error { color: #ef4444; font-size: 13px; margin-top: 12px; min-height: 20px; }
+  .login-locked { color: #f59e0b; font-size: 13px; margin-top: 8px; min-height: 20px; }
 
-  .login-logo {
-    margin-bottom: 24px;
+  /* ========== ADMIN SHELL ========== */
+  .admin-shell {
+    display: flex;
+    min-height: 100vh;
+    background: #0a0a0a;
   }
 
-  .login-logo img {
-    height: 36px;
-    opacity: 0.9;
+  /* ========== SIDEBAR ========== */
+  .admin-sidebar {
+    width: 240px;
+    background: #111;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
   }
-
-  .login-title {
-    font-size: 24px;
+  .sidebar-brand {
+    padding: 20px 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .sidebar-brand img { height: 28px; opacity: 0.9; }
+  .sidebar-badge {
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
     font-weight: 700;
-    color: var(--white);
-    margin-bottom: 6px;
-  }
-
-  .login-subtitle {
-    font-size: 14px;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 28px;
-  }
-
-  .login-field {
-    margin-bottom: 16px;
-    text-align: left;
-  }
-
-  .login-field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 6px;
+    padding: 2px 8px;
+    border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-
-  .login-field input {
-    width: 100%;
-    padding: 12px 14px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+  .sidebar-nav {
+    flex: 1;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
     border-radius: 8px;
-    color: var(--white);
-    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    font-size: 14px;
+    font-weight: 500;
     font-family: var(--sans);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .login-field input:focus {
-    border-color: var(--red);
-  }
-
-  .login-field input::placeholder {
-    color: rgba(255,255,255,0.2);
-  }
-
-  .login-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--red);
-    color: var(--white);
+    background: none;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: var(--sans);
     cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 8px;
+    transition: all 0.15s;
+    width: 100%;
+    text-align: left;
   }
-
-  .login-btn:hover {
-    background: var(--red-dark);
+  .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.04); }
+  .sidebar-link.active { color: #fff; background: rgba(255,255,255,0.08); }
+  .sidebar-link.active svg { color: var(--red); }
+  .sidebar-footer {
+    padding: 12px 8px 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
   }
-
-  .login-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .login-error {
-    color: #ef4444;
+  .sidebar-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.4);
     font-size: 13px;
-    margin-top: 12px;
-    min-height: 20px;
+    font-weight: 500;
+    font-family: var(--sans);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .sidebar-logout:hover { color: #ef4444; background: rgba(239,68,68,0.08); }
+
+  /* ========== TOPBAR (mobile) ========== */
+  .admin-topbar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #111;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 99;
+  }
+  .topbar-menu, .topbar-logout {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    padding: 8px;
+  }
+  .topbar-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+  }
+  .sidebar-overlay.open { display: block; }
+
+  /* ========== MAIN CONTENT ========== */
+  .admin-main {
+    flex: 1;
+    margin-left: 240px;
+    padding: 32px;
+    max-width: 1200px;
+  }
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .page-header h1 { font-size: 24px; font-weight: 700; color: #fff; margin: 0; }
+  .page-desc { font-size: 14px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+  /* ========== STATS GRID ========== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-icon.green { background: rgba(34,197,94,0.1); color: #22C55E; }
+  .stat-icon.amber { background: rgba(245,158,11,0.1); color: #F59E0B; }
+  .stat-icon.blue { background: rgba(59,130,246,0.1); color: #3B82F6; }
+  .stat-icon.red { background: rgba(239,68,68,0.1); color: #EF4444; }
+  .stat-info { display: flex; flex-direction: column; }
+  .stat-value { font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
+  .stat-label { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+  /* ========== DASHBOARD GRID ========== */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 
-  .login-locked {
-    color: #f59e0b;
-    font-size: 13px;
-    margin-top: 8px;
-    min-height: 20px;
+  /* ========== CARDS ========== */
+  .card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
   }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-header h3 { font-size: 15px; font-weight: 600; color: #fff; margin: 0; }
+  .card-body { padding: 20px; }
 
-  /* ========== ADMIN HEADER ========== */
-  .admin-header-row {
+  /* ========== TOOLBAR ========== */
+  .toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
   }
+  .toolbar-right { display: flex; align-items: center; gap: 8px; }
+  .car-stats-inline { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .admin-header-row .admin-title {
-    margin-bottom: 0;
-  }
-
-  .logout-btn {
+  /* ========== BUTTONS ========== */
+  .btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px;
-    color: rgba(255,255,255,0.6);
+    border-radius: 8px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     font-family: var(--sans);
     cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .logout-btn:hover {
-    background: rgba(239,68,68,0.1);
-    border-color: rgba(239,68,68,0.3);
-    color: #ef4444;
-  }
-
-  /* ========== ADMIN PAGE ========== */
-  .admin-page { padding: 32px 0 64px; }
-  .admin-title { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
-
-  /* Tabs */
-  .admin-tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    padding-bottom: 0;
-  }
-  .tab-btn {
-    background: none;
+    transition: all 0.15s;
     border: none;
-    color: var(--gray);
-    font-size: 15px;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    font-weight: 500;
+    white-space: nowrap;
   }
-  .tab-btn:hover { color: #fff; }
-  .tab-btn.active {
-    color: #fff;
-    border-bottom-color: var(--red);
-  }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
+  .btn-primary { background: var(--red); color: #fff; }
+  .btn-primary:hover { background: var(--red-dark); }
+  .btn-outline { background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+  .btn-ghost { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.08); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .btn-lg { padding: 12px 24px; font-size: 14px; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-danger { background: rgba(239,68,68,0.1); color: #EF4444; border: 1px solid rgba(239,68,68,0.2); }
+  .btn-danger:hover { background: rgba(239,68,68,0.2); }
+  .btn-success { background: rgba(34,197,94,0.1); color: #22C55E; border: 1px solid rgba(34,197,94,0.2); }
+  .btn-success:hover { background: rgba(34,197,94,0.2); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .admin-card {
-    background: var(--bg-dark-3);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px;
-    padding: 24px;
-  }
-  .admin-card h2 {
-    font-size: 20px;
-    margin-bottom: 0;
-    font-weight: 600;
-  }
-  .status-msg { margin-top: 12px; font-size: 14px; color: var(--gray); }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .section-controls { display: flex; gap: 8px; align-items: center; }
-  .source-filter {
-    background: var(--bg-dark-4);
+  /* ========== FORM ELEMENTS ========== */
+  .select {
+    background: #1a1a1a;
     color: #fff;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 8px;
     padding: 8px 12px;
-    font-size: 14px;
+    font-size: 13px;
+    font-family: var(--sans);
     cursor: pointer;
+    outline: none;
   }
-  .refresh-btn {
-    background: var(--bg-dark-4);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.1);
+  .select:focus { border-color: var(--red); }
+  .input {
+    width: 100%;
+    padding: 10px 14px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 8px;
-    padding: 8px 16px;
+    color: #fff;
     font-size: 14px;
-    cursor: pointer;
-    transition: background 0.2s;
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color 0.15s;
   }
-  .refresh-btn:hover { background: var(--bg-dark-5); }
+  .input:focus { border-color: var(--red); }
+  .input::placeholder { color: rgba(255,255,255,0.2); }
+  .textarea { resize: vertical; min-height: 100px; font-family: monospace; font-size: 13px; line-height: 1.6; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-msg { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 10px; min-height: 18px; }
+  .inline-form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .inline-form .input { flex: 1; min-width: 160px; }
+  .checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .checkbox-label input { width: auto; padding: 0; accent-color: var(--red); }
+  .checkbox-label span { font-size: 14px; color: rgba(255,255,255,0.7); text-transform: none; letter-spacing: 0; }
 
-  .submissions-stats, .car-stats {
+  /* ========== SUB-TABS ========== */
+  .sub-tabs {
     display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
+    gap: 2px;
+    margin-bottom: 20px;
+    background: #141414;
+    border-radius: 10px;
+    padding: 4px;
+    width: fit-content;
   }
-  .submissions-list, .cars-list {
+  .sub-tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sub-tab:hover { color: #fff; }
+  .sub-tab.active { background: rgba(255,255,255,0.08); color: #fff; }
+  .sub-content { display: none; }
+  .sub-content.active { display: block; }
+
+  /* ========== NEWSLETTER ========== */
+  .nl-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .nl-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .nl-test { display: flex; gap: 8px; align-items: center; }
+  .template-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .preview-frame {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    min-height: 200px;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ========== CARS GRID ========== */
+  .cars-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    max-height: 700px;
+    gap: 8px;
+    max-height: calc(100vh - 240px);
     overflow-y: auto;
   }
-  .loading-text { color: var(--gray); font-size: 14px; }
-
-  /* Car cards */
-  .car-admin-card {
-    background: var(--bg-dark-4);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px;
-    padding: 16px;
+  .car-row {
     display: flex;
-    gap: 16px;
     align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    transition: border-color 0.15s;
   }
-  .car-admin-thumb {
-    width: 100px;
-    height: 68px;
-    border-radius: 8px;
+  .car-row:hover { border-color: rgba(255,255,255,0.12); }
+  .car-thumb {
+    width: 88px;
+    height: 60px;
+    border-radius: 6px;
     object-fit: cover;
     flex-shrink: 0;
-    background: var(--bg-dark-3);
+    background: #1a1a1a;
   }
-  .car-admin-info { flex: 1; min-width: 0; }
-  .car-admin-name {
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .car-admin-meta {
-    font-size: 13px;
-    color: var(--gray);
+  .car-thumb-empty {
+    width: 88px;
+    height: 60px;
+    border-radius: 6px;
+    background: #1a1a1a;
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .car-admin-actions {
-    display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    opacity: 0.2;
     flex-shrink: 0;
   }
-  .car-action-btn {
-    background: var(--bg-dark-3);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    border-radius: 8px;
-    padding: 6px 14px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .car-action-btn:hover { background: var(--bg-dark-5); }
-  .car-action-btn.sold-btn { border-color: #F59E0B44; color: #F59E0B; }
-  .car-action-btn.sold-btn:hover { background: #F59E0B22; }
-  .car-action-btn.active-btn { border-color: #22C55E44; color: #22C55E; }
-  .car-action-btn.active-btn:hover { background: #22C55E22; }
+  .car-info { flex: 1; min-width: 0; }
+  .car-name { font-weight: 600; font-size: 14px; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .car-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: rgba(255,255,255,0.4); }
+  .car-meta .price { color: #fff; font-weight: 600; }
+  .car-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-  /* Modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
+  /* ========== STATUS BADGES ========== */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
   }
+  .badge-green { background: rgba(34,197,94,0.12); color: #22C55E; border: 1px solid rgba(34,197,94,0.2); }
+  .badge-amber { background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.2); }
+  .badge-gray { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); }
+  .badge-red { background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.2); }
+  .badge-blue { background: rgba(59,130,246,0.12); color: #3B82F6; border: 1px solid rgba(59,130,246,0.2); }
+
+  /* ========== LIST CONTAINER ========== */
+  .list-container, .submissions-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .list-container { max-height: calc(100vh - 300px); overflow-y: auto; }
+  .submissions-stats { flex-direction: row; flex-wrap: wrap; margin-bottom: 12px; }
+  .empty-text { color: rgba(255,255,255,0.3); font-size: 14px; }
+
+  /* ========== SUBMISSION CARD ========== */
+  .submission-card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .submission-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .submission-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .submission-date { font-size: 12px; color: rgba(255,255,255,0.3); }
+  .submission-fields { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 6px; }
+  .submission-fields strong { color: rgba(255,255,255,0.5); }
+  .submission-msg { font-size: 13px; color: rgba(255,255,255,0.4); white-space: pre-line; margin: 0; }
+
+  /* ========== NL SUBSCRIBER ROW ========== */
+  .nl-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    flex-wrap: wrap;
+  }
+  .nl-info { flex: 1; min-width: 0; }
+  .nl-email { font-weight: 600; font-size: 13px; color: #fff; }
+  .nl-detail { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+  .nl-badges { display: flex; gap: 6px; align-items: center; }
+  .nl-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+  /* ========== MODAL ========== */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(4px); }
   .modal-overlay.open { display: block; }
   .modal {
     display: none;
@@ -479,14 +796,13 @@ import Layout from '../components/Layout.astro';
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--bg-dark-3);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
-    padding: 24px;
     z-index: 1001;
     width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
+    max-width: 640px;
+    max-height: 85vh;
     overflow-y: auto;
   }
   .modal.open { display: block; }
@@ -494,25 +810,102 @@ import Layout from '../components/Layout.astro';
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    background: #141414;
+    z-index: 1;
+    border-radius: 16px 16px 0 0;
   }
-  .modal-header h3 { font-size: 18px; font-weight: 600; margin: 0; }
-  .modal-close {
-    background: none;
-    border: none;
-    color: var(--gray);
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0 4px;
-  }
+  .modal-header h3 { font-size: 16px; font-weight: 600; margin: 0; color: #fff; }
+  .modal-close { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 24px; cursor: pointer; padding: 0 4px; }
   .modal-close:hover { color: #fff; }
+  .modal-body { padding: 24px; }
+
+  /* ========== ADD CAR FORM ========== */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .upload-zone {
+    border: 2px dashed rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: rgba(255,255,255,0.02);
+  }
+  .upload-zone:hover { border-color: var(--red); background: rgba(230,46,45,0.04); }
+  .upload-zone.dragover { border-color: var(--red); background: rgba(230,46,45,0.08); }
+  .upload-icon { color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+  .upload-text { font-size: 13px; color: rgba(255,255,255,0.4); }
+  .upload-text strong { color: var(--red); }
+  .image-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .img-preview {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+  .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .img-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .upload-progress {
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ========== TAB CONTENT ========== */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 900px) {
+    .admin-sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.25s;
+    }
+    .admin-sidebar.open { transform: translateX(0); }
+    .admin-topbar { display: flex; }
+    .admin-main { margin-left: 0; padding: 72px 16px 32px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-row-3 { grid-template-columns: 1fr; }
+    .nl-actions { flex-direction: column; align-items: stretch; }
+    .nl-test { flex-direction: column; }
+    .nl-test .input { max-width: 100% !important; }
+  }
 
   @media (max-width: 640px) {
-    .section-header { flex-direction: column; align-items: flex-start; }
-    .car-admin-card { flex-direction: column; align-items: flex-start; }
-    .car-admin-thumb { width: 100%; height: 140px; }
-    .car-admin-actions { width: 100%; }
-    .car-action-btn { flex: 1; text-align: center; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { padding: 14px; }
+    .stat-value { font-size: 22px; }
+    .car-row { flex-direction: column; align-items: flex-start; }
+    .car-thumb, .car-thumb-empty { width: 100%; height: 140px; }
+    .car-actions { width: 100%; }
+    .car-actions .btn { flex: 1; justify-content: center; }
+    .page-header { flex-direction: column; }
   }
 </style>
 
@@ -530,28 +923,18 @@ import Layout from '../components/Layout.astro';
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  function getAttempts(): number {
-    return parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10);
-  }
-
-  function getLockoutEnd(): number {
-    return parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10);
-  }
+  function getAttempts(): number { return parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10); }
+  function getLockoutEnd(): number { return parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10); }
 
   function isLockedOut(): boolean {
     const end = getLockoutEnd();
     if (end && Date.now() < end) return true;
-    if (end && Date.now() >= end) {
-      localStorage.removeItem(LOCKOUT_KEY);
-      localStorage.removeItem(ATTEMPTS_KEY);
-    }
+    if (end && Date.now() >= end) { localStorage.removeItem(LOCKOUT_KEY); localStorage.removeItem(ATTEMPTS_KEY); }
     return false;
   }
 
   function lockoutRemaining(): string {
-    const end = getLockoutEnd();
-    const mins = Math.ceil((end - Date.now()) / 60000);
-    return `${mins} min`;
+    return `${Math.ceil((getLockoutEnd() - Date.now()) / 60000)} min`;
   }
 
   const overlay = document.getElementById('loginOverlay')!;
@@ -560,15 +943,12 @@ import Layout from '../components/Layout.astro';
   const loginError = document.getElementById('loginError')!;
   const loginLocked = document.getElementById('loginLocked')!;
   const loginBtn = document.getElementById('loginBtn') as HTMLButtonElement;
-  const logoutBtn = document.getElementById('logoutBtn')!;
 
-  // Check existing session
   if (sessionStorage.getItem(SESSION_KEY) === AUTH_HASH) {
     overlay.classList.add('hidden');
     adminContent.style.display = '';
   }
 
-  // Update lockout UI
   function updateLockoutUI() {
     if (isLockedOut()) {
       loginBtn.disabled = true;
@@ -583,51 +963,72 @@ import Layout from '../components/Layout.astro';
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginError.textContent = '';
-
-    if (isLockedOut()) {
-      updateLockoutUI();
-      return;
-    }
-
+    if (isLockedOut()) { updateLockoutUI(); return; }
     const user = (document.getElementById('loginUser') as HTMLInputElement).value.trim();
     const pass = (document.getElementById('loginPass') as HTMLInputElement).value;
     const hash = await sha256(`${user}:${pass}`);
-
     if (hash === AUTH_HASH) {
       sessionStorage.setItem(SESSION_KEY, AUTH_HASH);
       localStorage.removeItem(ATTEMPTS_KEY);
       localStorage.removeItem(LOCKOUT_KEY);
       overlay.classList.add('hidden');
       adminContent.style.display = '';
+      initAdmin();
     } else {
       const attempts = getAttempts() + 1;
       localStorage.setItem(ATTEMPTS_KEY, String(attempts));
-
       if (attempts >= MAX_ATTEMPTS) {
-        const lockEnd = Date.now() + LOCKOUT_MINUTES * 60 * 1000;
-        localStorage.setItem(LOCKOUT_KEY, String(lockEnd));
+        localStorage.setItem(LOCKOUT_KEY, String(Date.now() + LOCKOUT_MINUTES * 60 * 1000));
         updateLockoutUI();
-        loginError.textContent = `För många felaktiga försök.`;
+        loginError.textContent = 'För många felaktiga försök.';
       } else {
-        const remaining = MAX_ATTEMPTS - attempts;
-        loginError.textContent = `Fel användarnamn eller lösenord. ${remaining} försök kvar.`;
+        loginError.textContent = `Fel användarnamn eller lösenord. ${MAX_ATTEMPTS - attempts} försök kvar.`;
       }
     }
   });
 
-  logoutBtn.addEventListener('click', () => {
-    sessionStorage.removeItem(SESSION_KEY);
-    window.location.reload();
+  // Logout
+  function logout() { sessionStorage.removeItem(SESSION_KEY); window.location.reload(); }
+  document.getElementById('logoutBtn')?.addEventListener('click', logout);
+  document.getElementById('logoutBtnMobile')?.addEventListener('click', logout);
+
+  // === SIDEBAR & TABS ===
+  const sidebar = document.getElementById('adminSidebar')!;
+  const sidebarOverlay = document.getElementById('sidebarOverlay')!;
+  const topbarTitle = document.getElementById('topbarTitle')!;
+  const tabLabels: Record<string, string> = { dashboard: 'Dashboard', cars: 'Bilar', submissions: 'Formulär', newsletter: 'Nyhetsbrev', settings: 'Inställningar' };
+
+  document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarOverlay.classList.toggle('open');
+  });
+  sidebarOverlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('open');
   });
 
-  // === TABS ===
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  document.querySelectorAll('.sidebar-link').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      const tab = (btn as HTMLElement).dataset.tab;
+      const tab = (btn as HTMLElement).dataset.tab!;
       document.getElementById(`tab-${tab}`)?.classList.add('active');
+      topbarTitle.textContent = tabLabels[tab] || tab;
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('open');
+    });
+  });
+
+  // Sub-tabs
+  document.querySelectorAll('.sub-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.closest('.tab-content')!;
+      parent.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+      parent.querySelectorAll('.sub-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const id = (btn as HTMLElement).dataset.subtab!;
+      document.getElementById(`subtab-${id}`)?.classList.add('active');
     });
   });
 
@@ -637,14 +1038,8 @@ import Layout from '../components/Layout.astro';
     return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' })
       + ' ' + d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
   }
-
-  function formatPrice(price: number) {
-    return price?.toLocaleString('sv-SE') + ' kr';
-  }
-
-  function formatMileage(m: number) {
-    return m?.toLocaleString('sv-SE') + ' mil';
-  }
+  function formatPrice(price: number) { return price?.toLocaleString('sv-SE') + ' kr'; }
+  function formatMileage(m: number) { return m?.toLocaleString('sv-SE') + ' mil'; }
 
   // === ANNOUNCEMENT BAR ===
   const textInput = document.getElementById('ann-text') as HTMLInputElement;
@@ -660,28 +1055,20 @@ import Layout from '../components/Layout.astro';
       textInput.value = data.text || '';
       linkInput.value = data.link || '';
       visibleCheck.checked = data.visible ?? true;
-    } catch {
-      statusMsg.textContent = 'Kunde inte ladda inställningar.';
-    }
+    } catch { statusMsg.textContent = 'Kunde inte ladda.'; }
   }
 
   saveBtn.addEventListener('click', async () => {
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Sparar...';
+    saveBtn.disabled = true; saveBtn.textContent = 'Sparar...';
     try {
       const res = await fetch('/api/announcement', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: textInput.value, link: linkInput.value, visible: visibleCheck.checked }),
       });
       statusMsg.textContent = res.ok ? 'Sparat!' : 'Fel vid sparning.';
-      statusMsg.style.color = res.ok ? '#22C55E' : 'var(--red)';
-    } catch {
-      statusMsg.textContent = 'Nätverksfel.';
-      statusMsg.style.color = 'var(--red)';
-    }
-    saveBtn.disabled = false;
-    saveBtn.textContent = 'Spara';
+      statusMsg.style.color = res.ok ? '#22C55E' : '#EF4444';
+    } catch { statusMsg.textContent = 'Nätverksfel.'; statusMsg.style.color = '#EF4444'; }
+    saveBtn.disabled = false; saveBtn.textContent = 'Spara';
   });
 
   // === CARS ===
@@ -695,63 +1082,349 @@ import Layout from '../components/Layout.astro';
   const carModalBody = document.getElementById('carModalBody') as HTMLDivElement;
 
   let allCars: any[] = [];
+  let uploadedImages: string[] = [];
 
   function closeCarModal() {
     carModal.classList.remove('open');
     carModalOverlay.classList.remove('open');
+    uploadedImages = [];
   }
   carModalClose.addEventListener('click', closeCarModal);
   carModalOverlay.addEventListener('click', closeCarModal);
 
   async function updateCar(id: string, updates: Record<string, any>) {
     const res = await fetch('/api/cars', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, ...updates }),
     });
-    if (res.ok) {
-      await loadCars();
-      closeCarModal();
-    }
+    if (res.ok) { await loadCars(); closeCarModal(); }
   }
 
-  function openEditModal(car: any) {
-    carModalTitle.textContent = car.full_name;
+  // Upload image via server-side API
+  async function uploadImage(file: File): Promise<string | null> {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.url || null;
+    } catch { return null; }
+  }
+
+  function openAddCarModal() {
+    carModalTitle.textContent = 'Lägg till ny bil';
+    uploadedImages = [];
     carModalBody.innerHTML = `
-      <div class="form-group">
-        <label>Pris (kr)</label>
-        <input type="number" id="editPrice" value="${car.price || ''}" />
+      <div class="form-row">
+        <div class="form-group"><label>Reg.nr *</label><input type="text" id="newRegNo" class="input" placeholder="ABC123" /></div>
+        <div class="form-group"><label>Märke *</label><input type="text" id="newBrand" class="input" placeholder="Volvo" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Modell *</label><input type="text" id="newModel" class="input" placeholder="V60" /></div>
+        <div class="form-group"><label>Variant</label><input type="text" id="newVariant" class="input" placeholder="T4 Momentum" /></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group"><label>År *</label><input type="number" id="newYear" class="input" placeholder="2020" /></div>
+        <div class="form-group"><label>Miltal</label><input type="number" id="newMileage" class="input" placeholder="5200" /></div>
+        <div class="form-group"><label>Pris (kr) *</label><input type="number" id="newPrice" class="input" placeholder="189000" /></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>Drivmedel</label>
+          <select id="newFuel" class="input">
+            <option value="Bensin">Bensin</option>
+            <option value="Diesel">Diesel</option>
+            <option value="El">El</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="Laddhybrid">Laddhybrid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Växellåda</label>
+          <select id="newGearbox" class="input">
+            <option value="Automat">Automat</option>
+            <option value="Manuell">Manuell</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Biltyp</label>
+          <select id="newBodyType" class="input">
+            <option value="">Välj...</option>
+            <option value="Sedan">Sedan</option>
+            <option value="Kombi">Kombi</option>
+            <option value="SUV">SUV</option>
+            <option value="Halvkombi">Halvkombi</option>
+            <option value="Cab">Cab</option>
+            <option value="Coupé">Coupé</option>
+          </select>
+        </div>
       </div>
       <div class="form-group">
-        <label>Månadskostnad</label>
-        <input type="text" id="editMonthly" value="${car.monthly_payment || ''}" placeholder="ex: 1 995 kr/mån" />
+        <label>Månadsbetalning</label>
+        <input type="text" id="newMonthly" class="input" placeholder="t.ex. 1 995 kr/mån" />
       </div>
       <div class="form-group">
-        <label>Miltal</label>
-        <input type="number" id="editMileage" value="${car.mileage || ''}" />
+        <label>Beskrivning</label>
+        <textarea id="newDesc" class="input textarea" rows="3" placeholder="Beskrivning av bilen..."></textarea>
       </div>
-      <div class="form-group" style="display:flex;gap:16px;">
-        <label style="display:flex;align-items:center;gap:8px;margin-bottom:0;">
-          <input type="checkbox" id="editActive" ${car.is_active ? 'checked' : ''} style="width:auto;padding:0;" />
-          Aktiv
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;margin-bottom:0;">
-          <input type="checkbox" id="editSold" ${car.is_sold ? 'checked' : ''} style="width:auto;padding:0;" />
-          Såld
-        </label>
+      <div class="form-group">
+        <label>Utrustning (en per rad)</label>
+        <textarea id="newEquipment" class="input textarea" rows="4" placeholder="Adaptiv farthållare&#10;Navigation&#10;Backkamera"></textarea>
       </div>
-      <button class="submit-btn" id="editSaveBtn" type="button">Spara ändringar</button>
+      <div class="form-group">
+        <label>Bilder</label>
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          </div>
+          <p class="upload-text"><strong>Klicka eller dra bilder hit</strong><br>JPG, PNG, WebP (max 10MB)</p>
+          <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
+        </div>
+        <div class="image-previews" id="imagePreviews"></div>
+        <p class="upload-progress" id="uploadProgress"></p>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
+        <button class="btn btn-ghost" id="cancelAddCar" type="button">Avbryt</button>
+        <button class="btn btn-primary" id="saveNewCar" type="button">Spara bil</button>
+      </div>
     `;
+
     carModal.classList.add('open');
     carModalOverlay.classList.add('open');
 
-    document.getElementById('editSaveBtn')?.addEventListener('click', () => {
+    // Upload zone
+    const zone = document.getElementById('uploadZone')!;
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    const previews = document.getElementById('imagePreviews')!;
+    const progress = document.getElementById('uploadProgress')!;
+
+    zone.addEventListener('click', () => fileInput.click());
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault(); zone.classList.remove('dragover');
+      handleFiles(e.dataTransfer?.files);
+    });
+    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+    async function handleFiles(files: FileList | null | undefined) {
+      if (!files?.length) return;
+      const total = files.length;
+      let done = 0;
+      progress.textContent = `Laddar upp 0/${total}...`;
+
+      for (const file of Array.from(files)) {
+        const url = await uploadImage(file);
+        done++;
+        progress.textContent = `Laddar upp ${done}/${total}...`;
+        if (url) {
+          uploadedImages.push(url);
+          const div = document.createElement('div');
+          div.className = 'img-preview';
+          div.innerHTML = `<img src="${url}" /><button class="img-remove" type="button">&times;</button>`;
+          div.querySelector('.img-remove')?.addEventListener('click', () => {
+            uploadedImages = uploadedImages.filter(u => u !== url);
+            div.remove();
+          });
+          previews.appendChild(div);
+        }
+      }
+      progress.textContent = `${uploadedImages.length} bild(er) uppladdade`;
+    }
+
+    document.getElementById('cancelAddCar')?.addEventListener('click', closeCarModal);
+    document.getElementById('saveNewCar')?.addEventListener('click', async () => {
+      const btn = document.getElementById('saveNewCar') as HTMLButtonElement;
+      btn.disabled = true; btn.textContent = 'Sparar...';
+
+      const reg_no = (document.getElementById('newRegNo') as HTMLInputElement).value.trim();
+      const brand = (document.getElementById('newBrand') as HTMLInputElement).value.trim();
+      const model = (document.getElementById('newModel') as HTMLInputElement).value.trim();
+      const variant = (document.getElementById('newVariant') as HTMLInputElement).value.trim();
+      const year = (document.getElementById('newYear') as HTMLInputElement).value;
+      const mileage = (document.getElementById('newMileage') as HTMLInputElement).value;
+      const price = (document.getElementById('newPrice') as HTMLInputElement).value;
+      const fuel_type = (document.getElementById('newFuel') as HTMLSelectElement).value;
+      const gearbox = (document.getElementById('newGearbox') as HTMLSelectElement).value;
+      const body_type = (document.getElementById('newBodyType') as HTMLSelectElement).value;
+      const monthly_payment = (document.getElementById('newMonthly') as HTMLInputElement).value.trim();
+      const description = (document.getElementById('newDesc') as HTMLTextAreaElement).value.trim();
+      const equipmentText = (document.getElementById('newEquipment') as HTMLTextAreaElement).value.trim();
+      const equipment = equipmentText ? equipmentText.split('\n').map(s => s.trim()).filter(Boolean) : [];
+
+      if (!reg_no || !brand || !model || !year || !price) {
+        progress.textContent = 'Fyll i alla obligatoriska fält (*)';
+        progress.style.color = '#EF4444';
+        btn.disabled = false; btn.textContent = 'Spara bil';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/cars', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'create', reg_no, brand, model, variant, year, mileage, price,
+            fuel_type, gearbox, body_type, monthly_payment, description,
+            equipment, images: uploadedImages,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          closeCarModal();
+          await loadCars();
+        } else {
+          progress.textContent = data.error || 'Fel vid sparning.';
+          progress.style.color = '#EF4444';
+        }
+      } catch {
+        progress.textContent = 'Nätverksfel.';
+        progress.style.color = '#EF4444';
+      }
+      btn.disabled = false; btn.textContent = 'Spara bil';
+    });
+  }
+
+  document.getElementById('addCarBtn')?.addEventListener('click', openAddCarModal);
+
+  function openEditModal(car: any) {
+    carModalTitle.textContent = `Redigera: ${car.full_name}`;
+    uploadedImages = [...(car.images || [])];
+    carModalBody.innerHTML = `
+      <div class="form-row">
+        <div class="form-group"><label>Reg.nr</label><input type="text" id="editRegNo" class="input" value="${car.reg_no}" disabled /></div>
+        <div class="form-group"><label>Märke</label><input type="text" id="editBrand" class="input" value="${car.brand || ''}" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Modell</label><input type="text" id="editModel" class="input" value="${car.model || ''}" /></div>
+        <div class="form-group"><label>Variant</label><input type="text" id="editVariant" class="input" value="${car.variant || ''}" /></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group"><label>Pris (kr)</label><input type="number" id="editPrice" class="input" value="${car.price || ''}" /></div>
+        <div class="form-group"><label>Miltal</label><input type="number" id="editMileage" class="input" value="${car.mileage || ''}" /></div>
+        <div class="form-group"><label>Månadsbetalning</label><input type="text" id="editMonthly" class="input" value="${car.monthly_payment || ''}" /></div>
+      </div>
+      <div class="form-group">
+        <label>Beskrivning</label>
+        <textarea id="editDesc" class="input textarea" rows="3">${car.description || ''}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Utrustning (en per rad)</label>
+        <textarea id="editEquipment" class="input textarea" rows="4">${(car.equipment || []).join('\n')}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <div style="display:flex;gap:16px;">
+          <label class="checkbox-label"><input type="checkbox" id="editActive" ${car.is_active ? 'checked' : ''} /><span>Aktiv</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="editSold" ${car.is_sold ? 'checked' : ''} /><span>Såld</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Bilder</label>
+        <div class="upload-zone" id="editUploadZone">
+          <div class="upload-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          </div>
+          <p class="upload-text"><strong>Lägg till fler bilder</strong></p>
+          <input type="file" id="editFileInput" accept="image/*" multiple style="display:none;" />
+        </div>
+        <div class="image-previews" id="editImagePreviews">
+          ${uploadedImages.map(url => `
+            <div class="img-preview" data-url="${url}">
+              <img src="${url}" />
+              <button class="img-remove" type="button">&times;</button>
+            </div>
+          `).join('')}
+        </div>
+        <p class="upload-progress" id="editUploadProgress">${uploadedImages.length} bild(er)</p>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
+        <button class="btn btn-danger btn-sm" id="deleteCar" type="button">Ta bort bil</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" id="cancelEditCar" type="button">Avbryt</button>
+          <button class="btn btn-primary" id="saveEditCar" type="button">Spara ändringar</button>
+        </div>
+      </div>
+    `;
+
+    carModal.classList.add('open');
+    carModalOverlay.classList.add('open');
+
+    // Remove existing image buttons
+    document.querySelectorAll('#editImagePreviews .img-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const url = btn.closest('.img-preview')?.getAttribute('data-url');
+        if (url) uploadedImages = uploadedImages.filter(u => u !== url);
+        btn.closest('.img-preview')?.remove();
+        document.getElementById('editUploadProgress')!.textContent = `${uploadedImages.length} bild(er)`;
+      });
+    });
+
+    // Upload zone for edit
+    const editZone = document.getElementById('editUploadZone')!;
+    const editFileInput = document.getElementById('editFileInput') as HTMLInputElement;
+    const editPreviews = document.getElementById('editImagePreviews')!;
+    const editProgress = document.getElementById('editUploadProgress')!;
+
+    editZone.addEventListener('click', () => editFileInput.click());
+    editZone.addEventListener('dragover', (e) => { e.preventDefault(); editZone.classList.add('dragover'); });
+    editZone.addEventListener('dragleave', () => editZone.classList.remove('dragover'));
+    editZone.addEventListener('drop', (e) => {
+      e.preventDefault(); editZone.classList.remove('dragover');
+      handleEditFiles(e.dataTransfer?.files);
+    });
+    editFileInput.addEventListener('change', () => handleEditFiles(editFileInput.files));
+
+    async function handleEditFiles(files: FileList | null | undefined) {
+      if (!files?.length) return;
+      for (const file of Array.from(files)) {
+        editProgress.textContent = 'Laddar upp...';
+        const url = await uploadImage(file);
+        if (url) {
+          uploadedImages.push(url);
+          const div = document.createElement('div');
+          div.className = 'img-preview';
+          div.setAttribute('data-url', url);
+          div.innerHTML = `<img src="${url}" /><button class="img-remove" type="button">&times;</button>`;
+          div.querySelector('.img-remove')?.addEventListener('click', () => {
+            uploadedImages = uploadedImages.filter(u => u !== url);
+            div.remove();
+            editProgress.textContent = `${uploadedImages.length} bild(er)`;
+          });
+          editPreviews.appendChild(div);
+        }
+      }
+      editProgress.textContent = `${uploadedImages.length} bild(er)`;
+    }
+
+    document.getElementById('cancelEditCar')?.addEventListener('click', closeCarModal);
+    document.getElementById('deleteCar')?.addEventListener('click', async () => {
+      if (!confirm('Är du säker på att du vill ta bort denna bil?')) return;
+      const res = await fetch('/api/cars', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id: car.id }),
+      });
+      if (res.ok) { closeCarModal(); await loadCars(); }
+    });
+
+    document.getElementById('saveEditCar')?.addEventListener('click', async () => {
+      const btn = document.getElementById('saveEditCar') as HTMLButtonElement;
+      btn.disabled = true; btn.textContent = 'Sparar...';
+
+      const brand = (document.getElementById('editBrand') as HTMLInputElement).value.trim();
+      const model = (document.getElementById('editModel') as HTMLInputElement).value.trim();
+      const variant = (document.getElementById('editVariant') as HTMLInputElement).value.trim();
       const price = parseInt((document.getElementById('editPrice') as HTMLInputElement).value) || null;
-      const monthly_payment = (document.getElementById('editMonthly') as HTMLInputElement).value || null;
       const mileage = parseInt((document.getElementById('editMileage') as HTMLInputElement).value) || null;
+      const monthly_payment = (document.getElementById('editMonthly') as HTMLInputElement).value.trim() || null;
+      const description = (document.getElementById('editDesc') as HTMLTextAreaElement).value.trim() || null;
+      const equipmentText = (document.getElementById('editEquipment') as HTMLTextAreaElement).value.trim();
+      const equipment = equipmentText ? equipmentText.split('\n').map(s => s.trim()).filter(Boolean) : [];
       const is_active = (document.getElementById('editActive') as HTMLInputElement).checked;
       const is_sold = (document.getElementById('editSold') as HTMLInputElement).checked;
-      updateCar(car.id, { price, monthly_payment, mileage, is_active, is_sold });
+
+      await updateCar(car.id, { brand, model, variant, price, mileage, monthly_payment, description, equipment, is_active, is_sold, images: uploadedImages });
+      btn.disabled = false; btn.textContent = 'Spara ändringar';
     });
   }
 
@@ -764,52 +1437,42 @@ import Layout from '../components/Layout.astro';
 
     const active = allCars.filter(c => c.is_active && !c.is_sold).length;
     const sold = allCars.filter(c => c.is_sold).length;
-    const inactive = allCars.filter(c => !c.is_active).length;
+    const total = allCars.length;
 
     carStats.innerHTML = `
-      <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
-        Totalt: <strong style="color:#fff;">${allCars.length}</strong>
-      </span>
-      <span style="background:#22C55E18;border:1px solid #22C55E33;border-radius:8px;padding:6px 12px;font-size:13px;color:#22C55E;">
-        Aktiva: <strong>${active}</strong>
-      </span>
-      <span style="background:#F59E0B18;border:1px solid #F59E0B33;border-radius:8px;padding:6px 12px;font-size:13px;color:#F59E0B;">
-        Sålda: <strong>${sold}</strong>
-      </span>
-      <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--gray);">
-        Inaktiva: <strong>${inactive}</strong>
-      </span>
+      <span class="badge badge-green">Aktiva: ${active}</span>
+      <span class="badge badge-amber">Sålda: ${sold}</span>
+      <span class="badge badge-gray">Totalt: ${total}</span>
     `;
 
-    if (!filtered.length) {
-      carsList.innerHTML = '<p class="loading-text">Inga bilar hittades.</p>';
-      return;
-    }
+    if (!filtered.length) { carsList.innerHTML = '<p class="empty-text">Inga bilar hittades.</p>'; return; }
 
     carsList.innerHTML = filtered.map(c => {
-      const thumb = c.images?.[0] || '';
+      const thumb = c.images?.[0];
       const statusBadge = c.is_sold
-        ? '<span style="background:#F59E0B22;color:#F59E0B;border:1px solid #F59E0B44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">Såld</span>'
+        ? '<span class="badge badge-amber">Såld</span>'
         : c.is_active
-          ? '<span style="background:#22C55E22;color:#22C55E;border:1px solid #22C55E44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">Aktiv</span>'
-          : '<span style="background:rgba(255,255,255,0.08);color:var(--gray);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">Inaktiv</span>';
+          ? '<span class="badge badge-green">Aktiv</span>'
+          : '<span class="badge badge-gray">Inaktiv</span>';
 
       return `
-        <div class="car-admin-card" data-id="${c.id}">
-          ${thumb ? `<img class="car-admin-thumb" src="${thumb}" alt="${c.full_name}" loading="lazy" />` : '<div class="car-admin-thumb" style="display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0.2;">&#128663;</div>'}
-          <div class="car-admin-info">
-            <div class="car-admin-name">${c.full_name}</div>
-            <div class="car-admin-meta">
+        <div class="car-row" data-id="${c.id}">
+          ${thumb ? `<img class="car-thumb" src="${thumb}" alt="${c.full_name}" loading="lazy" />` : '<div class="car-thumb-empty">&#128663;</div>'}
+          <div class="car-info">
+            <div class="car-name">${c.full_name}</div>
+            <div class="car-meta">
               <span>${c.reg_no}</span>
               <span>${c.year}</span>
               <span>${formatMileage(c.mileage)}</span>
-              <span style="color:#fff;font-weight:600;">${formatPrice(c.price)}</span>
+              <span class="price">${formatPrice(c.price)}</span>
               ${statusBadge}
             </div>
           </div>
-          <div class="car-admin-actions">
-            ${!c.is_sold ? `<button class="car-action-btn sold-btn" onclick="window.__markSold('${c.id}')">Markera såld</button>` : `<button class="car-action-btn active-btn" onclick="window.__markUnsold('${c.id}')">Ångra såld</button>`}
-            <button class="car-action-btn" onclick="window.__editCar('${c.id}')">Redigera</button>
+          <div class="car-actions">
+            ${!c.is_sold
+              ? `<button class="btn btn-sm btn-outline" style="border-color:rgba(245,158,11,0.3);color:#F59E0B;" onclick="window.__markSold('${c.id}')">Markera såld</button>`
+              : `<button class="btn btn-sm btn-outline" style="border-color:rgba(34,197,94,0.3);color:#22C55E;" onclick="window.__markUnsold('${c.id}')">Ångra</button>`}
+            <button class="btn btn-sm btn-ghost" onclick="window.__editCar('${c.id}')">Redigera</button>
           </div>
         </div>
       `;
@@ -817,23 +1480,19 @@ import Layout from '../components/Layout.astro';
   }
 
   async function loadCars() {
-    carsList.innerHTML = '<p class="loading-text">Laddar bilar...</p>';
+    carsList.innerHTML = '<p class="empty-text">Laddar bilar...</p>';
     try {
       const res = await fetch('/api/cars');
       allCars = await res.json();
       renderCars();
-    } catch {
-      carsList.innerHTML = '<p class="loading-text" style="color:var(--red);">Kunde inte ladda bilar.</p>';
-    }
+      updateDashboard();
+    } catch { carsList.innerHTML = '<p class="empty-text" style="color:#EF4444;">Kunde inte ladda bilar.</p>'; }
   }
 
   carFilter.addEventListener('change', renderCars);
   document.getElementById('refreshCarsBtn')?.addEventListener('click', loadCars);
 
-  (window as any).__editCar = (id: string) => {
-    const car = allCars.find(c => c.id === id);
-    if (car) openEditModal(car);
-  };
+  (window as any).__editCar = (id: string) => { const car = allCars.find(c => c.id === id); if (car) openEditModal(car); };
   (window as any).__markSold = (id: string) => updateCar(id, { is_sold: true });
   (window as any).__markUnsold = (id: string) => updateCar(id, { is_sold: false });
 
@@ -842,83 +1501,59 @@ import Layout from '../components/Layout.astro';
   const refreshBtn = document.getElementById('refreshBtn') as HTMLButtonElement;
   const submissionsList = document.getElementById('submissionsList') as HTMLDivElement;
   const statsEl = document.getElementById('stats') as HTMLDivElement;
+  let allSubmissions: any[] = [];
 
   const sourceLabels: Record<string, string> = {
-    'kontakt': 'Kontaktsidan',
-    'kontakt-footer': 'Kontakt (footer)',
-    'vardering': 'Värdering',
-    'salj-bil-footer': 'Sälj bil (footer)',
-    'bevakning': 'Bevakning',
-    'newsletter': 'Newsletter',
-    'newsletter-footer': 'Newsletter (footer)',
+    'kontakt': 'Kontakt', 'kontakt-footer': 'Footer', 'vardering': 'Värdering',
+    'salj-bil-footer': 'Sälj bil', 'bevakning': 'Bevakning', 'newsletter': 'Newsletter', 'newsletter-footer': 'NL (footer)',
   };
   const sourceColors: Record<string, string> = {
-    'kontakt': '#E62E2D',
-    'kontakt-footer': '#C72625',
-    'vardering': '#F59E0B',
-    'salj-bil-footer': '#EF4444',
-    'bevakning': '#10B981',
-    'newsletter': '#E62E2D',
-    'newsletter-footer': '#C72625',
+    'kontakt': '#E62E2D', 'kontakt-footer': '#C72625', 'vardering': '#F59E0B',
+    'salj-bil-footer': '#EF4444', 'bevakning': '#10B981', 'newsletter': '#3B82F6', 'newsletter-footer': '#6366F1',
   };
 
   function getSourceBadge(source: string | null) {
     const label = source ? (sourceLabels[source] || source) : 'okänd';
     const color = source ? (sourceColors[source] || '#6B7280') : '#6B7280';
-    return `<span style="display:inline-block;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">${label}</span>`;
+    return `<span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}33;">${label}</span>`;
   }
 
   async function loadSubmissions() {
-    submissionsList.innerHTML = '<p class="loading-text">Laddar...</p>';
+    submissionsList.innerHTML = '<p class="empty-text">Laddar...</p>';
     const source = sourceFilter.value;
     try {
       const res = await fetch(`/api/submissions?source=${source}&limit=50`);
-      const data = await res.json();
-
-      if (!data.length) {
-        submissionsList.innerHTML = '<p class="loading-text">Inga inlämningar hittades.</p>';
-        statsEl.innerHTML = '';
-        return;
-      }
+      allSubmissions = await res.json();
+      if (!allSubmissions.length) { submissionsList.innerHTML = '<p class="empty-text">Inga inlämningar.</p>'; statsEl.innerHTML = ''; return; }
 
       const sourceCounts: Record<string, number> = {};
-      data.forEach((s: any) => {
-        const src = s.source || 'okänd';
-        sourceCounts[src] = (sourceCounts[src] || 0) + 1;
-      });
+      allSubmissions.forEach((s: any) => { const src = s.source || 'okänd'; sourceCounts[src] = (sourceCounts[src] || 0) + 1; });
 
       statsEl.innerHTML = `
-        <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--gray);">
-          Totalt: <strong style="color:#fff;">${data.length}</strong>
-        </span>
-        ${Object.entries(sourceCounts).map(([src, count]) => `
-          <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
-            ${getSourceBadge(src)} <strong style="color:#fff;">${count}</strong>
-          </span>
-        `).join('')}
+        <span class="badge badge-gray">Totalt: ${allSubmissions.length}</span>
+        ${Object.entries(sourceCounts).map(([src, count]) => `${getSourceBadge(src)} <span style="font-size:12px;color:rgba(255,255,255,0.4);margin-right:4px;">${count}</span>`).join('')}
       `;
 
-      submissionsList.innerHTML = data.map((s: any) => `
-        <div style="background:var(--bg-dark-4);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      submissionsList.innerHTML = allSubmissions.map((s: any) => `
+        <div class="submission-card">
+          <div class="submission-top">
+            <div class="submission-badges">
               ${getSourceBadge(s.source)}
-              ${s.car_name ? `<span style="display:inline-block;background:var(--red);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">${s.car_name}</span>` : ''}
-              ${s.sent_successfully ? '<span style="color:#22C55E;font-size:12px;">mejlat</span>' : '<span style="color:#EF4444;font-size:12px;">ej mejlat</span>'}
+              ${s.car_name ? `<span class="badge badge-red">${s.car_name}</span>` : ''}
+              ${s.sent_successfully ? '<span class="badge badge-green">Mejlat</span>' : '<span class="badge badge-gray">Ej mejlat</span>'}
             </div>
-            <span style="color:var(--gray);font-size:12px;">${formatDate(s.created_at)}</span>
+            <span class="submission-date">${formatDate(s.created_at)}</span>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:14px;margin-bottom:8px;">
+          <div class="submission-fields">
             ${s.name && s.name !== 'Okänd' ? `<span><strong>Namn:</strong> ${s.name}</span>` : ''}
             ${s.email ? `<span><strong>E-post:</strong> ${s.email}</span>` : ''}
             ${s.phone ? `<span><strong>Tel:</strong> ${s.phone}</span>` : ''}
           </div>
-          <p style="font-size:13px;color:var(--gray);white-space:pre-line;margin:0;">${s.message}</p>
+          <p class="submission-msg">${s.message}</p>
         </div>
       `).join('');
-    } catch {
-      submissionsList.innerHTML = '<p class="loading-text" style="color:var(--red);">Kunde inte ladda inlämningar.</p>';
-    }
+      updateDashboard();
+    } catch { submissionsList.innerHTML = '<p class="empty-text" style="color:#EF4444;">Kunde inte ladda.</p>'; }
   }
 
   sourceFilter.addEventListener('change', loadSubmissions);
@@ -936,23 +1571,6 @@ import Layout from '../components/Layout.astro';
 
   let allSubscribers: any[] = [];
 
-  const nlSourceLabels: Record<string, string> = {
-    'hemsida': 'Hemsida',
-    'footer': 'Footer',
-    'manual': 'Manuell',
-  };
-  const nlSourceColors: Record<string, string> = {
-    'hemsida': '#E62E2D',
-    'footer': '#C72625',
-    'manual': '#EF4444',
-  };
-
-  function getNlSourceBadge(source: string | null) {
-    const label = source ? (nlSourceLabels[source] || source) : 'okänd';
-    const color = source ? (nlSourceColors[source] || '#6B7280') : '#6B7280';
-    return `<span style="display:inline-block;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">${label}</span>`;
-  }
-
   function renderSubscribers() {
     const filter = nlFilter.value;
     let filtered = allSubscribers;
@@ -962,69 +1580,39 @@ import Layout from '../components/Layout.astro';
     const active = allSubscribers.filter(s => s.is_active).length;
     const inactive = allSubscribers.filter(s => !s.is_active).length;
 
-    const sourceCounts: Record<string, number> = {};
-    allSubscribers.filter(s => s.is_active).forEach(s => {
-      const src = s.source || 'okänd';
-      sourceCounts[src] = (sourceCounts[src] || 0) + 1;
-    });
-
     nlStats.innerHTML = `
-      <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
-        Totalt: <strong style="color:#fff;">${allSubscribers.length}</strong>
-      </span>
-      <span style="background:#22C55E18;border:1px solid #22C55E33;border-radius:8px;padding:6px 12px;font-size:13px;color:#22C55E;">
-        Aktiva: <strong>${active}</strong>
-      </span>
-      <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--gray);">
-        Avregistrerade: <strong>${inactive}</strong>
-      </span>
-      ${Object.entries(sourceCounts).map(([src, count]) => `
-        <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
-          ${getNlSourceBadge(src)} <strong style="color:#fff;">${count}</strong>
-        </span>
-      `).join('')}
+      <span class="badge badge-gray">Totalt: ${allSubscribers.length}</span>
+      <span class="badge badge-green">Aktiva: ${active}</span>
+      ${inactive > 0 ? `<span class="badge badge-gray">Avregistrerade: ${inactive}</span>` : ''}
     `;
 
-    if (!filtered.length) {
-      nlList.innerHTML = '<p class="loading-text">Inga prenumeranter hittades.</p>';
-      return;
-    }
+    if (!filtered.length) { nlList.innerHTML = '<p class="empty-text">Inga prenumeranter.</p>'; return; }
 
     nlList.innerHTML = filtered.map(s => `
-      <div style="background:var(--bg-dark-4);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-            <span style="font-weight:600;font-size:14px;">${s.email}</span>
-            ${getNlSourceBadge(s.source)}
-            ${s.is_active
-              ? '<span style="color:#22C55E;font-size:12px;">aktiv</span>'
-              : '<span style="color:var(--gray);font-size:12px;">avregistrerad</span>'}
+      <div class="nl-row">
+        <div class="nl-info">
+          <div class="nl-badges">
+            <span class="nl-email">${s.email}</span>
+            ${s.is_active ? '<span class="badge badge-green">Aktiv</span>' : '<span class="badge badge-gray">Avregistrerad</span>'}
           </div>
-          <div style="font-size:12px;color:var(--gray);">
-            ${s.name ? `${s.name} — ` : ''}${formatDate(s.created_at)}
-          </div>
+          <div class="nl-detail">${s.name ? `${s.name} — ` : ''}${formatDate(s.created_at)}${s.source ? ` — ${s.source}` : ''}</div>
         </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;">
-          <button class="car-action-btn" onclick="window.__toggleNl('${s.id}', ${!s.is_active})" style="font-size:12px;padding:4px 10px;">
-            ${s.is_active ? 'Avregistrera' : 'Aktivera'}
-          </button>
-          <button class="car-action-btn" onclick="window.__deleteNl('${s.id}')" style="font-size:12px;padding:4px 10px;border-color:#EF444444;color:#EF4444;">
-            Ta bort
-          </button>
+        <div class="nl-actions">
+          <button class="btn btn-sm btn-ghost" onclick="window.__toggleNl('${s.id}', ${!s.is_active})">${s.is_active ? 'Avregistrera' : 'Aktivera'}</button>
+          <button class="btn btn-sm btn-danger" onclick="window.__deleteNl('${s.id}')">Ta bort</button>
         </div>
       </div>
     `).join('');
   }
 
   async function loadSubscribers() {
-    nlList.innerHTML = '<p class="loading-text">Laddar...</p>';
+    nlList.innerHTML = '<p class="empty-text">Laddar...</p>';
     try {
       const res = await fetch('/api/newsletter');
       allSubscribers = await res.json();
       renderSubscribers();
-    } catch {
-      nlList.innerHTML = '<p class="loading-text" style="color:var(--red);">Kunde inte ladda prenumeranter.</p>';
-    }
+      updateDashboard();
+    } catch { nlList.innerHTML = '<p class="empty-text" style="color:#EF4444;">Kunde inte ladda.</p>'; }
   }
 
   nlFilter.addEventListener('change', renderSubscribers);
@@ -1032,69 +1620,212 @@ import Layout from '../components/Layout.astro';
 
   nlAddBtn.addEventListener('click', async () => {
     const email = nlAddEmail.value.trim();
-    if (!email) { nlAddMsg.textContent = 'Ange e-postadress.'; nlAddMsg.style.color = 'var(--red)'; return; }
-    nlAddBtn.disabled = true;
-    nlAddBtn.textContent = 'Lägger till...';
+    if (!email) { nlAddMsg.textContent = 'Ange e-postadress.'; nlAddMsg.style.color = '#EF4444'; return; }
+    nlAddBtn.disabled = true; nlAddBtn.textContent = 'Lägger till...';
     try {
       const res = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'add', email, name: nlAddName.value.trim() || null }),
       });
       if (res.ok) {
-        nlAddMsg.textContent = 'Tillagd!';
-        nlAddMsg.style.color = '#22C55E';
-        nlAddEmail.value = '';
-        nlAddName.value = '';
+        nlAddMsg.textContent = 'Tillagd!'; nlAddMsg.style.color = '#22C55E';
+        nlAddEmail.value = ''; nlAddName.value = '';
         await loadSubscribers();
-      } else {
-        const data = await res.json();
-        nlAddMsg.textContent = data.error || 'Fel vid tillägg.';
-        nlAddMsg.style.color = 'var(--red)';
-      }
-    } catch {
-      nlAddMsg.textContent = 'Nätverksfel.';
-      nlAddMsg.style.color = 'var(--red)';
-    }
-    nlAddBtn.disabled = false;
-    nlAddBtn.textContent = 'Lägg till';
+      } else { const d = await res.json(); nlAddMsg.textContent = d.error || 'Fel.'; nlAddMsg.style.color = '#EF4444'; }
+    } catch { nlAddMsg.textContent = 'Nätverksfel.'; nlAddMsg.style.color = '#EF4444'; }
+    nlAddBtn.disabled = false; nlAddBtn.textContent = 'Lägg till';
   });
 
   (window as any).__toggleNl = async (id: string, is_active: boolean) => {
-    await fetch('/api/newsletter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'toggle', id, is_active }),
-    });
+    await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'toggle', id, is_active }) });
     await loadSubscribers();
   };
-
   (window as any).__deleteNl = async (id: string) => {
-    await fetch('/api/newsletter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', id }),
-    });
+    if (!confirm('Ta bort prenumerant?')) return;
+    await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id }) });
     await loadSubscribers();
   };
 
   nlExportBtn.addEventListener('click', () => {
     const active = allSubscribers.filter(s => s.is_active);
-    const csv = 'E-post,Namn,Källa,Registrerad\n' + active.map(s =>
-      `${s.email},${s.name || ''},${s.source || ''},${s.created_at}`
-    ).join('\n');
+    const csv = 'E-post,Namn,Källa,Registrerad\n' + active.map(s => `${s.email},${s.name || ''},${s.source || ''},${s.created_at}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `prenumeranter_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
+    const a = document.createElement('a'); a.href = url; a.download = `prenumeranter_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     URL.revokeObjectURL(url);
   });
 
+  // === NEWSLETTER SEND ===
+  const nlSubject = document.getElementById('nlSubject') as HTMLInputElement;
+  const nlContent = document.getElementById('nlContent') as HTMLTextAreaElement;
+  const nlPreview = document.getElementById('nlPreview') as HTMLDivElement;
+  const nlSendMsg = document.getElementById('nlSendMsg') as HTMLParagraphElement;
+  const nlTestBtn = document.getElementById('nlTestBtn') as HTMLButtonElement;
+  const nlSendBtn = document.getElementById('nlSendBtn') as HTMLButtonElement;
+  const nlTestEmail = document.getElementById('nlTestEmail') as HTMLInputElement;
+
+  // Live preview
+  nlContent.addEventListener('input', () => {
+    const html = nlContent.value;
+    if (html.trim()) {
+      nlPreview.innerHTML = html;
+    } else {
+      nlPreview.innerHTML = '<p class="empty-text">Skriv innehåll ovan för att se förhandsvisning</p>';
+    }
+  });
+
+  // Templates
+  document.getElementById('tplNewCars')?.addEventListener('click', () => {
+    nlSubject.value = 'Nya bilar i lager hos Begbilnorr!';
+    nlContent.value = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+  <div style="text-align:center;padding:20px 0;">
+    <h1 style="color:#1a1a1a;font-size:24px;margin-bottom:8px;">Nya bilar i lager!</h1>
+    <p style="color:#666;font-size:16px;">Vi har precis fått in nya kvalitetsbilar.</p>
+  </div>
+  <div style="background:#f8f8f8;border-radius:8px;padding:20px;margin-bottom:20px;">
+    <p style="color:#333;font-size:14px;line-height:1.7;">Hej!</p>
+    <p style="color:#333;font-size:14px;line-height:1.7;">Vi vill meddela att vi har fått in nya bilar i vårt lager. Besök vår hemsida för att se hela utbudet.</p>
+    <p style="text-align:center;margin:24px 0;">
+      <a href="https://begbilnorr.se/bilar" style="background:#E62E2D;color:#fff;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Se alla bilar</a>
+    </p>
+  </div>
+  <p style="color:#999;font-size:12px;text-align:center;">Begbilnorr — Luleås tryggaste bilhandlare sedan 2010</p>
+</div>`;
+    nlContent.dispatchEvent(new Event('input'));
+  });
+
+  document.getElementById('tplOffer')?.addEventListener('click', () => {
+    nlSubject.value = 'Specialerbjudande från Begbilnorr';
+    nlContent.value = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+  <div style="text-align:center;padding:20px 0;">
+    <h1 style="color:#E62E2D;font-size:28px;margin-bottom:8px;">Specialerbjudande!</h1>
+    <p style="color:#666;font-size:16px;">Missa inte våra fantastiska erbjudanden</p>
+  </div>
+  <div style="background:#f8f8f8;border-radius:8px;padding:20px;margin-bottom:20px;">
+    <p style="color:#333;font-size:14px;line-height:1.7;">Hej!</p>
+    <p style="color:#333;font-size:14px;line-height:1.7;">Just nu har vi ett specialerbjudande som du inte vill missa. Kontakta oss för mer information!</p>
+    <p style="text-align:center;margin:24px 0;">
+      <a href="https://begbilnorr.se/kontakt" style="background:#E62E2D;color:#fff;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Kontakta oss</a>
+    </p>
+  </div>
+  <p style="color:#999;font-size:12px;text-align:center;">Begbilnorr — Luleås tryggaste bilhandlare sedan 2010</p>
+</div>`;
+    nlContent.dispatchEvent(new Event('input'));
+  });
+
+  document.getElementById('tplGeneral')?.addEventListener('click', () => {
+    nlSubject.value = 'Nyheter från Begbilnorr';
+    nlContent.value = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+  <div style="text-align:center;padding:20px 0;">
+    <h1 style="color:#1a1a1a;font-size:24px;margin-bottom:8px;">Nyheter från Begbilnorr</h1>
+  </div>
+  <div style="background:#f8f8f8;border-radius:8px;padding:20px;margin-bottom:20px;">
+    <p style="color:#333;font-size:14px;line-height:1.7;">Hej!</p>
+    <p style="color:#333;font-size:14px;line-height:1.7;">Skriv ditt meddelande här...</p>
+    <p style="text-align:center;margin:24px 0;">
+      <a href="https://begbilnorr.se" style="background:#E62E2D;color:#fff;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Besök hemsidan</a>
+    </p>
+  </div>
+  <p style="color:#999;font-size:12px;text-align:center;">Begbilnorr — Luleås tryggaste bilhandlare sedan 2010</p>
+</div>`;
+    nlContent.dispatchEvent(new Event('input'));
+  });
+
+  // Send test
+  nlTestBtn.addEventListener('click', async () => {
+    const email = nlTestEmail.value.trim();
+    if (!email) { nlSendMsg.textContent = 'Ange test-epost.'; nlSendMsg.style.color = '#EF4444'; return; }
+    if (!nlSubject.value || !nlContent.value) { nlSendMsg.textContent = 'Fyll i ämne och innehåll.'; nlSendMsg.style.color = '#EF4444'; return; }
+    nlTestBtn.disabled = true; nlTestBtn.textContent = 'Skickar...';
+    try {
+      const res = await fetch('/api/newsletter-send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: nlSubject.value, html: nlContent.value, testEmail: email }),
+      });
+      if (res.ok) { nlSendMsg.textContent = `Test skickat till ${email}!`; nlSendMsg.style.color = '#22C55E'; }
+      else { const d = await res.json(); nlSendMsg.textContent = d.error || 'Fel.'; nlSendMsg.style.color = '#EF4444'; }
+    } catch { nlSendMsg.textContent = 'Nätverksfel.'; nlSendMsg.style.color = '#EF4444'; }
+    nlTestBtn.disabled = false; nlTestBtn.textContent = 'Skicka test';
+  });
+
+  // Send to all
+  nlSendBtn.addEventListener('click', async () => {
+    if (!nlSubject.value || !nlContent.value) { nlSendMsg.textContent = 'Fyll i ämne och innehåll.'; nlSendMsg.style.color = '#EF4444'; return; }
+    const activeCount = allSubscribers.filter(s => s.is_active).length;
+    if (!confirm(`Skicka nyhetsbrev till ${activeCount} prenumerant(er)?`)) return;
+    nlSendBtn.disabled = true; nlSendBtn.textContent = 'Skickar...';
+    try {
+      const res = await fetch('/api/newsletter-send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: nlSubject.value, html: nlContent.value }),
+      });
+      const d = await res.json();
+      if (res.ok) { nlSendMsg.textContent = `Skickat till ${d.sent} prenumerant(er)!${d.failed ? ` (${d.failed} misslyckades)` : ''}`; nlSendMsg.style.color = '#22C55E'; }
+      else { nlSendMsg.textContent = d.error || 'Fel.'; nlSendMsg.style.color = '#EF4444'; }
+    } catch { nlSendMsg.textContent = 'Nätverksfel.'; nlSendMsg.style.color = '#EF4444'; }
+    nlSendBtn.disabled = false;
+    nlSendBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> Skicka till alla prenumeranter';
+  });
+
+  // === DASHBOARD ===
+  function updateDashboard() {
+    const activeCars = allCars.filter(c => c.is_active && !c.is_sold).length;
+    const soldCars = allCars.filter(c => c.is_sold).length;
+    const subs = allSubscribers.filter(s => s.is_active).length;
+    const submissions = allSubmissions.length;
+
+    document.getElementById('statActiveCars')!.textContent = String(activeCars);
+    document.getElementById('statSoldCars')!.textContent = String(soldCars);
+    document.getElementById('statSubscribers')!.textContent = String(subs);
+    document.getElementById('statSubmissions')!.textContent = String(submissions);
+
+    // Recent submissions
+    const recentSubs = document.getElementById('dashRecentSubmissions')!;
+    const latest = allSubmissions.slice(0, 5);
+    if (latest.length) {
+      recentSubs.innerHTML = latest.map(s => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div>
+            <span style="font-size:13px;font-weight:500;">${s.name || 'Okänd'}</span>
+            ${getSourceBadge(s.source)}
+          </div>
+          <span style="font-size:12px;color:rgba(255,255,255,0.3);">${formatDate(s.created_at)}</span>
+        </div>
+      `).join('');
+    } else {
+      recentSubs.innerHTML = '<p class="empty-text">Inga inlämningar ännu.</p>';
+    }
+
+    // Recent cars
+    const recentCarsEl = document.getElementById('dashRecentCars')!;
+    const latestCars = allCars.slice(0, 5);
+    if (latestCars.length) {
+      recentCarsEl.innerHTML = latestCars.map(c => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          ${c.images?.[0] ? `<img src="${c.images[0]}" style="width:48px;height:32px;border-radius:4px;object-fit:cover;" />` : ''}
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.full_name}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.3);">${formatPrice(c.price)}</div>
+          </div>
+          ${c.is_sold ? '<span class="badge badge-amber">Såld</span>' : '<span class="badge badge-green">Aktiv</span>'}
+        </div>
+      `).join('');
+    } else {
+      recentCarsEl.innerHTML = '<p class="empty-text">Inga bilar ännu.</p>';
+    }
+  }
+
   // === INIT ===
-  loadAnnouncement();
-  loadCars();
-  loadSubmissions();
-  loadSubscribers();
+  function initAdmin() {
+    loadAnnouncement();
+    loadCars();
+    loadSubmissions();
+    loadSubscribers();
+  }
+
+  // Run init if already logged in
+  if (sessionStorage.getItem(SESSION_KEY) === AUTH_HASH) {
+    initAdmin();
+  }
 </script>
+</Layout>
