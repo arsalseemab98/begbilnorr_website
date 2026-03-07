@@ -129,8 +129,13 @@ const faqSchema = {
       <div class="section-label fade-up">VÅRT LAGER</div>
       <h2 class="section-heading fade-up">Senast inkomna bilar</h2>
 
+      <!-- Desktop: show all 6, Mobile: show 3 -->
       <div class="car-grid">
-        {latestCars.map((car) => <CarCard car={car} />)}
+        {latestCars.map((car, i) => (
+          <div class:list={['car-grid-item', { 'mobile-hidden': i >= 3 }]}>
+            <CarCard car={car} />
+          </div>
+        ))}
       </div>
 
       <div class="cars-section-footer fade-up">
@@ -186,7 +191,7 @@ const faqSchema = {
     </div>
   </section>
 
-  <!-- OM BEGBILNORR -->
+  <!-- OM BEGBILNORR — hidden on mobile, too much scroll -->
   <section class="about-cta-section">
     <div class="container">
       <div class="about-cta-grid">
@@ -229,7 +234,7 @@ const faqSchema = {
     </div>
   </section>
 
-  <!-- FAQ SECTION -->
+  <!-- FAQ SECTION — show only 3 on mobile -->
   <section class="faq-section">
     <div class="container">
       <div class="section-label fade-up" style="text-align:center;">VANLIGA FRÅGOR</div>
@@ -247,11 +252,11 @@ const faqSchema = {
           <summary>Erbjuder ni hemleverans av bilar?</summary>
           <div class="faq-answer">Ja, vi levererar bilar till hela Sverige. Oavsett var du bor kan du köpa din bil på distans och få den levererad hem till dörren.</div>
         </details>
-        <details class="faq-item fade-up">
+        <details class="faq-item fade-up faq-extra">
           <summary>Kan jag byta in min nuvarande bil?</summary>
           <div class="faq-answer">Självklart! Vi erbjuder kostnadsfri värdering och inbyte av din nuvarande bil. Kontakta oss för en snabb och rättvis värdering.</div>
         </details>
-        <details class="faq-item fade-up">
+        <details class="faq-item fade-up faq-extra">
           <summary>Var ligger Begbilnorr?</summary>
           <div class="faq-answer">Vi finns i Luleå, Norrbotten. Vi betjänar kunder i hela Norrbottens län inklusive Boden, Piteå, Kalix och Älvsbyn. Välkommen att besöka oss eller ring 0920-999 86.</div>
         </details>
@@ -263,9 +268,9 @@ const faqSchema = {
   <section class="newsletter-section">
     <div class="container">
       <div class="newsletter-inner fade-up">
-        <div class="section-label" style="text-align:center;">HÅLL DIG UPPDATERAD</div>
+        <div class="section-label mobile-hidden" style="text-align:center;">HÅLL DIG UPPDATERAD</div>
         <h2>Missa inte din drömbil</h2>
-        <p>Vi lägger upp nya bilar varje vecka. Prenumerera för att vara först med att få veta när nya bilar kommer in.</p>
+        <p class="mobile-hidden">Vi lägger upp nya bilar varje vecka. Prenumerera för att vara först med att få veta när nya bilar kommer in.</p>
         <form class="newsletter-form" id="newsletterForm">
           <input type="email" placeholder="Din e-postadress" required />
           <button type="submit">Prenumerera</button>
@@ -571,7 +576,15 @@ const faqSchema = {
 
   @media (max-width: 768px) {
     .faq-section {
-      padding: 64px 0;
+      padding: 48px 0;
+    }
+
+    .faq-section .section-heading {
+      margin-bottom: 24px !important;
+    }
+
+    .faq-extra {
+      display: none;
     }
   }
 
@@ -667,37 +680,64 @@ const faqSchema = {
   }
 
   @media (max-width: 768px) {
+    .mobile-hidden {
+      display: none !important;
+    }
+
     .cars-section {
-      padding: 64px 0 56px;
+      padding: 40px 0 32px;
     }
 
     .why-section {
-      padding: 64px 0;
+      padding: 40px 0;
+    }
+
+    .why-subtitle {
+      font-size: 14px;
+      margin-bottom: 24px;
     }
 
     .why-grid {
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 10px;
     }
 
     .why-card {
-      padding: 28px 16px;
+      padding: 16px 12px;
     }
 
-    .about-cta-content {
-      padding: 48px 0;
+    .why-card-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 10px;
     }
 
-    .about-cta-content h2 {
-      font-size: 30px;
+    .why-card-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .why-card h3 {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .why-card p {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .about-cta-section {
+      display: none;
     }
 
     .newsletter-section {
-      padding: 56px 0;
+      padding: 32px 0;
     }
 
     .newsletter-inner h2 {
-      font-size: 26px;
+      font-size: 22px;
+      margin-bottom: 16px;
     }
 
     .newsletter-form {
@@ -707,21 +747,29 @@ const faqSchema = {
 
     .newsletter-form input {
       border-right: 1px solid rgba(255,255,255,0.1);
-      border-radius: 2px;
+      border-radius: 8px;
+      font-size: 16px;
     }
 
     .newsletter-form button {
-      border-radius: 2px;
+      border-radius: 8px;
+      min-height: 48px;
+    }
+
+    .see-all-btn {
+      padding: 12px 28px;
+      font-size: 13px;
     }
   }
 
   @media (max-width: 480px) {
     .why-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
     .why-card {
-      padding: 24px 20px;
+      padding: 14px 10px;
     }
   }
 </style>

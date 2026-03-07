@@ -3055,8 +3055,9 @@ body.menu-open {
 
     /* --- Hero: mobile optimized --- */
     .hero {
-        height: 70vh;
-        min-height: 400px;
+        height: 50vh;
+        min-height: 320px;
+        max-height: 440px;
     }
 
     .hero-shader-bg {
@@ -3093,7 +3094,7 @@ body.menu-open {
     .why-section,
     .about-cta-section,
     .newsletter-section {
-        padding: 48px 0;
+        padding: 32px 0;
     }
 
     .section-label {
@@ -3102,21 +3103,21 @@ body.menu-open {
     }
 
     .section-heading {
-        font-size: 24px;
-        margin-bottom: 32px;
+        font-size: 22px;
+        margin-bottom: 20px;
     }
 
     /* --- Page Hero --- */
     .page-hero {
-        padding: 40px 0 32px;
+        padding: 32px 0 24px;
     }
 
     .page-hero h1 {
-        font-size: 28px;
+        font-size: 26px;
     }
 
     .page-hero p {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     /* --- Car Grid: full-width single column --- */
@@ -3142,44 +3143,44 @@ body.menu-open {
     }
 
     .car-card-image {
-        height: 220px;
+        height: 180px;
         border-radius: 12px 12px 0 0;
     }
 
     .car-card-image img {
-        aspect-ratio: 16/10;
+        aspect-ratio: 16/9;
     }
 
     .car-card-body {
-        padding: 16px;
+        padding: 12px 14px;
     }
 
     .car-card-body .car-name {
-        font-size: 18px;
-        margin-bottom: 10px;
+        font-size: 16px;
+        margin-bottom: 6px;
     }
 
     .car-card-body .car-specs {
         font-size: 10px;
         letter-spacing: 1px;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
 
     .car-card-body .car-location {
-        font-size: 12px;
-        margin-bottom: 10px;
+        font-size: 11px;
+        margin-bottom: 8px;
     }
 
     .car-card-footer .car-price {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 800;
         color: var(--red);
     }
 
     .car-card-footer .car-monthly {
-        font-size: 12px;
+        font-size: 11px;
         color: rgba(255,255,255,0.35);
-        margin-top: 2px;
+        margin-top: 1px;
     }
 
     /* Card actions: touch-friendly */
@@ -3636,13 +3637,14 @@ body.menu-open {
 
     /* Hero */
     .hero {
-        height: 65vh;
-        min-height: 360px;
+        height: 45vh;
+        min-height: 300px;
+        max-height: 400px;
     }
 
     .hero h1,
     .hero .hero-title {
-        font-size: 26px !important;
+        font-size: 24px !important;
     }
 
     /* Section headings */
