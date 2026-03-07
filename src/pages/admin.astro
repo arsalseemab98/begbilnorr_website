@@ -854,7 +854,7 @@ export const prerender = false;
   .upload-zone {
     border: 2px dashed rgba(255,255,255,0.1);
     border-radius: 10px;
-    padding: 24px;
+    padding: 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.15s;
@@ -862,42 +862,82 @@ export const prerender = false;
   }
   .upload-zone:hover { border-color: var(--red); background: rgba(230,46,45,0.04); }
   .upload-zone.dragover { border-color: var(--red); background: rgba(230,46,45,0.08); }
-  .upload-icon { color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+  .upload-zone.uploading { pointer-events: none; opacity: 0.6; }
+  .upload-icon { color: rgba(255,255,255,0.3); margin-bottom: 6px; }
   .upload-text { font-size: 13px; color: rgba(255,255,255,0.4); }
   .upload-text strong { color: var(--red); }
   .image-previews {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 8px;
     margin-top: 12px;
   }
   .img-preview {
     position: relative;
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
     aspect-ratio: 4/3;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+    cursor: grab;
   }
-  .img-preview img { width: 100%; height: 100%; object-fit: cover; }
-  .img-remove {
+  .img-preview:active { cursor: grabbing; }
+  .img-preview.dragging { opacity: 0.4; border-color: var(--red); }
+  .img-preview.drag-over { border-color: var(--red); transform: scale(1.05); }
+  .img-preview.uploading-img::after {
+    content: '';
     position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 20px;
-    height: 20px;
-    background: rgba(0,0,0,0.7);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    font-size: 12px;
-    cursor: pointer;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
   }
+  .img-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .img-number {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .img-cover { background: var(--red); }
+  .img-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .img-remove:hover { background: #EF4444; }
   .upload-progress {
-    margin-top: 12px;
+    margin-top: 10px;
     font-size: 12px;
     color: rgba(255,255,255,0.4);
+  }
+  .upload-progress.error { color: #EF4444; }
+  .sort-hint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 6px;
   }
 
   /* ========== TAB CONTENT ========== */
@@ -1125,16 +1165,133 @@ export const prerender = false;
     if (res.ok) { await loadCars(); closeCarModal(); }
   }
 
-  // Upload image via server-side API
-  async function uploadImage(file: File): Promise<string | null> {
+  // Upload multiple images in parallel via server-side API
+  async function uploadImages(files: File[]): Promise<string[]> {
     const formData = new FormData();
-    formData.append('file', file);
+    files.forEach(f => formData.append('files', f));
     try {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      if (!res.ok) return null;
+      if (!res.ok) return [];
       const data = await res.json();
-      return data.url || null;
-    } catch { return null; }
+      return data.urls || [];
+    } catch { return []; }
+  }
+
+  // Render image previews with drag-to-sort and numbering
+  function renderImagePreviews(container: HTMLElement, progressEl: HTMLElement) {
+    container.innerHTML = '';
+    uploadedImages.forEach((url, i) => {
+      const div = document.createElement('div');
+      div.className = 'img-preview';
+      div.setAttribute('data-url', url);
+      div.setAttribute('draggable', 'true');
+      div.innerHTML = `
+        <img src="${url}" loading="lazy" />
+        <span class="img-number ${i === 0 ? 'img-cover' : ''}">${i + 1}</span>
+        <button class="img-remove" type="button">&times;</button>
+      `;
+      // Remove
+      div.querySelector('.img-remove')!.addEventListener('click', (e) => {
+        e.stopPropagation();
+        uploadedImages = uploadedImages.filter(u => u !== url);
+        renderImagePreviews(container, progressEl);
+      });
+      // Drag sort
+      div.addEventListener('dragstart', (e) => {
+        div.classList.add('dragging');
+        e.dataTransfer!.effectAllowed = 'move';
+        e.dataTransfer!.setData('text/plain', String(i));
+      });
+      div.addEventListener('dragend', () => div.classList.remove('dragging'));
+      div.addEventListener('dragover', (e) => { e.preventDefault(); div.classList.add('drag-over'); });
+      div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
+      div.addEventListener('drop', (e) => {
+        e.preventDefault();
+        div.classList.remove('drag-over');
+        const fromIdx = parseInt(e.dataTransfer!.getData('text/plain'));
+        const toIdx = i;
+        if (fromIdx !== toIdx) {
+          const item = uploadedImages.splice(fromIdx, 1)[0];
+          uploadedImages.splice(toIdx, 0, item);
+          renderImagePreviews(container, progressEl);
+        }
+      });
+      container.appendChild(div);
+    });
+    progressEl.textContent = uploadedImages.length
+      ? `${uploadedImages.length} bild(er) — bild 1 = omslagsbild`
+      : '';
+  }
+
+  // Handle file selection: show instant local preview, upload in background
+  async function handleFileUpload(files: FileList | null | undefined, container: HTMLElement, progressEl: HTMLElement, zone?: HTMLElement) {
+    if (!files?.length) return;
+    const fileArr = Array.from(files);
+
+    // Instant local previews
+    const localUrls: string[] = [];
+    fileArr.forEach(f => {
+      const localUrl = URL.createObjectURL(f);
+      localUrls.push(localUrl);
+      uploadedImages.push(localUrl);
+    });
+    renderImagePreviews(container, progressEl);
+
+    // Upload in parallel
+    if (zone) zone.classList.add('uploading');
+    progressEl.textContent = `Laddar upp ${fileArr.length} bild(er)...`;
+
+    const serverUrls = await uploadImages(fileArr);
+
+    // Replace local URLs with server URLs
+    serverUrls.forEach((serverUrl, idx) => {
+      const localUrl = localUrls[idx];
+      if (localUrl) {
+        const localIdx = uploadedImages.indexOf(localUrl);
+        if (localIdx >= 0) {
+          uploadedImages[localIdx] = serverUrl;
+        }
+        URL.revokeObjectURL(localUrl);
+      }
+    });
+
+    // Remove local URLs that failed upload
+    const failCount = fileArr.length - serverUrls.length;
+    if (failCount > 0) {
+      localUrls.slice(serverUrls.length).forEach(localUrl => {
+        uploadedImages = uploadedImages.filter(u => u !== localUrl);
+        URL.revokeObjectURL(localUrl);
+      });
+      progressEl.textContent = `${uploadedImages.length} bild(er) — ${failCount} misslyckades`;
+      progressEl.classList.add('error');
+    } else {
+      progressEl.classList.remove('error');
+    }
+
+    if (zone) zone.classList.remove('uploading');
+    renderImagePreviews(container, progressEl);
+  }
+
+  // Setup upload zone with drag/drop and click
+  function setupUploadZone(zoneId: string, fileInputId: string, previewsId: string, progressId: string) {
+    const zone = document.getElementById(zoneId)!;
+    const fileInput = document.getElementById(fileInputId) as HTMLInputElement;
+    const previews = document.getElementById(previewsId)!;
+    const progress = document.getElementById(progressId)!;
+
+    zone.addEventListener('click', () => fileInput.click());
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault(); zone.classList.remove('dragover');
+      handleFileUpload(e.dataTransfer?.files, previews, progress, zone);
+    });
+    fileInput.addEventListener('change', () => {
+      handleFileUpload(fileInput.files, previews, progress, zone);
+      fileInput.value = '';
+    });
+
+    return { previews, progress };
   }
 
   function openAddCarModal() {
@@ -1201,13 +1358,14 @@ export const prerender = false;
         <label>Bilder</label>
         <div class="upload-zone" id="uploadZone">
           <div class="upload-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
           </div>
-          <p class="upload-text"><strong>Klicka eller dra bilder hit</strong><br>JPG, PNG, WebP (max 10MB)</p>
-          <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
+          <p class="upload-text"><strong>Klicka eller dra bilder hit</strong><br>JPG, PNG, WebP (max 10MB per bild)</p>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/avif" multiple style="display:none;" />
         </div>
         <div class="image-previews" id="imagePreviews"></div>
         <p class="upload-progress" id="uploadProgress"></p>
+        <p class="sort-hint">Dra bilderna för att ändra ordning. Bild 1 = omslagsbild på hemsidan.</p>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
         <button class="btn btn-ghost" id="cancelAddCar" type="button">Avbryt</button>
@@ -1218,45 +1376,8 @@ export const prerender = false;
     carModal.classList.add('open');
     carModalOverlay.classList.add('open');
 
-    // Upload zone
-    const zone = document.getElementById('uploadZone')!;
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    const previews = document.getElementById('imagePreviews')!;
-    const progress = document.getElementById('uploadProgress')!;
-
-    zone.addEventListener('click', () => fileInput.click());
-    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-    zone.addEventListener('drop', (e) => {
-      e.preventDefault(); zone.classList.remove('dragover');
-      handleFiles(e.dataTransfer?.files);
-    });
-    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
-
-    async function handleFiles(files: FileList | null | undefined) {
-      if (!files?.length) return;
-      const total = files.length;
-      let done = 0;
-      progress.textContent = `Laddar upp 0/${total}...`;
-
-      for (const file of Array.from(files)) {
-        const url = await uploadImage(file);
-        done++;
-        progress.textContent = `Laddar upp ${done}/${total}...`;
-        if (url) {
-          uploadedImages.push(url);
-          const div = document.createElement('div');
-          div.className = 'img-preview';
-          div.innerHTML = `<img src="${url}" /><button class="img-remove" type="button">&times;</button>`;
-          div.querySelector('.img-remove')?.addEventListener('click', () => {
-            uploadedImages = uploadedImages.filter(u => u !== url);
-            div.remove();
-          });
-          previews.appendChild(div);
-        }
-      }
-      progress.textContent = `${uploadedImages.length} bild(er) uppladdade`;
-    }
+    // Setup upload zone
+    setupUploadZone('uploadZone', 'fileInput', 'imagePreviews', 'uploadProgress');
 
     document.getElementById('cancelAddCar')?.addEventListener('click', closeCarModal);
     document.getElementById('saveNewCar')?.addEventListener('click', async () => {
@@ -1348,20 +1469,14 @@ export const prerender = false;
         <label>Bilder</label>
         <div class="upload-zone" id="editUploadZone">
           <div class="upload-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
           </div>
           <p class="upload-text"><strong>Lägg till fler bilder</strong></p>
-          <input type="file" id="editFileInput" accept="image/*" multiple style="display:none;" />
+          <input type="file" id="editFileInput" accept="image/jpeg,image/png,image/webp,image/avif" multiple style="display:none;" />
         </div>
-        <div class="image-previews" id="editImagePreviews">
-          ${uploadedImages.map(url => `
-            <div class="img-preview" data-url="${url}">
-              <img src="${url}" />
-              <button class="img-remove" type="button">&times;</button>
-            </div>
-          `).join('')}
-        </div>
-        <p class="upload-progress" id="editUploadProgress">${uploadedImages.length} bild(er)</p>
+        <div class="image-previews" id="editImagePreviews"></div>
+        <p class="upload-progress" id="editUploadProgress"></p>
+        <p class="sort-hint">Dra bilderna för att ändra ordning. Bild 1 = omslagsbild på hemsidan.</p>
       </div>
       <div style="display:flex;gap:8px;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
         <button class="btn btn-danger btn-sm" id="deleteCar" type="button">Ta bort bil</button>
@@ -1375,52 +1490,13 @@ export const prerender = false;
     carModal.classList.add('open');
     carModalOverlay.classList.add('open');
 
-    // Remove existing image buttons
-    document.querySelectorAll('#editImagePreviews .img-remove').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const url = btn.closest('.img-preview')?.getAttribute('data-url');
-        if (url) uploadedImages = uploadedImages.filter(u => u !== url);
-        btn.closest('.img-preview')?.remove();
-        document.getElementById('editUploadProgress')!.textContent = `${uploadedImages.length} bild(er)`;
-      });
-    });
-
-    // Upload zone for edit
-    const editZone = document.getElementById('editUploadZone')!;
-    const editFileInput = document.getElementById('editFileInput') as HTMLInputElement;
+    // Render existing images with drag-sort
     const editPreviews = document.getElementById('editImagePreviews')!;
     const editProgress = document.getElementById('editUploadProgress')!;
+    renderImagePreviews(editPreviews, editProgress);
 
-    editZone.addEventListener('click', () => editFileInput.click());
-    editZone.addEventListener('dragover', (e) => { e.preventDefault(); editZone.classList.add('dragover'); });
-    editZone.addEventListener('dragleave', () => editZone.classList.remove('dragover'));
-    editZone.addEventListener('drop', (e) => {
-      e.preventDefault(); editZone.classList.remove('dragover');
-      handleEditFiles(e.dataTransfer?.files);
-    });
-    editFileInput.addEventListener('change', () => handleEditFiles(editFileInput.files));
-
-    async function handleEditFiles(files: FileList | null | undefined) {
-      if (!files?.length) return;
-      for (const file of Array.from(files)) {
-        editProgress.textContent = 'Laddar upp...';
-        const url = await uploadImage(file);
-        if (url) {
-          uploadedImages.push(url);
-          const div = document.createElement('div');
-          div.className = 'img-preview';
-          div.setAttribute('data-url', url);
-          div.innerHTML = `<img src="${url}" /><button class="img-remove" type="button">&times;</button>`;
-          div.querySelector('.img-remove')?.addEventListener('click', () => {
-            uploadedImages = uploadedImages.filter(u => u !== url);
-            div.remove();
-            editProgress.textContent = `${uploadedImages.length} bild(er)`;
-          });
-          editPreviews.appendChild(div);
-        }
-      }
-      editProgress.textContent = `${uploadedImages.length} bild(er)`;
-    }
+    // Setup upload zone for adding more images
+    setupUploadZone('editUploadZone', 'editFileInput', 'editImagePreviews', 'editUploadProgress');
 
     document.getElementById('cancelEditCar')?.addEventListener('click', closeCarModal);
     document.getElementById('deleteCar')?.addEventListener('click', async () => {
