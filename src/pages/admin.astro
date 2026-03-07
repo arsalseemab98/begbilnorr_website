@@ -1165,16 +1165,25 @@ export const prerender = false;
     if (res.ok) { await loadCars(); closeCarModal(); }
   }
 
-  // Upload multiple images in parallel via server-side API
-  async function uploadImages(files: File[]): Promise<string[]> {
+  // Upload single image via server-side API
+  async function uploadSingleImage(file: File): Promise<string | null> {
     const formData = new FormData();
-    files.forEach(f => formData.append('files', f));
+    formData.append('file', file);
     try {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      if (!res.ok) return [];
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        console.error('Upload failed:', d.error || res.status);
+        return null;
+      }
       const data = await res.json();
-      return data.urls || [];
-    } catch { return []; }
+      return data.url || null;
+    } catch (e) { console.error('Upload error:', e); return null; }
+  }
+
+  // Upload multiple images — each as separate request, all in parallel
+  async function uploadImages(files: File[]): Promise<(string | null)[]> {
+    return Promise.all(files.map(f => uploadSingleImage(f)));
   }
 
   // Render image previews with drag-to-sort and numbering
@@ -1237,32 +1246,28 @@ export const prerender = false;
     });
     renderImagePreviews(container, progressEl);
 
-    // Upload in parallel
+    // Upload each file as separate request, all in parallel
     if (zone) zone.classList.add('uploading');
     progressEl.textContent = `Laddar upp ${fileArr.length} bild(er)...`;
 
-    const serverUrls = await uploadImages(fileArr);
+    const results = await uploadImages(fileArr);
 
-    // Replace local URLs with server URLs
-    serverUrls.forEach((serverUrl, idx) => {
+    // Replace local URLs with server URLs, remove failures
+    let failCount = 0;
+    results.forEach((serverUrl, idx) => {
       const localUrl = localUrls[idx];
-      if (localUrl) {
+      if (serverUrl && localUrl) {
         const localIdx = uploadedImages.indexOf(localUrl);
-        if (localIdx >= 0) {
-          uploadedImages[localIdx] = serverUrl;
-        }
-        URL.revokeObjectURL(localUrl);
+        if (localIdx >= 0) uploadedImages[localIdx] = serverUrl;
+      } else if (localUrl) {
+        uploadedImages = uploadedImages.filter(u => u !== localUrl);
+        failCount++;
       }
+      if (localUrl) URL.revokeObjectURL(localUrl);
     });
 
-    // Remove local URLs that failed upload
-    const failCount = fileArr.length - serverUrls.length;
     if (failCount > 0) {
-      localUrls.slice(serverUrls.length).forEach(localUrl => {
-        uploadedImages = uploadedImages.filter(u => u !== localUrl);
-        URL.revokeObjectURL(localUrl);
-      });
-      progressEl.textContent = `${uploadedImages.length} bild(er) — ${failCount} misslyckades`;
+      progressEl.textContent = `${uploadedImages.length} bild(er) — ${failCount} misslyckades (max 4MB/bild)`;
       progressEl.classList.add('error');
     } else {
       progressEl.classList.remove('error');
