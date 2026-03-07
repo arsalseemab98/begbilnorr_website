@@ -8,6 +8,7 @@ export const GET: APIRoute = async () => {
   const staticPages = [
     { url: '/', priority: '1.0', changefreq: 'daily' },
     { url: '/bilar', priority: '0.9', changefreq: 'daily' },
+    { url: '/begagnade-bilar-lulea', priority: '0.9', changefreq: 'daily' },
     { url: '/kontakt', priority: '0.7', changefreq: 'monthly' },
     { url: '/om-oss', priority: '0.6', changefreq: 'monthly' },
     { url: '/finansiering', priority: '0.7', changefreq: 'monthly' },
@@ -18,7 +19,7 @@ export const GET: APIRoute = async () => {
 
   const { data: cars } = await supabase
     .from('cars')
-    .select('slug, updated_at')
+    .select('slug, updated_at, brand')
     .eq('is_active', true)
     .eq('is_sold', false);
 
@@ -27,6 +28,15 @@ export const GET: APIRoute = async () => {
     priority: '0.8',
     changefreq: 'weekly',
     lastmod: car.updated_at ? car.updated_at.split('T')[0] : now,
+  }));
+
+  // Brand-specific landing pages
+  const brands = [...new Set((cars || []).map((c: { brand: string }) => c.brand))];
+  const brandPages = brands.map((brand: string) => ({
+    url: `/begagnade-bilar-lulea/${brand.toLowerCase()}`,
+    priority: '0.8',
+    changefreq: 'weekly',
+    lastmod: now,
   }));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -44,6 +54,16 @@ ${staticPages
 ${carPages
   .map(
     (p: { url: string; lastmod: string; changefreq: string; priority: string }) => `  <url>
+    <loc>${site}${p.url}</loc>
+    <lastmod>${p.lastmod}</lastmod>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`
+  )
+  .join('\n')}
+${brandPages
+  .map(
+    (p: { url: string; priority: string; changefreq: string; lastmod: string }) => `  <url>
     <loc>${site}${p.url}</loc>
     <lastmod>${p.lastmod}</lastmod>
     <changefreq>${p.changefreq}</changefreq>

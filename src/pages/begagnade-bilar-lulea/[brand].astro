@@ -1,0 +1,229 @@
+---
+import Layout from '../../components/Layout.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import CarCard from '../../components/CarCard.astro';
+import { supabase } from '../../lib/supabase';
+import type { Car } from '../../types/car';
+
+const { brand } = Astro.params;
+
+if (!brand) {
+  return Astro.redirect('/begagnade-bilar-lulea');
+}
+
+const brandDisplay = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase();
+
+let cars: Car[] = [];
+let totalActiveCars = 0;
+
+try {
+  const [carsResult, countResult] = await Promise.all([
+    supabase
+      .from('cars')
+      .select('*')
+      .ilike('brand', brand)
+      .eq('is_active', true)
+      .eq('is_sold', false)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('cars')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('is_sold', false),
+  ]);
+
+  cars = (carsResult.data || []) as Car[];
+  totalActiveCars = countResult.count || 0;
+} catch {
+  // Supabase not configured
+}
+
+if (cars.length === 0) {
+  return Astro.redirect('/begagnade-bilar-lulea');
+}
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Hem", "item": "https://begbilnorr.se/" },
+    { "@type": "ListItem", "position": 2, "name": "Begagnade bilar i Luleå", "item": "https://begbilnorr.se/begagnade-bilar-lulea" },
+    { "@type": "ListItem", "position": 3, "name": `Begagnade ${brandDisplay}`, "item": `https://begbilnorr.se/begagnade-bilar-lulea/${brand}` }
+  ]
+};
+---
+
+<Layout
+  title={`Begagnade ${brandDisplay} i Luleå — Köp med garanti | Begbilnorr`}
+  description={`Köp begagnad ${brandDisplay} i Luleå hos Begbilnorr. Se vårt utbud av kvalitetskontrollerade ${brandDisplay}-bilar med garanti och finansiering.`}
+>
+  <Fragment slot="head">
+    <StructuredData data={breadcrumbSchema} />
+  </Fragment>
+
+  <!-- Page Hero -->
+  <section class="brand-hero">
+    <div class="container">
+      <div class="breadcrumb" style="justify-content:center;margin-bottom:24px;">
+        <a href="/">Hem</a>
+        <span class="separator">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+        <a href="/begagnade-bilar-lulea">Begagnade bilar i Luleå</a>
+        <span class="separator">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+        <span class="current">Begagnade {brandDisplay}</span>
+      </div>
+      <div class="section-label" style="text-align:center;">BEGAGNADE {brandDisplay.toUpperCase()}</div>
+      <h1>Begagnade {brandDisplay} i Luleå</h1>
+      <p class="hero-intro">
+        Letar du efter en begagnad {brandDisplay} i Luleå? Hos Begbilnorr hittar du ett noggrant utvalt sortiment av kvalitetskontrollerade {brandDisplay}-bilar.
+        Alla våra bilar genomgår en grundlig besiktning innan försäljning och säljs med garanti för din trygghet.
+        Vi erbjuder även finansieringslösningar och inbyten för att göra ditt bilköp så smidigt som möjligt.
+        Utforska våra {cars.length} tillgängliga {brandDisplay}-bilar nedan.
+      </p>
+    </div>
+  </section>
+
+  <!-- Car Grid -->
+  <section class="brand-cars">
+    <div class="container">
+      <div class="results-info">
+        <span>Visar <strong>{cars.length}</strong> {brandDisplay}-bilar av totalt <strong>{totalActiveCars}</strong> bilar i lager</span>
+      </div>
+      <div class="car-grid">
+        {cars.map((car) => <CarCard car={car} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Buy Section -->
+  <section class="brand-why">
+    <div class="container">
+      <h2>Varför köpa begagnad {brandDisplay} hos oss?</h2>
+      <p>
+        Begbilnorr är din lokala bilhandlare i Luleå med fokus på kvalitet och trygghet.
+        När du köper en begagnad {brandDisplay} hos oss får du alltid garanti, möjlighet till finansiering och en bil som är noggrant kontrollerad.
+        Vi hjälper dig genom hela köpprocessen, från provkörning till leverans, och erbjuder självklart även inbyte av din nuvarande bil.
+      </p>
+      <div class="brand-back-link">
+        <a href="/begagnade-bilar-lulea">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Se alla märken
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .brand-hero {
+    background: var(--bg-dark-2);
+    padding: 60px 0 48px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .brand-hero h1 {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .hero-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  .brand-cars {
+    padding: 48px 0 0;
+  }
+
+  .results-info {
+    margin-bottom: 24px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .results-info strong {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .brand-why {
+    padding: 64px 0 80px;
+  }
+
+  .brand-why h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .brand-why p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    max-width: 720px;
+    line-height: 1.8;
+  }
+
+  .brand-back-link {
+    margin-top: 32px;
+  }
+
+  .brand-back-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 15px;
+    transition: opacity 0.2s;
+  }
+
+  .brand-back-link a:hover {
+    opacity: 0.8;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--red);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .brand-hero {
+      padding: 40px 0 32px;
+    }
+
+    .brand-hero h1 {
+      font-size: 32px;
+    }
+
+    .hero-intro {
+      font-size: 15px;
+    }
+
+    .brand-why h2 {
+      font-size: 26px;
+    }
+
+    .brand-why {
+      padding: 48px 0 64px;
+    }
+  }
+</style>

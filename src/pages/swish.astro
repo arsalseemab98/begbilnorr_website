@@ -193,13 +193,31 @@ const faqSchema = {
     </div>
   </section>
 
+  <!-- Höja gräns banner -->
+  <section class="hoja-grans-banner">
+    <div class="container">
+      <div class="hoja-grans-card">
+        <div class="hoja-grans-content">
+          <div class="hoja-grans-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="m18 14-6-6-6 6"/><path d="M4 4h16"/></svg>
+          </div>
+          <div>
+            <h3>Behöver du höja din Swish-gräns?</h3>
+            <p>Vi har steg-för-steg guider för varje bank — Swedbank, Handelsbanken, SEB, Nordea och fler. Ta 2 minuter och höj gränsen innan du kommer till oss.</p>
+          </div>
+        </div>
+        <a href="/hoja-swish-grans" class="btn-primary">Visa guide per bank →</a>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
   <section class="swish-cta-section">
     <div class="container" style="text-align:center;">
-      <h2>Vill du veta mer?</h2>
-      <p>Behöver du höja din Swish-gräns? Läs vår guide eller kontakta oss för hjälp.</p>
+      <h2>Redo att köpa din bil?</h2>
+      <p>Kontakta oss så hjälper vi dig med hela processen — från val av bil till Swish-betalning.</p>
       <div class="cta-buttons">
-        <a href="/hoja-swish-grans" class="btn-primary">Höja Swish-gräns</a>
+        <a href="/bilar" class="btn-primary">Se våra bilar</a>
         <a href="/kontakt" class="btn-outline">Kontakta oss</a>
       </div>
     </div>
@@ -457,6 +475,62 @@ const faqSchema = {
     padding: 3px 6px;
   }
 
+  /* ========== HÖJA GRÄNS BANNER ========== */
+  .hoja-grans-banner {
+    background: var(--bg-dark-3);
+    padding: 60px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .hoja-grans-card {
+    max-width: 720px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(230,46,45,0.08) 0%, rgba(230,46,45,0.02) 100%);
+    border: 1px solid rgba(230,46,45,0.2);
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .hoja-grans-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .hoja-grans-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .hoja-grans-content h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .hoja-grans-content p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+
+  .hoja-grans-card .btn-primary {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   /* ========== CTA ========== */
   .swish-cta-section {
     background: var(--bg-dark-3);
@@ -603,6 +677,16 @@ const faqSchema = {
     }
 
     .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hoja-grans-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .hoja-grans-content {
       flex-direction: column;
       align-items: center;
     }

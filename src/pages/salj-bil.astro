@@ -47,8 +47,8 @@ import Layout from '../components/Layout.astro';
             </div>
           </div>
         </div>
-        <div class="sell-image-placeholder">
-          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+        <div class="sell-image-placeholder" style="padding:0;overflow:hidden;">
+          <img src="/images/salj-din-bil.jpg" alt="Kund lämnar över bilnycklar till Begbilnorr säljare i Luleå" style="width:100%;height:100%;object-fit:cover;" loading="lazy" />
         </div>
       </div>
     </div>
@@ -102,34 +102,23 @@ import Layout from '../components/Layout.astro';
 
           <div class="form-row">
             <div class="form-group">
-              <label for="v-brand">Märke *</label>
-              <input type="text" id="v-brand" name="brand" placeholder="T.ex. Volvo" required />
-            </div>
-            <div class="form-group">
-              <label for="v-model">Modell *</label>
-              <input type="text" id="v-model" name="model" placeholder="T.ex. XC60" required />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="v-year">Årsmodell *</label>
-              <input type="number" id="v-year" name="year" placeholder="T.ex. 2019" required />
-            </div>
-            <div class="form-group">
               <label for="v-mileage">Miltal *</label>
               <input type="text" id="v-mileage" name="mileage" placeholder="T.ex. 8 200 mil" required />
             </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="v-name">Ditt namn *</label>
-              <input type="text" id="v-name" name="name" placeholder="Ditt namn" required />
-            </div>
             <div class="form-group">
               <label for="v-phone">Telefon *</label>
-              <input type="tel" id="v-phone" name="phone" placeholder="07X-XXX XX XX" required />
+              <div class="phone-input-wrapper">
+                <select id="v-country-code" name="countryCode" class="country-code-select">
+                  <option value="+46" selected>🇸🇪 +46</option>
+                  <option value="+47">🇳🇴 +47</option>
+                  <option value="+45">🇩🇰 +45</option>
+                  <option value="+358">🇫🇮 +358</option>
+                  <option value="+49">🇩🇪 +49</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+1">🇺🇸 +1</option>
+                </select>
+                <input type="tel" id="v-phone" name="phone" placeholder="7X-XXX XX XX" required />
+              </div>
             </div>
           </div>
 
@@ -139,8 +128,8 @@ import Layout from '../components/Layout.astro';
           </div>
 
           <div class="form-group">
-            <label for="v-message">Övrigt</label>
-            <textarea id="v-message" name="message" placeholder="Beskriv bilens skick, utrustning etc." rows="4"></textarea>
+            <label for="v-desc">Beskrivning</label>
+            <textarea id="v-desc" name="description" placeholder="Beskriv eventuella fel, skador, utrustning etc." rows="3"></textarea>
           </div>
 
           <button type="submit" class="submit-btn" id="valuationBtn">
@@ -362,6 +351,34 @@ import Layout from '../components/Layout.astro';
     z-index: 2;
   }
 
+  .phone-input-wrapper {
+    display: flex;
+    gap: 0;
+  }
+
+  .country-code-select {
+    width: 110px;
+    flex-shrink: 0;
+    background: var(--bg-dark-5, #2a2a2a);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+    padding: 12px 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .country-code-select:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  .phone-input-wrapper input {
+    flex: 1;
+    border-radius: 0 6px 6px 0 !important;
+  }
+
   /* Valuation */
   .valuation-section {
     background: var(--bg-dark-3);
@@ -469,14 +486,17 @@ import Layout from '../components/Layout.astro';
     const data = Object.fromEntries(formData.entries());
 
     try {
+      const countryCode = data.countryCode || '+46';
+      const phone = countryCode + ' ' + (data.phone || '');
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: data.name,
+          name: 'Värdering',
           email: data.email || 'ej angiven',
-          phone: data.phone,
-          message: `[VÄRDERING] Reg: ${data.regNumber || '-'}, ${data.brand} ${data.model} ${data.year}, ${data.mileage}. ${data.message || ''}`,
+          phone: phone,
+          message: `[VÄRDERING]\nReg: ${data.regNumber || '-'}\nMiltal: ${data.mileage || '-'}\nTelefon: ${phone}\nE-post: ${data.email || '-'}\nBeskrivning: ${data.description || '-'}`,
+          source: 'vardering',
         }),
       });
 

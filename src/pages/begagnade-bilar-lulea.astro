@@ -1,0 +1,742 @@
+---
+import Layout from '../components/Layout.astro';
+import StructuredData from '../components/StructuredData.astro';
+import CarCard from '../components/CarCard.astro';
+import { supabase } from '../lib/supabase';
+import type { Car } from '../types/car';
+
+let allCars: Car[] = [];
+let brands: string[] = [];
+
+try {
+  const { data: cars } = await supabase
+    .from('cars')
+    .select('*')
+    .eq('is_active', true)
+    .eq('is_sold', false)
+    .order('created_at', { ascending: false });
+
+  allCars = (cars || []) as Car[];
+
+  const { data: brandData } = await supabase
+    .from('cars')
+    .select('brand')
+    .eq('is_active', true)
+    .eq('is_sold', false);
+
+  brands = [...new Set((brandData || []).map((c: { brand: string }) => c.brand))].sort();
+} catch {
+  // Supabase not configured
+}
+
+const faqItems = [
+  {
+    question: 'Har ni garanti på begagnade bilar?',
+    answer: 'Ja, alla begagnade bilar hos Begbilnorr säljs med garanti. Vi kvalitetskontrollerar varje fordon noggrant innan det läggs ut till försäljning. Garantin ger dig trygghet och skydd mot oväntade kostnader efter köpet.'
+  },
+  {
+    question: 'Kan jag finansiera mitt bilköp?',
+    answer: 'Absolut! Vi erbjuder flexibla finansieringslösningar i samarbete med ledande kreditgivare. Du kan enkelt ansöka om billån direkt hos oss, och vi hjälper dig att hitta den bästa räntan och de mest förmånliga villkoren för just din situation.'
+  },
+  {
+    question: 'Erbjuder ni hemleverans?',
+    answer: 'Ja, vi levererar bilar hem till dig i hela Norrbotten och övriga Sverige. Oavsett om du bor i Luleå, Boden, Piteå eller längre bort kan vi ordna transport av din nya bil direkt till dörren.'
+  },
+  {
+    question: 'Hur gör jag om jag vill sälja min bil?',
+    answer: 'Kontakta oss så gör vi en kostnadsfri värdering av din bil. Vi köper begagnade bilar i alla prisklasser och kan ge dig ett konkurrenskraftigt bud snabbt. Besök oss i Luleå eller ring för en första bedömning.'
+  },
+  {
+    question: 'Kan jag byta in min nuvarande bil?',
+    answer: 'Ja, vi erbjuder inbytesvärdering på alla bilmärken. Att byta in din gamla bil mot en nyare modell är ett smidigt sätt att uppgradera — vi tar hand om hela processen åt dig.'
+  },
+  {
+    question: 'Var ligger Begbilnorr?',
+    answer: 'Begbilnorr finns i Luleå, Norrbotten. Besök oss för att provköra din drömbil eller kontakta oss via telefon på 0920-999 86 eller e-post info@begbilnorr.se för mer information.'
+  }
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer
+    }
+  }))
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Hem',
+      item: 'https://begbilnorr.se/'
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Begagnade bilar i Luleå',
+      item: 'https://begbilnorr.se/begagnade-bilar-lulea'
+    }
+  ]
+};
+---
+
+<Layout
+  title="Begagnade bilar i Luleå — Köp bil med garanti | Begbilnorr"
+  description="Hitta begagnade bilar i Luleå hos Begbilnorr. Kvalitetskontrollerade bilar med garanti, finansiering och hemleverans. Luleås tryggaste bilhandlare."
+>
+  <Fragment slot="head">
+    <StructuredData data={faqSchema} />
+    <StructuredData data={breadcrumbSchema} />
+  </Fragment>
+
+  <!-- Page Hero -->
+  <section class="seo-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Hem</a>
+        <span class="separator">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+        <span class="current">Begagnade bilar i Luleå</span>
+      </div>
+      <h1>Begagnade bilar i Luleå</h1>
+      <p class="hero-intro">
+        Letar du efter en begagnad bil i Luleå? Hos Begbilnorr hittar du ett brett utbud av kvalitetskontrollerade begagnade bilar med garanti.
+        Som Luleås tryggaste bilhandlare erbjuder vi personlig service, finansiering och hemleverans i hela Norrbotten.
+        Varje bil i vårt lager har genomgått en noggrann kontroll så att du kan känna dig trygg med ditt köp.
+        Oavsett om du söker en familjevänlig SUV, en bränslesnål hybrid eller en sportbil — vi har bilen för dig.
+        Välkommen att bläddra bland våra bilar nedan eller besöka oss i Luleå för en provkörning.
+      </p>
+    </div>
+  </section>
+
+  <!-- Car Grid Section -->
+  <section class="seo-cars-section">
+    <div class="container">
+      <div class="cars-header">
+        <span class="section-label">VÅRT LAGER</span>
+        <p class="cars-count">Visar <strong>{allCars.length}</strong> begagnade bilar i Luleå</p>
+      </div>
+      <div class="car-grid">
+        {allCars.map((car) => <CarCard car={car} />)}
+      </div>
+
+      {allCars.length === 0 && (
+        <div class="empty-state">
+          <p>Inga bilar tillgängliga just nu.</p>
+          <a href="/bilar">Visa alla bilar</a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits-section">
+    <div class="container">
+      <h2>Varför köpa begagnad bil hos Begbilnorr i Luleå?</h2>
+      <p class="benefits-intro">
+        Att köpa en begagnad bil är ett smart val, men det är viktigt att välja rätt bilhandlare.
+        Begbilnorr i Luleå har sedan 2010 hjälpt tusentals kunder i Norrbotten att hitta sin drömbil.
+        Vi skiljer oss från andra bilhandlare genom att alltid sätta kundens trygghet först.
+      </p>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h3>Garanti på alla bilar</h3>
+          <p>Samtliga begagnade bilar i vårt sortiment säljs med garanti. Vi kvalitetskontrollerar varje fordon noggrant innan det erbjuds till försäljning, så att du som kund alltid kan känna dig trygg med ditt bilköp i Luleå.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </div>
+          <h3>Flexibel finansiering</h3>
+          <p>Vi samarbetar med flera kreditgivare för att erbjuda dig de bästa finansieringsvillkoren. Ansök om billån direkt hos oss och få snabbt besked. Vi hjälper dig att hitta en avbetalningsplan som passar din ekonomi.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><path d="M15 18H9"/><circle cx="17" cy="18" r="2"/></svg>
+          </div>
+          <h3>Hemleverans i Norrbotten</h3>
+          <p>Bor du utanför Luleå? Inga problem! Vi levererar begagnade bilar hem till dig i hela Norrbotten och övriga Sverige. Från Boden och Piteå till Gällivare och Kiruna — vi ser till att din bil kommer hem till dig.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg>
+          </div>
+          <h3>Inbyte av din gamla bil</h3>
+          <p>Vill du byta in din nuvarande bil? Vi erbjuder rättvisa inbytespriser på alla bilmärken. Att byta in din gamla bil gör det enkelt och smidigt att uppgradera till en nyare modell hos Begbilnorr i Luleå.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Brands Section -->
+  <section class="brands-section">
+    <div class="container">
+      <h2>Populära bilmärken i Luleå</h2>
+      <p class="brands-intro">
+        Utforska begagnade bilar efter märke. Vi har ett varierat utbud av bilmärken från välkända tillverkare.
+        Klicka på ett märke nedan för att se alla tillgängliga begagnade bilar av det märket i Luleå.
+      </p>
+      <div class="brands-grid">
+        {brands.map((b) => (
+          <a href={`/begagnade-bilar-lulea/${b.toLowerCase()}`} class="brand-card">
+            <span class="brand-name">{b}</span>
+            <span class="brand-arrow">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </span>
+          </a>
+        ))}
+      </div>
+      {brands.length === 0 && (
+        <p class="no-brands">Inga bilmärken tillgängliga just nu.</p>
+      )}
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <h2>Vanliga frågor om begagnade bilar i Luleå</h2>
+      <p class="faq-intro">
+        Här svarar vi på de vanligaste frågorna vi får från kunder som letar efter begagnade bilar i Luleå och Norrbotten.
+        Hittar du inte svaret på din fråga? Tveka inte att kontakta oss direkt.
+      </p>
+      <div class="faq-list">
+        {faqItems.map((item, i) => (
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls={`faq-answer-${i}`}>
+              <span>{item.question}</span>
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer" id={`faq-answer-${i}`}>
+              <p>{item.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO Content Section -->
+  <section class="seo-content-section">
+    <div class="container">
+      <div class="seo-content">
+        <h2>Din bilhandlare i Luleå</h2>
+        <p>
+          Begbilnorr är en av de mest etablerade bilhandlarna i Luleå och har verkat i Norrbotten sedan 2010.
+          Vi har byggt vårt rykte genom att alltid leverera kvalitetskontrollerade begagnade bilar med garanti och utmärkt kundservice.
+          Vår filosofi är enkel: varje kund ska känna sig trygg genom hela köpprocessen, från första besöket till långt efter leveransen.
+        </p>
+        <p>
+          I vårt lager hittar du ett brett utbud av begagnade bilar från alla ledande bilmärken.
+          Vi erbjuder allt från ekonomiska småbilar och familjevänliga kombibilar till kraftfulla SUV:ar och premium-modeller.
+          Alla bilar har genomgått en grundlig teknisk kontroll och levereras med garanti för din trygghet.
+        </p>
+        <p>
+          Som bilhandlare i Luleå förstår vi de speciella krav som det norrbottniska klimatet ställer på fordon.
+          Därför ser vi extra noga till att våra begagnade bilar är redo för nordsvenska förhållanden —
+          med kontrollerat underrede, fungerande uppvärmning och däck anpassade för säsongen.
+          Köper du en begagnad bil hos oss kan du lita på att den klarar av både vintervägar och sommarens fjällturer.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Hitta din drömbil idag</h2>
+      <p>Bläddra bland våra kvalitetskontrollerade begagnade bilar i Luleå eller kontakta oss för personlig rådgivning. Vi hjälper dig hitta rätt bil till rätt pris.</p>
+      <div class="cta-buttons">
+        <a href="/bilar" class="btn-primary">Se alla bilar</a>
+        <a href="/kontakt" class="btn-outline">Kontakta oss</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  function initFaqAccordion() {
+    document.querySelectorAll('.faq-question').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item') as HTMLElement;
+        const isOpen = item.classList.contains('open');
+
+        // Close all other items
+        document.querySelectorAll('.faq-item.open').forEach((openItem) => {
+          openItem.classList.remove('open');
+          const openBtn = openItem.querySelector('.faq-question');
+          if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+        });
+
+        // Toggle current item
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
+  initFaqAccordion();
+  document.addEventListener('astro:after-swap', initFaqAccordion);
+</script>
+
+<style>
+  /* Hero */
+  .seo-hero {
+    background: var(--bg-dark-2);
+    padding: 60px 0 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .seo-hero h1 {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+
+  .hero-intro {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+    max-width: 800px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+
+  .breadcrumb a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--red);
+  }
+
+  .breadcrumb .separator {
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumb .current {
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Cars Section */
+  .seo-cars-section {
+    background: var(--bg-dark-2);
+    padding: 0 0 64px;
+  }
+
+  .cars-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cars-count {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .cars-count strong {
+    color: var(--white);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 64px 0;
+  }
+
+  .empty-state p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 12px;
+  }
+
+  .empty-state a {
+    color: var(--red);
+    font-weight: 600;
+    font-size: 15px;
+    transition: opacity 0.2s;
+  }
+
+  .empty-state a:hover {
+    opacity: 0.8;
+  }
+
+  /* Benefits */
+  .benefits-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .benefits-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .benefits-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto 48px;
+    text-align: center;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .benefit-card {
+    background: var(--bg-dark-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 36px 24px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .benefit-card:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateY(-4px);
+  }
+
+  .benefit-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--red);
+    transition: all 0.3s;
+  }
+
+  .benefit-card:hover .benefit-icon {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .benefit-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .benefit-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* Brands */
+  .brands-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .brands-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .brands-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+
+  .brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .brand-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .brand-card:hover {
+    border-color: rgba(230,46,45,0.4);
+    transform: translateY(-2px);
+    background: rgba(230,46,45,0.05);
+  }
+
+  .brand-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .brand-arrow {
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+  }
+
+  .brand-card:hover .brand-arrow {
+    color: var(--red);
+  }
+
+  .no-brands {
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 15px;
+  }
+
+  /* FAQ */
+  .faq-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .faq-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+
+  .faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    background: var(--bg-dark-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .faq-item.open {
+    border-color: rgba(230,46,45,0.3);
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: 16px;
+  }
+
+  .faq-question span {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.4;
+  }
+
+  .faq-chevron {
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  .faq-item.open .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--red);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 24px;
+  }
+
+  .faq-item.open .faq-answer {
+    max-height: 300px;
+    padding: 0 24px 20px;
+  }
+
+  .faq-answer p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* SEO Content */
+  .seo-content-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .seo-content h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .seo-content p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    max-width: 800px;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .benefits-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .seo-hero h1 {
+      font-size: 36px;
+    }
+
+    .benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .brands-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .benefits-section h2,
+    .brands-section h2,
+    .faq-section h2,
+    .cta-section h2 {
+      font-size: 26px;
+    }
+
+    .seo-content h2 {
+      font-size: 24px;
+    }
+
+    .faq-question span {
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .brands-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

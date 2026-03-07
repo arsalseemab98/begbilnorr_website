@@ -17,7 +17,6 @@
     "astro": "^5.17.1",
     "lucide-react": "^0.575.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "resend": "^6.9.3"
+    "react-dom": "^19.2.4"
   }
 }

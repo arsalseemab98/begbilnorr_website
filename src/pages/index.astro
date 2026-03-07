@@ -24,25 +24,90 @@ const dealerSchema = {
   "@context": "https://schema.org",
   "@type": ["AutoDealer", "LocalBusiness"],
   "name": "Begbilnorr",
-  "description": "Begbilnorr erbjuder kvalitetskontrollerade begagnade bilar med garanti i Luleå.",
+  "alternateName": "Begbilnorr AB",
+  "description": "Begbilnorr erbjuder kvalitetskontrollerade begagnade bilar med garanti i Luleå. Din trygga bilhandlare i Norrbotten sedan 2010.",
   "url": "https://begbilnorr.se",
-  "logo": "https://begbilnorr.se/wp-content/uploads/2024/11/cropped-begbilnorr_Logo_-_E-2__1_-removebg-preview.png",
+  "logo": "https://begbilnorr.se/images/begbilnorr-logo.webp",
+  "image": "https://begbilnorr.se/images/og-hero.png",
   "telephone": "+46920-99986",
   "email": "info@begbilnorr.se",
   "address": {
     "@type": "PostalAddress",
+    "streetAddress": "Luleå",
     "addressLocality": "Luleå",
     "addressRegion": "Norrbotten",
+    "postalCode": "97232",
     "addressCountry": "SE"
   },
   "geo": { "@type": "GeoCoordinates", "latitude": 65.5848, "longitude": 22.1547 },
+  "areaServed": [
+    { "@type": "City", "name": "Luleå" },
+    { "@type": "City", "name": "Boden" },
+    { "@type": "City", "name": "Piteå" },
+    { "@type": "City", "name": "Älvsbyn" },
+    { "@type": "City", "name": "Kalix" },
+    { "@type": "AdministrativeArea", "name": "Norrbotten" }
+  ],
   "openingHoursSpecification": [
     { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "18:00" },
     { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "15:00" }
   ],
   "priceRange": "$$",
   "currenciesAccepted": "SEK",
-  "sameAs": ["https://www.facebook.com/begbilnorr", "https://www.instagram.com/begbilnorr"]
+  "paymentAccepted": "Kontant, Swish, Bankgiro, Finansiering",
+  "numberOfEmployees": { "@type": "QuantitativeValue", "value": 3 },
+  "foundingDate": "2010",
+  "slogan": "Luleås tryggaste bilhandlare",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Begagnade bilar",
+    "itemListElement": latestCars.slice(0, 3).map((car) => ({
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Car",
+        "name": car.full_name,
+        "brand": { "@type": "Brand", "name": car.brand },
+        "vehicleModelDate": String(car.year),
+        "mileageFromOdometer": { "@type": "QuantitativeValue", "value": car.mileage, "unitCode": "SMI" },
+        "url": `https://begbilnorr.se/bilar/${car.slug}`
+      },
+      "price": car.price,
+      "priceCurrency": "SEK"
+    }))
+  },
+  "sameAs": ["https://www.facebook.com/begbilnorr", "https://www.instagram.com/begbilnorr", "https://www.tiktok.com/@begbilnorr"]
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Har ni garanti på begagnade bilar?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Ja, alla bilar vi säljer på Begbilnorr i Luleå levereras med garanti. Vi kvalitetskontrollerar varje fordon noggrant innan försäljning för att säkerställa att du får en trygg och pålitlig bil." }
+    },
+    {
+      "@type": "Question",
+      "name": "Kan jag finansiera mitt bilköp?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Absolut! Vi samarbetar med flera banker och erbjuder flexibla finansieringslösningar med snabbt lånebesked. Du kan beräkna din månadskostnad direkt på varje bilsida." }
+    },
+    {
+      "@type": "Question",
+      "name": "Erbjuder ni hemleverans av bilar?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Ja, vi levererar bilar till hela Sverige. Oavsett var du bor kan du köpa din bil på distans och få den levererad hem till dörren." }
+    },
+    {
+      "@type": "Question",
+      "name": "Kan jag byta in min nuvarande bil?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Självklart! Vi erbjuder kostnadsfri värdering och inbyte av din nuvarande bil. Kontakta oss för en snabb och rättvis värdering." }
+    },
+    {
+      "@type": "Question",
+      "name": "Var ligger Begbilnorr?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Vi finns i Luleå, Norrbotten. Vi betjänar kunder i hela Norrbottens län inklusive Boden, Piteå, Kalix och Älvsbyn. Välkommen att besöka oss eller ring 0920-999 86." }
+    }
+  ]
 };
 ---
 
@@ -52,6 +117,7 @@ const dealerSchema = {
 >
   <Fragment slot="head">
     <StructuredData data={dealerSchema} />
+    <StructuredData data={faqSchema} />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" is:inline defer></script>
   </Fragment>
 
@@ -72,6 +138,7 @@ const dealerSchema = {
           Se alla bilar
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
+        <a href="/begagnade-bilar-lulea" class="see-all-link">Begagnade bilar i Luleå</a>
       </div>
     </div>
   </section>
@@ -162,6 +229,36 @@ const dealerSchema = {
     </div>
   </section>
 
+  <!-- FAQ SECTION -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-label fade-up" style="text-align:center;">VANLIGA FRÅGOR</div>
+      <h2 class="section-heading fade-up" style="text-align:center;margin-bottom:48px;">Vanliga frågor om att köpa begagnad bil</h2>
+      <div class="faq-list">
+        <details class="faq-item fade-up">
+          <summary>Har ni garanti på begagnade bilar?</summary>
+          <div class="faq-answer">Ja, alla bilar vi säljer på Begbilnorr i Luleå levereras med garanti. Vi kvalitetskontrollerar varje fordon noggrant innan försäljning för att säkerställa att du får en trygg och pålitlig bil.</div>
+        </details>
+        <details class="faq-item fade-up">
+          <summary>Kan jag finansiera mitt bilköp?</summary>
+          <div class="faq-answer">Absolut! Vi samarbetar med flera banker och erbjuder flexibla finansieringslösningar med snabbt lånebesked. Du kan beräkna din månadskostnad direkt på varje bilsida.</div>
+        </details>
+        <details class="faq-item fade-up">
+          <summary>Erbjuder ni hemleverans av bilar?</summary>
+          <div class="faq-answer">Ja, vi levererar bilar till hela Sverige. Oavsett var du bor kan du köpa din bil på distans och få den levererad hem till dörren.</div>
+        </details>
+        <details class="faq-item fade-up">
+          <summary>Kan jag byta in min nuvarande bil?</summary>
+          <div class="faq-answer">Självklart! Vi erbjuder kostnadsfri värdering och inbyte av din nuvarande bil. Kontakta oss för en snabb och rättvis värdering.</div>
+        </details>
+        <details class="faq-item fade-up">
+          <summary>Var ligger Begbilnorr?</summary>
+          <div class="faq-answer">Vi finns i Luleå, Norrbotten. Vi betjänar kunder i hela Norrbottens län inklusive Boden, Piteå, Kalix och Älvsbyn. Välkommen att besöka oss eller ring 0920-999 86.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- NEWSLETTER -->
   <section class="newsletter-section">
     <div class="container">
@@ -210,6 +307,18 @@ const dealerSchema = {
   .see-all-btn:hover {
     border-color: var(--white);
     background: rgba(255,255,255,0.06);
+  }
+
+  .see-all-link {
+    display: block;
+    margin-top: 16px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    transition: color 0.2s;
+  }
+
+  .see-all-link:hover {
+    color: var(--red);
   }
 
   /* Why section */
@@ -397,6 +506,75 @@ const dealerSchema = {
     align-items: center;
   }
 
+  /* FAQ section */
+  .faq-section {
+    background: var(--bg-dark-3);
+    padding: 100px 0;
+  }
+
+  .faq-list {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .faq-item[open] {
+    border-color: rgba(230,46,45,0.3);
+  }
+
+  .faq-item summary {
+    padding: 20px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--red);
+    flex-shrink: 0;
+    transition: transform 0.3s;
+  }
+
+  .faq-item[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    padding: 0 24px 20px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    .faq-section {
+      padding: 64px 0;
+    }
+  }
+
   /* Newsletter section */
   .newsletter-section {
     background: var(--bg-dark-2);
@@ -550,10 +728,27 @@ const dealerSchema = {
 
 <script>
   // Newsletter form
-  document.getElementById('newsletterForm')?.addEventListener('submit', (e) => {
+  document.getElementById('newsletterForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
+    const email = (form.querySelector('input[type="email"]') as HTMLInputElement)?.value;
     const btn = form.querySelector('button') as HTMLButtonElement;
+
+    if (email) {
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'Prenumerant',
+            email: email,
+            message: `[NEWSLETTER] Ny prenumerant: ${email}`,
+            source: 'newsletter',
+          }),
+        });
+      } catch {}
+    }
+
     btn.textContent = 'Tack! Du är prenumerant.';
     btn.style.background = '#22C55E';
     setTimeout(() => {

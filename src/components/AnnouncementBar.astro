@@ -35,7 +35,7 @@ if (!announcement) {
 
 {announcement?.visible && (
   <div class="announcement-bar">
-    <a href={announcement.link}><span>NYHET</span> — Garanti på alla våra bilar. Kontakta oss för mer information.</a>
+    <a href={announcement.link}>{announcement.text}</a>
   </div>
 )}
 
@@ -58,6 +58,9 @@ if (!announcement) {
       </a>
       <a href="https://www.instagram.com/begbilnorr" target="_blank" rel="noopener" aria-label="Instagram">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@begbilnorr" target="_blank" rel="noopener" aria-label="TikTok">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
       </a>
     </div>
   </div>

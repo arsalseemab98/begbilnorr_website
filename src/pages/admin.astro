@@ -7,45 +7,363 @@ import Layout from '../components/Layout.astro';
   description="Adminpanel"
   noindex={true}
 >
-  <div style="padding:32px 0;">
+  <div class="admin-page">
     <div class="container">
-      <div style="max-width:600px;margin:0 auto;">
-        <h1 style="font-size:28px;font-weight:700;margin-bottom:24px;">Admin – Inställningar</h1>
+      <h1 class="admin-title">Admin</h1>
 
-        <div class="contact-form-card">
-          <h2 style="font-size:20px;margin-bottom:20px;">Announcement Bar</h2>
+      <!-- Tab navigation -->
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="cars">Bilar</button>
+        <button class="tab-btn" data-tab="submissions">Formulär</button>
+        <button class="tab-btn" data-tab="newsletter">Nyhetsbrev</button>
+        <button class="tab-btn" data-tab="settings">Inställningar</button>
+      </div>
 
+      <!-- Cars tab -->
+      <div class="tab-content active" id="tab-cars">
+        <section class="admin-card">
+          <div class="section-header">
+            <h2>Bilar i lager</h2>
+            <div class="section-controls">
+              <select id="carFilter" class="source-filter">
+                <option value="active">Aktiva</option>
+                <option value="sold">Sålda</option>
+                <option value="inactive">Inaktiva</option>
+                <option value="all">Alla</option>
+              </select>
+              <button class="refresh-btn" id="refreshCarsBtn" type="button">Uppdatera</button>
+            </div>
+          </div>
+          <div class="car-stats" id="carStats"></div>
+          <div class="cars-list" id="carsList">
+            <p class="loading-text">Laddar bilar...</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Submissions tab -->
+      <div class="tab-content" id="tab-submissions">
+        <section class="admin-card">
+          <div class="section-header">
+            <h2>Formulärinlämningar</h2>
+            <div class="section-controls">
+              <select id="sourceFilter" class="source-filter">
+                <option value="alla">Alla källor</option>
+                <option value="kontakt">Kontaktsidan</option>
+                <option value="kontakt-footer">Kontakt (footer)</option>
+                <option value="vardering">Värdering</option>
+                <option value="salj-bil-footer">Sälj bil (footer)</option>
+                <option value="bevakning">Bevakning</option>
+                <option value="newsletter">Newsletter</option>
+                <option value="newsletter-footer">Newsletter (footer)</option>
+              </select>
+              <button class="refresh-btn" id="refreshBtn" type="button">Uppdatera</button>
+            </div>
+          </div>
+          <div class="submissions-stats" id="stats"></div>
+          <div class="submissions-list" id="submissionsList">
+            <p class="loading-text">Laddar...</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Newsletter tab -->
+      <div class="tab-content" id="tab-newsletter">
+        <section class="admin-card" style="margin-bottom:24px;">
+          <h2 style="margin-bottom:16px;">Lägg till prenumerant</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="email" id="nlAddEmail" placeholder="E-postadress" style="flex:1;min-width:200px;" />
+            <input type="text" id="nlAddName" placeholder="Namn (valfritt)" style="flex:1;min-width:150px;" />
+            <button class="submit-btn" id="nlAddBtn" type="button" style="white-space:nowrap;">Lägg till</button>
+          </div>
+          <p id="nlAddMsg" class="status-msg"></p>
+        </section>
+
+        <section class="admin-card">
+          <div class="section-header">
+            <h2>Prenumeranter</h2>
+            <div class="section-controls">
+              <select id="nlFilter" class="source-filter">
+                <option value="all">Alla</option>
+                <option value="active">Aktiva</option>
+                <option value="inactive">Avregistrerade</option>
+              </select>
+              <button class="refresh-btn" id="nlExportBtn" type="button">Exportera CSV</button>
+              <button class="refresh-btn" id="refreshNlBtn" type="button">Uppdatera</button>
+            </div>
+          </div>
+          <div class="submissions-stats" id="nlStats"></div>
+          <div class="submissions-list" id="nlList">
+            <p class="loading-text">Laddar...</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Settings tab -->
+      <div class="tab-content" id="tab-settings">
+        <section class="admin-card">
+          <h2>Announcement Bar</h2>
           <div class="form-group">
             <label for="ann-text">Text</label>
             <input type="text" id="ann-text" placeholder="Annonstext..." />
           </div>
-
           <div class="form-group">
             <label for="ann-link">Länk</label>
             <input type="text" id="ann-link" placeholder="/kontakt" />
           </div>
-
           <div class="form-group" style="display:flex;align-items:center;gap:12px;">
             <input type="checkbox" id="ann-visible" style="width:auto;padding:0;" />
             <label for="ann-visible" style="margin-bottom:0;">Synlig</label>
           </div>
-
           <button class="submit-btn" id="saveBtn" type="button">Spara</button>
-          <p id="statusMsg" style="margin-top:12px;font-size:14px;color:var(--gray);"></p>
-        </div>
+          <p id="statusMsg" class="status-msg"></p>
+        </section>
       </div>
     </div>
   </div>
+
+  <!-- Edit car modal -->
+  <div class="modal-overlay" id="carModalOverlay"></div>
+  <div class="modal" id="carModal">
+    <div class="modal-header">
+      <h3 id="carModalTitle">Redigera bil</h3>
+      <button class="modal-close" id="carModalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="carModalBody"></div>
+  </div>
 </Layout>
 
+<style>
+  .admin-page { padding: 32px 0 64px; }
+  .admin-title { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
+
+  /* Tabs */
+  .admin-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 0;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .tab-btn:hover { color: #fff; }
+  .tab-btn.active {
+    color: #fff;
+    border-bottom-color: var(--red);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .admin-card {
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .admin-card h2 {
+    font-size: 20px;
+    margin-bottom: 0;
+    font-weight: 600;
+  }
+  .status-msg { margin-top: 12px; font-size: 14px; color: var(--gray); }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .section-controls { display: flex; gap: 8px; align-items: center; }
+  .source-filter {
+    background: var(--bg-dark-4);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .refresh-btn {
+    background: var(--bg-dark-4);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .refresh-btn:hover { background: var(--bg-dark-5); }
+
+  .submissions-stats, .car-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .submissions-list, .cars-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 700px;
+    overflow-y: auto;
+  }
+  .loading-text { color: var(--gray); font-size: 14px; }
+
+  /* Car cards */
+  .car-admin-card {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .car-admin-thumb {
+    width: 100px;
+    height: 68px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--bg-dark-3);
+  }
+  .car-admin-info { flex: 1; min-width: 0; }
+  .car-admin-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .car-admin-meta {
+    font-size: 13px;
+    color: var(--gray);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .car-admin-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .car-action-btn {
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .car-action-btn:hover { background: var(--bg-dark-5); }
+  .car-action-btn.sold-btn { border-color: #F59E0B44; color: #F59E0B; }
+  .car-action-btn.sold-btn:hover { background: #F59E0B22; }
+  .car-action-btn.active-btn { border-color: #22C55E44; color: #22C55E; }
+  .car-action-btn.active-btn:hover { background: #22C55E22; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+  }
+  .modal-overlay.open { display: block; }
+  .modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    z-index: 1001;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal.open { display: block; }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .modal-header h3 { font-size: 18px; font-weight: 600; margin: 0; }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .modal-close:hover { color: #fff; }
+
+  @media (max-width: 640px) {
+    .section-header { flex-direction: column; align-items: flex-start; }
+    .car-admin-card { flex-direction: column; align-items: flex-start; }
+    .car-admin-thumb { width: 100%; height: 140px; }
+    .car-admin-actions { width: 100%; }
+    .car-action-btn { flex: 1; text-align: center; }
+  }
+</style>
+
 <script>
+  // === TABS ===
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = (btn as HTMLElement).dataset.tab;
+      document.getElementById(`tab-${tab}`)?.classList.add('active');
+    });
+  });
+
+  // === HELPERS ===
+  function formatDate(dateStr: string) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' })
+      + ' ' + d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function formatPrice(price: number) {
+    return price?.toLocaleString('sv-SE') + ' kr';
+  }
+
+  function formatMileage(m: number) {
+    return m?.toLocaleString('sv-SE') + ' mil';
+  }
+
+  // === ANNOUNCEMENT BAR ===
   const textInput = document.getElementById('ann-text') as HTMLInputElement;
   const linkInput = document.getElementById('ann-link') as HTMLInputElement;
   const visibleCheck = document.getElementById('ann-visible') as HTMLInputElement;
   const saveBtn = document.getElementById('saveBtn') as HTMLButtonElement;
   const statusMsg = document.getElementById('statusMsg') as HTMLParagraphElement;
 
-  async function load() {
+  async function loadAnnouncement() {
     try {
       const res = await fetch('/api/announcement');
       const data = await res.json();
@@ -64,19 +382,10 @@ import Layout from '../components/Layout.astro';
       const res = await fetch('/api/announcement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: textInput.value,
-          link: linkInput.value,
-          visible: visibleCheck.checked,
-        }),
+        body: JSON.stringify({ text: textInput.value, link: linkInput.value, visible: visibleCheck.checked }),
       });
-      if (res.ok) {
-        statusMsg.textContent = 'Sparat!';
-        statusMsg.style.color = 'var(--green)';
-      } else {
-        statusMsg.textContent = 'Fel vid sparning.';
-        statusMsg.style.color = 'var(--red)';
-      }
+      statusMsg.textContent = res.ok ? 'Sparat!' : 'Fel vid sparning.';
+      statusMsg.style.color = res.ok ? '#22C55E' : 'var(--red)';
     } catch {
       statusMsg.textContent = 'Nätverksfel.';
       statusMsg.style.color = 'var(--red)';
@@ -85,5 +394,417 @@ import Layout from '../components/Layout.astro';
     saveBtn.textContent = 'Spara';
   });
 
-  load();
+  // === CARS ===
+  const carFilter = document.getElementById('carFilter') as HTMLSelectElement;
+  const carsList = document.getElementById('carsList') as HTMLDivElement;
+  const carStats = document.getElementById('carStats') as HTMLDivElement;
+  const carModal = document.getElementById('carModal') as HTMLDivElement;
+  const carModalOverlay = document.getElementById('carModalOverlay') as HTMLDivElement;
+  const carModalClose = document.getElementById('carModalClose') as HTMLButtonElement;
+  const carModalTitle = document.getElementById('carModalTitle') as HTMLElement;
+  const carModalBody = document.getElementById('carModalBody') as HTMLDivElement;
+
+  let allCars: any[] = [];
+
+  function closeCarModal() {
+    carModal.classList.remove('open');
+    carModalOverlay.classList.remove('open');
+  }
+  carModalClose.addEventListener('click', closeCarModal);
+  carModalOverlay.addEventListener('click', closeCarModal);
+
+  async function updateCar(id: string, updates: Record<string, any>) {
+    const res = await fetch('/api/cars', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...updates }),
+    });
+    if (res.ok) {
+      await loadCars();
+      closeCarModal();
+    }
+  }
+
+  function openEditModal(car: any) {
+    carModalTitle.textContent = car.full_name;
+    carModalBody.innerHTML = `
+      <div class="form-group">
+        <label>Pris (kr)</label>
+        <input type="number" id="editPrice" value="${car.price || ''}" />
+      </div>
+      <div class="form-group">
+        <label>Månadskostnad</label>
+        <input type="text" id="editMonthly" value="${car.monthly_payment || ''}" placeholder="ex: 1 995 kr/mån" />
+      </div>
+      <div class="form-group">
+        <label>Miltal</label>
+        <input type="number" id="editMileage" value="${car.mileage || ''}" />
+      </div>
+      <div class="form-group" style="display:flex;gap:16px;">
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:0;">
+          <input type="checkbox" id="editActive" ${car.is_active ? 'checked' : ''} style="width:auto;padding:0;" />
+          Aktiv
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:0;">
+          <input type="checkbox" id="editSold" ${car.is_sold ? 'checked' : ''} style="width:auto;padding:0;" />
+          Såld
+        </label>
+      </div>
+      <button class="submit-btn" id="editSaveBtn" type="button">Spara ändringar</button>
+    `;
+    carModal.classList.add('open');
+    carModalOverlay.classList.add('open');
+
+    document.getElementById('editSaveBtn')?.addEventListener('click', () => {
+      const price = parseInt((document.getElementById('editPrice') as HTMLInputElement).value) || null;
+      const monthly_payment = (document.getElementById('editMonthly') as HTMLInputElement).value || null;
+      const mileage = parseInt((document.getElementById('editMileage') as HTMLInputElement).value) || null;
+      const is_active = (document.getElementById('editActive') as HTMLInputElement).checked;
+      const is_sold = (document.getElementById('editSold') as HTMLInputElement).checked;
+      updateCar(car.id, { price, monthly_payment, mileage, is_active, is_sold });
+    });
+  }
+
+  function renderCars() {
+    const filter = carFilter.value;
+    let filtered = allCars;
+    if (filter === 'active') filtered = allCars.filter(c => c.is_active && !c.is_sold);
+    else if (filter === 'sold') filtered = allCars.filter(c => c.is_sold);
+    else if (filter === 'inactive') filtered = allCars.filter(c => !c.is_active);
+
+    const active = allCars.filter(c => c.is_active && !c.is_sold).length;
+    const sold = allCars.filter(c => c.is_sold).length;
+    const inactive = allCars.filter(c => !c.is_active).length;
+
+    carStats.innerHTML = `
+      <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
+        Totalt: <strong style="color:#fff;">${allCars.length}</strong>
+      </span>
+      <span style="background:#22C55E18;border:1px solid #22C55E33;border-radius:8px;padding:6px 12px;font-size:13px;color:#22C55E;">
+        Aktiva: <strong>${active}</strong>
+      </span>
+      <span style="background:#F59E0B18;border:1px solid #F59E0B33;border-radius:8px;padding:6px 12px;font-size:13px;color:#F59E0B;">
+        Sålda: <strong>${sold}</strong>
+      </span>
+      <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--gray);">
+        Inaktiva: <strong>${inactive}</strong>
+      </span>
+    `;
+
+    if (!filtered.length) {
+      carsList.innerHTML = '<p class="loading-text">Inga bilar hittades.</p>';
+      return;
+    }
+
+    carsList.innerHTML = filtered.map(c => {
+      const thumb = c.images?.[0] || '';
+      const statusBadge = c.is_sold
+        ? '<span style="background:#F59E0B22;color:#F59E0B;border:1px solid #F59E0B44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">Såld</span>'
+        : c.is_active
+          ? '<span style="background:#22C55E22;color:#22C55E;border:1px solid #22C55E44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">Aktiv</span>'
+          : '<span style="background:rgba(255,255,255,0.08);color:var(--gray);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">Inaktiv</span>';
+
+      return `
+        <div class="car-admin-card" data-id="${c.id}">
+          ${thumb ? `<img class="car-admin-thumb" src="${thumb}" alt="${c.full_name}" loading="lazy" />` : '<div class="car-admin-thumb" style="display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0.2;">&#128663;</div>'}
+          <div class="car-admin-info">
+            <div class="car-admin-name">${c.full_name}</div>
+            <div class="car-admin-meta">
+              <span>${c.reg_no}</span>
+              <span>${c.year}</span>
+              <span>${formatMileage(c.mileage)}</span>
+              <span style="color:#fff;font-weight:600;">${formatPrice(c.price)}</span>
+              ${statusBadge}
+            </div>
+          </div>
+          <div class="car-admin-actions">
+            ${!c.is_sold ? `<button class="car-action-btn sold-btn" onclick="window.__markSold('${c.id}')">Markera såld</button>` : `<button class="car-action-btn active-btn" onclick="window.__markUnsold('${c.id}')">Ångra såld</button>`}
+            <button class="car-action-btn" onclick="window.__editCar('${c.id}')">Redigera</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function loadCars() {
+    carsList.innerHTML = '<p class="loading-text">Laddar bilar...</p>';
+    try {
+      const res = await fetch('/api/cars');
+      allCars = await res.json();
+      renderCars();
+    } catch {
+      carsList.innerHTML = '<p class="loading-text" style="color:var(--red);">Kunde inte ladda bilar.</p>';
+    }
+  }
+
+  carFilter.addEventListener('change', renderCars);
+  document.getElementById('refreshCarsBtn')?.addEventListener('click', loadCars);
+
+  (window as any).__editCar = (id: string) => {
+    const car = allCars.find(c => c.id === id);
+    if (car) openEditModal(car);
+  };
+  (window as any).__markSold = (id: string) => updateCar(id, { is_sold: true });
+  (window as any).__markUnsold = (id: string) => updateCar(id, { is_sold: false });
+
+  // === SUBMISSIONS ===
+  const sourceFilter = document.getElementById('sourceFilter') as HTMLSelectElement;
+  const refreshBtn = document.getElementById('refreshBtn') as HTMLButtonElement;
+  const submissionsList = document.getElementById('submissionsList') as HTMLDivElement;
+  const statsEl = document.getElementById('stats') as HTMLDivElement;
+
+  const sourceLabels: Record<string, string> = {
+    'kontakt': 'Kontaktsidan',
+    'kontakt-footer': 'Kontakt (footer)',
+    'vardering': 'Värdering',
+    'salj-bil-footer': 'Sälj bil (footer)',
+    'bevakning': 'Bevakning',
+    'newsletter': 'Newsletter',
+    'newsletter-footer': 'Newsletter (footer)',
+  };
+  const sourceColors: Record<string, string> = {
+    'kontakt': '#E62E2D',
+    'kontakt-footer': '#C72625',
+    'vardering': '#F59E0B',
+    'salj-bil-footer': '#EF4444',
+    'bevakning': '#10B981',
+    'newsletter': '#E62E2D',
+    'newsletter-footer': '#C72625',
+  };
+
+  function getSourceBadge(source: string | null) {
+    const label = source ? (sourceLabels[source] || source) : 'okänd';
+    const color = source ? (sourceColors[source] || '#6B7280') : '#6B7280';
+    return `<span style="display:inline-block;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">${label}</span>`;
+  }
+
+  async function loadSubmissions() {
+    submissionsList.innerHTML = '<p class="loading-text">Laddar...</p>';
+    const source = sourceFilter.value;
+    try {
+      const res = await fetch(`/api/submissions?source=${source}&limit=50`);
+      const data = await res.json();
+
+      if (!data.length) {
+        submissionsList.innerHTML = '<p class="loading-text">Inga inlämningar hittades.</p>';
+        statsEl.innerHTML = '';
+        return;
+      }
+
+      const sourceCounts: Record<string, number> = {};
+      data.forEach((s: any) => {
+        const src = s.source || 'okänd';
+        sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+      });
+
+      statsEl.innerHTML = `
+        <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--gray);">
+          Totalt: <strong style="color:#fff;">${data.length}</strong>
+        </span>
+        ${Object.entries(sourceCounts).map(([src, count]) => `
+          <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
+            ${getSourceBadge(src)} <strong style="color:#fff;">${count}</strong>
+          </span>
+        `).join('')}
+      `;
+
+      submissionsList.innerHTML = data.map((s: any) => `
+        <div style="background:var(--bg-dark-4);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              ${getSourceBadge(s.source)}
+              ${s.car_name ? `<span style="display:inline-block;background:var(--red);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">${s.car_name}</span>` : ''}
+              ${s.sent_successfully ? '<span style="color:#22C55E;font-size:12px;">mejlat</span>' : '<span style="color:#EF4444;font-size:12px;">ej mejlat</span>'}
+            </div>
+            <span style="color:var(--gray);font-size:12px;">${formatDate(s.created_at)}</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:14px;margin-bottom:8px;">
+            ${s.name && s.name !== 'Okänd' ? `<span><strong>Namn:</strong> ${s.name}</span>` : ''}
+            ${s.email ? `<span><strong>E-post:</strong> ${s.email}</span>` : ''}
+            ${s.phone ? `<span><strong>Tel:</strong> ${s.phone}</span>` : ''}
+          </div>
+          <p style="font-size:13px;color:var(--gray);white-space:pre-line;margin:0;">${s.message}</p>
+        </div>
+      `).join('');
+    } catch {
+      submissionsList.innerHTML = '<p class="loading-text" style="color:var(--red);">Kunde inte ladda inlämningar.</p>';
+    }
+  }
+
+  sourceFilter.addEventListener('change', loadSubmissions);
+  refreshBtn.addEventListener('click', loadSubmissions);
+
+  // === NEWSLETTER ===
+  const nlList = document.getElementById('nlList') as HTMLDivElement;
+  const nlStats = document.getElementById('nlStats') as HTMLDivElement;
+  const nlFilter = document.getElementById('nlFilter') as HTMLSelectElement;
+  const nlAddBtn = document.getElementById('nlAddBtn') as HTMLButtonElement;
+  const nlAddEmail = document.getElementById('nlAddEmail') as HTMLInputElement;
+  const nlAddName = document.getElementById('nlAddName') as HTMLInputElement;
+  const nlAddMsg = document.getElementById('nlAddMsg') as HTMLParagraphElement;
+  const nlExportBtn = document.getElementById('nlExportBtn') as HTMLButtonElement;
+
+  let allSubscribers: any[] = [];
+
+  const nlSourceLabels: Record<string, string> = {
+    'hemsida': 'Hemsida',
+    'footer': 'Footer',
+    'manual': 'Manuell',
+  };
+  const nlSourceColors: Record<string, string> = {
+    'hemsida': '#E62E2D',
+    'footer': '#C72625',
+    'manual': '#EF4444',
+  };
+
+  function getNlSourceBadge(source: string | null) {
+    const label = source ? (nlSourceLabels[source] || source) : 'okänd';
+    const color = source ? (nlSourceColors[source] || '#6B7280') : '#6B7280';
+    return `<span style="display:inline-block;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;">${label}</span>`;
+  }
+
+  function renderSubscribers() {
+    const filter = nlFilter.value;
+    let filtered = allSubscribers;
+    if (filter === 'active') filtered = allSubscribers.filter(s => s.is_active);
+    else if (filter === 'inactive') filtered = allSubscribers.filter(s => !s.is_active);
+
+    const active = allSubscribers.filter(s => s.is_active).length;
+    const inactive = allSubscribers.filter(s => !s.is_active).length;
+
+    const sourceCounts: Record<string, number> = {};
+    allSubscribers.filter(s => s.is_active).forEach(s => {
+      const src = s.source || 'okänd';
+      sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+    });
+
+    nlStats.innerHTML = `
+      <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
+        Totalt: <strong style="color:#fff;">${allSubscribers.length}</strong>
+      </span>
+      <span style="background:#22C55E18;border:1px solid #22C55E33;border-radius:8px;padding:6px 12px;font-size:13px;color:#22C55E;">
+        Aktiva: <strong>${active}</strong>
+      </span>
+      <span style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--gray);">
+        Avregistrerade: <strong>${inactive}</strong>
+      </span>
+      ${Object.entries(sourceCounts).map(([src, count]) => `
+        <span style="background:var(--bg-dark-4);border-radius:8px;padding:6px 12px;font-size:13px;">
+          ${getNlSourceBadge(src)} <strong style="color:#fff;">${count}</strong>
+        </span>
+      `).join('')}
+    `;
+
+    if (!filtered.length) {
+      nlList.innerHTML = '<p class="loading-text">Inga prenumeranter hittades.</p>';
+      return;
+    }
+
+    nlList.innerHTML = filtered.map(s => `
+      <div style="background:var(--bg-dark-4);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span style="font-weight:600;font-size:14px;">${s.email}</span>
+            ${getNlSourceBadge(s.source)}
+            ${s.is_active
+              ? '<span style="color:#22C55E;font-size:12px;">aktiv</span>'
+              : '<span style="color:var(--gray);font-size:12px;">avregistrerad</span>'}
+          </div>
+          <div style="font-size:12px;color:var(--gray);">
+            ${s.name ? `${s.name} — ` : ''}${formatDate(s.created_at)}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="car-action-btn" onclick="window.__toggleNl('${s.id}', ${!s.is_active})" style="font-size:12px;padding:4px 10px;">
+            ${s.is_active ? 'Avregistrera' : 'Aktivera'}
+          </button>
+          <button class="car-action-btn" onclick="window.__deleteNl('${s.id}')" style="font-size:12px;padding:4px 10px;border-color:#EF444444;color:#EF4444;">
+            Ta bort
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadSubscribers() {
+    nlList.innerHTML = '<p class="loading-text">Laddar...</p>';
+    try {
+      const res = await fetch('/api/newsletter');
+      allSubscribers = await res.json();
+      renderSubscribers();
+    } catch {
+      nlList.innerHTML = '<p class="loading-text" style="color:var(--red);">Kunde inte ladda prenumeranter.</p>';
+    }
+  }
+
+  nlFilter.addEventListener('change', renderSubscribers);
+  document.getElementById('refreshNlBtn')?.addEventListener('click', loadSubscribers);
+
+  nlAddBtn.addEventListener('click', async () => {
+    const email = nlAddEmail.value.trim();
+    if (!email) { nlAddMsg.textContent = 'Ange e-postadress.'; nlAddMsg.style.color = 'var(--red)'; return; }
+    nlAddBtn.disabled = true;
+    nlAddBtn.textContent = 'Lägger till...';
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add', email, name: nlAddName.value.trim() || null }),
+      });
+      if (res.ok) {
+        nlAddMsg.textContent = 'Tillagd!';
+        nlAddMsg.style.color = '#22C55E';
+        nlAddEmail.value = '';
+        nlAddName.value = '';
+        await loadSubscribers();
+      } else {
+        const data = await res.json();
+        nlAddMsg.textContent = data.error || 'Fel vid tillägg.';
+        nlAddMsg.style.color = 'var(--red)';
+      }
+    } catch {
+      nlAddMsg.textContent = 'Nätverksfel.';
+      nlAddMsg.style.color = 'var(--red)';
+    }
+    nlAddBtn.disabled = false;
+    nlAddBtn.textContent = 'Lägg till';
+  });
+
+  (window as any).__toggleNl = async (id: string, is_active: boolean) => {
+    await fetch('/api/newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'toggle', id, is_active }),
+    });
+    await loadSubscribers();
+  };
+
+  (window as any).__deleteNl = async (id: string) => {
+    await fetch('/api/newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', id }),
+    });
+    await loadSubscribers();
+  };
+
+  nlExportBtn.addEventListener('click', () => {
+    const active = allSubscribers.filter(s => s.is_active);
+    const csv = 'E-post,Namn,Källa,Registrerad\n' + active.map(s =>
+      `${s.email},${s.name || ''},${s.source || ''},${s.created_at}`
+    ).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `prenumeranter_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // === INIT ===
+  loadAnnouncement();
+  loadCars();
+  loadSubmissions();
+  loadSubscribers();
 </script>
