@@ -7,9 +7,39 @@ import Layout from '../components/Layout.astro';
   description="Adminpanel"
   noindex={true}
 >
-  <div class="admin-page">
+  <!-- LOGIN OVERLAY -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="/images/begbilnorr-logo-nav.webp" alt="Begbilnorr" height="40" />
+      </div>
+      <h1 class="login-title">Adminpanel</h1>
+      <p class="login-subtitle">Logga in för att hantera webbplatsen</p>
+      <form id="loginForm" autocomplete="off">
+        <div class="login-field">
+          <label for="loginUser">Användarnamn</label>
+          <input type="text" id="loginUser" name="username" required autocomplete="username" placeholder="Användarnamn" />
+        </div>
+        <div class="login-field">
+          <label for="loginPass">Lösenord</label>
+          <input type="password" id="loginPass" name="password" required autocomplete="current-password" placeholder="Lösenord" />
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">Logga in</button>
+        <p class="login-error" id="loginError"></p>
+        <p class="login-locked" id="loginLocked"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin-page" id="adminContent" style="display:none;">
     <div class="container">
-      <h1 class="admin-title">Admin</h1>
+      <div class="admin-header-row">
+        <h1 class="admin-title">Admin</h1>
+        <button class="logout-btn" id="logoutBtn" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logga ut
+        </button>
+      </div>
 
       <!-- Tab navigation -->
       <div class="admin-tabs">
@@ -134,6 +164,163 @@ import Layout from '../components/Layout.astro';
 </Layout>
 
 <style>
+  /* ========== LOGIN ========== */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-dark-1, #0a0a0a);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-overlay.hidden {
+    display: none;
+  }
+
+  .login-card {
+    background: var(--bg-dark-3, #1a1a1a);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 40px 36px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .login-logo {
+    margin-bottom: 24px;
+  }
+
+  .login-logo img {
+    height: 36px;
+    opacity: 0.9;
+  }
+
+  .login-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 28px;
+  }
+
+  .login-field {
+    margin-bottom: 16px;
+    text-align: left;
+  }
+
+  .login-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .login-field input {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 15px;
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .login-field input:focus {
+    border-color: var(--red);
+  }
+
+  .login-field input::placeholder {
+    color: rgba(255,255,255,0.2);
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--red);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+
+  .login-btn:hover {
+    background: var(--red-dark);
+  }
+
+  .login-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .login-error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 12px;
+    min-height: 20px;
+  }
+
+  .login-locked {
+    color: #f59e0b;
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 20px;
+  }
+
+  /* ========== ADMIN HEADER ========== */
+  .admin-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .admin-header-row .admin-title {
+    margin-bottom: 0;
+  }
+
+  .logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .logout-btn:hover {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.3);
+    color: #ef4444;
+  }
+
+  /* ========== ADMIN PAGE ========== */
   .admin-page { padding: 32px 0 64px; }
   .admin-title { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
 
@@ -330,6 +517,109 @@ import Layout from '../components/Layout.astro';
 </style>
 
 <script>
+  // === AUTH ===
+  const AUTH_HASH = '0346ac86d2eec468045e22cda09213d76ae87930139b5c28b3709396f0e076c4';
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_MINUTES = 15;
+  const LOCKOUT_KEY = 'admin_lockout';
+  const ATTEMPTS_KEY = 'admin_attempts';
+  const SESSION_KEY = 'admin_auth';
+
+  async function sha256(str: string): Promise<string> {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function getAttempts(): number {
+    return parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10);
+  }
+
+  function getLockoutEnd(): number {
+    return parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10);
+  }
+
+  function isLockedOut(): boolean {
+    const end = getLockoutEnd();
+    if (end && Date.now() < end) return true;
+    if (end && Date.now() >= end) {
+      localStorage.removeItem(LOCKOUT_KEY);
+      localStorage.removeItem(ATTEMPTS_KEY);
+    }
+    return false;
+  }
+
+  function lockoutRemaining(): string {
+    const end = getLockoutEnd();
+    const mins = Math.ceil((end - Date.now()) / 60000);
+    return `${mins} min`;
+  }
+
+  const overlay = document.getElementById('loginOverlay')!;
+  const adminContent = document.getElementById('adminContent')!;
+  const loginForm = document.getElementById('loginForm') as HTMLFormElement;
+  const loginError = document.getElementById('loginError')!;
+  const loginLocked = document.getElementById('loginLocked')!;
+  const loginBtn = document.getElementById('loginBtn') as HTMLButtonElement;
+  const logoutBtn = document.getElementById('logoutBtn')!;
+
+  // Check existing session
+  if (sessionStorage.getItem(SESSION_KEY) === AUTH_HASH) {
+    overlay.classList.add('hidden');
+    adminContent.style.display = '';
+  }
+
+  // Update lockout UI
+  function updateLockoutUI() {
+    if (isLockedOut()) {
+      loginBtn.disabled = true;
+      loginLocked.textContent = `Kontot är låst. Försök igen om ${lockoutRemaining()}.`;
+    } else {
+      loginBtn.disabled = false;
+      loginLocked.textContent = '';
+    }
+  }
+  updateLockoutUI();
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.textContent = '';
+
+    if (isLockedOut()) {
+      updateLockoutUI();
+      return;
+    }
+
+    const user = (document.getElementById('loginUser') as HTMLInputElement).value.trim();
+    const pass = (document.getElementById('loginPass') as HTMLInputElement).value;
+    const hash = await sha256(`${user}:${pass}`);
+
+    if (hash === AUTH_HASH) {
+      sessionStorage.setItem(SESSION_KEY, AUTH_HASH);
+      localStorage.removeItem(ATTEMPTS_KEY);
+      localStorage.removeItem(LOCKOUT_KEY);
+      overlay.classList.add('hidden');
+      adminContent.style.display = '';
+    } else {
+      const attempts = getAttempts() + 1;
+      localStorage.setItem(ATTEMPTS_KEY, String(attempts));
+
+      if (attempts >= MAX_ATTEMPTS) {
+        const lockEnd = Date.now() + LOCKOUT_MINUTES * 60 * 1000;
+        localStorage.setItem(LOCKOUT_KEY, String(lockEnd));
+        updateLockoutUI();
+        loginError.textContent = `För många felaktiga försök.`;
+      } else {
+        const remaining = MAX_ATTEMPTS - attempts;
+        loginError.textContent = `Fel användarnamn eller lösenord. ${remaining} försök kvar.`;
+      }
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    window.location.reload();
+  });
+
   // === TABS ===
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
