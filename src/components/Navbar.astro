@@ -134,17 +134,5 @@ const isActive = (href: string) => {
   btn?.addEventListener('click', toggleMenu);
   overlay?.addEventListener('click', closeMenu);
 
-  // Bottom nav scroll hide/show
-  const bottomNav = document.getElementById('bottomNav');
-  let lastScroll = 0;
-
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    if (currentScroll > lastScroll && currentScroll > 100) {
-      bottomNav?.classList.add('hidden');
-    } else {
-      bottomNav?.classList.remove('hidden');
-    }
-    lastScroll = currentScroll;
-  }, { passive: true });
+  // Bottom nav always visible (fixed)
 </script>
