@@ -1,0 +1,434 @@
+---
+import Layout from '../components/Layout.astro';
+import StructuredData from '../components/StructuredData.astro';
+
+const categories = [
+  {
+    title: 'Om Begbilnorr',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    items: [
+      { question: 'Var ligger Begbilnorr?', answer: 'Vi finns i Luleå, Norrbotten. Välkommen att besöka oss på plats eller kontakta oss via telefon, e-post eller WhatsApp för mer information.' },
+      { question: 'Vilka öppettider har ni?', answer: 'Vi har flexibla öppettider och välkomnar besök efter överenskommelse. Ring oss på 0920-999 86 eller maila info@begbilnorr.se för att boka en tid.' },
+      { question: 'Kan jag provköra en bil innan köp?', answer: 'Ja, självklart! Vi erbjuder provkörning på alla våra bilar. Kontakta oss för att boka en tid som passar dig.' },
+      { question: 'Erbjuder ni hemleverans?', answer: 'Ja, vi kan leverera bilen hem till dig inom Norrbotten. Kontakta oss för att diskutera leveransalternativ och eventuella kostnader.' },
+    ]
+  },
+  {
+    title: 'Bilköp & Garanti',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>',
+    items: [
+      { question: 'Har ni garanti på begagnade bilar?', answer: 'Ja! Alla våra bilar säljs med garanti. Vi kvalitetskontrollerar varje fordon innan försäljning för att säkerställa att du får en pålitlig bil.' },
+      { question: 'Hur kontrolleras bilarna innan försäljning?', answer: 'Varje bil genomgår en grundlig kontroll som inkluderar motor, bromsar, chassi, elektronik och övriga viktiga komponenter. Vi åtgärdar eventuella brister innan bilen läggs ut till försäljning.' },
+      { question: 'Kan jag byta in min nuvarande bil?', answer: 'Ja, vi tar emot inbyten. Kontakta oss med uppgifter om din bil så ger vi dig ett värderingserbjudande. Vi hanterar hela processen smidigt.' },
+      { question: 'Vad ingår i priset?', answer: 'Priset som visas på hemsidan är det totala priset inklusive moms (VMB). Inga dolda avgifter tillkommer.' },
+      { question: 'Kan jag reservera en bil?', answer: 'Ja, du kan reservera en bil genom att kontakta oss. Vi håller bilen reserverad under en överenskommen tid medan du ordnar betalning eller finansiering.' },
+    ]
+  },
+  {
+    title: 'Betalning & Swish',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>',
+    items: [
+      { question: 'Vilka betalningsmetoder accepterar ni?', answer: 'Vi accepterar Swish, banköverföring och kontant betalning. Vi erbjuder även finansiering genom våra samarbetspartners.' },
+      { question: 'Kan jag betala hela bilen med Swish?', answer: 'Ja, om din Swish-gräns är tillräckligt hög. De flesta banker tillåter att du höjer gränsen till 150 000 kr eller mer. Kontakta din bank för att höja gränsen innan köpet.' },
+      { question: 'Kostar det något extra att betala med Swish?', answer: 'Nej, vi tar inga extra avgifter för Swish-betalning. Det är helt kostnadsfritt för dig som köpare.' },
+      { question: 'Hur snabbt går en Swish-betalning?', answer: 'Swish-betalningar är i regel klara inom några sekunder. Du får en bekräftelse direkt i appen och vi ser pengarna omedelbart.' },
+      { question: 'Kan jag dela upp betalningen i flera Swish-överföringar?', answer: 'Ja, om din Swish-gräns inte räcker för hela beloppet kan du göra flera överföringar. Vi kan även kombinera Swish med andra betalningsmetoder.' },
+      { question: 'Hur höjer jag min Swish-gräns?', answer: 'Varje bank har sitt eget sätt att höja gränsen — oftast via internetbanken eller appen. Se vår detaljerade guide per bank på sidan "Höja Swish-gräns".' },
+    ]
+  },
+  {
+    title: 'Finansiering',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+    items: [
+      { question: 'Vilka krav finns för att få bilfinansiering?', answer: 'Grundkraven är att du är minst 18 år, har fast inkomst och inte har allvarliga betalningsanmärkningar. Varje ansökan bedöms individuellt.' },
+      { question: 'Hur lång avbetalningstid kan jag välja?', answer: 'Du kan vanligtvis välja avbetalningstid mellan 12 och 84 månader beroende på bilens värde och din ekonomiska situation.' },
+      { question: 'Kan jag lösa lånet i förtid?', answer: 'Ja, du kan alltid lösa ditt billån i förtid utan extra kostnader. Kontakta långivaren för att få en slutbetalningssumma.' },
+      { question: 'Vad händer om jag missar en betalning?', answer: 'Om du missar en betalning bör du kontakta långivaren snarast. De kan ofta hjälpa till med en lösning, som en betalningsplan eller en kortare uppskovstid.' },
+      { question: 'Kan jag finansiera även om jag har betalningsanmärkning?', answer: 'Det beror på anmärkningens art och ålder. Vissa finansbolag kan godkänna ansökningar med äldre eller mindre anmärkningar. Kontakta oss så hjälper vi dig.' },
+    ]
+  },
+  {
+    title: 'Sälj din bil',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>',
+    items: [
+      { question: 'Hur gör jag om jag vill sälja min bil?', answer: 'Kontakta oss med uppgifter om din bil — märke, modell, årsmodell, miltal och skick. Du kan ringa, maila eller använda formuläret på vår sida "Sälj din bil". Vi ger dig ett värderings­erbjudande snabbt.' },
+      { question: 'Hur snabbt kan jag sälja min bil?', answer: 'Vi kan ofta ge dig ett bud samma dag och genomföra affären inom ett par dagar. Betalning sker direkt via Swish eller banköverföring.' },
+      { question: 'Behöver bilen vara besiktigad?', answer: 'Nej, bilen behöver inte vara besiktigad för att vi ska köpa den. Vi gör en egen bedömning av bilens skick och värde.' },
+      { question: 'Köper ni bilar med lån kvar?', answer: 'Ja, vi kan köpa bilar med kvarvarande lån. Vi hjälper till att lösa lånet som en del av affären.' },
+    ]
+  },
+];
+
+const allFaqItems = categories.flatMap(cat => cat.items);
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": allFaqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
+---
+
+<Layout
+  title="Vanliga frågor — FAQ om bilköp, Swish & finansiering | Begbilnorr"
+  description="Svar på vanliga frågor om att köpa begagnad bil hos Begbilnorr i Luleå. Läs om garanti, betalning med Swish, finansiering, inbyte och mer."
+>
+  <StructuredData data={faqSchema} />
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        VANLIGA FRÅGOR
+      </div>
+      <h1>Frågor och svar</h1>
+      <p>Hitta svar på de vanligaste frågorna om att köpa bil, betalning, finansiering och mer hos Begbilnorr i Luleå.</p>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <!-- Category Navigation -->
+  <section class="faq-nav-section">
+    <div class="container">
+      <div class="faq-nav">
+        {categories.map((cat, i) => (
+          <a href={`#kategori-${i}`} class="faq-nav-item">
+            <span class="faq-nav-icon" set:html={cat.icon} />
+            <span>{cat.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Categories -->
+  {categories.map((cat, catIndex) => (
+    <section class={`faq-section ${catIndex % 2 === 0 ? 'faq-section-dark' : 'faq-section-light'}`} id={`kategori-${catIndex}`}>
+      <div class="container">
+        <div class="faq-category-header">
+          <div class="faq-category-icon" set:html={cat.icon} />
+          <h2 class="section-heading">{cat.title}</h2>
+        </div>
+        <div class="faq-container">
+          {cat.items.map(item => (
+            <div class="faq-item">
+              <button class="faq-question" data-faq-toggle>
+                <span>{item.question}</span>
+                <div class="faq-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  {item.answer}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- CTA -->
+  <section class="faq-cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Hittar du inte svaret?</h2>
+      <p>Kontakta oss direkt så hjälper vi dig med alla dina frågor.</p>
+      <div class="cta-buttons">
+        <a href="/kontakt" class="btn-primary">Kontakta oss</a>
+        <a href="tel:0920-99986" class="btn-outline">Ring 0920-999 86</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ========== FAQ NAV ========== */
+  .faq-nav-section {
+    background: var(--bg-dark-2);
+    padding: 0 0 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .faq-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .faq-nav-item:hover {
+    border-color: rgba(230,46,45,0.3);
+    color: var(--white);
+    background: rgba(230,46,45,0.06);
+  }
+
+  .faq-nav-icon {
+    display: flex;
+    color: var(--red);
+  }
+
+  .faq-nav-icon :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ========== FAQ SECTIONS ========== */
+  .faq-section {
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-section-dark {
+    background: var(--bg-dark-2);
+  }
+
+  .faq-section-light {
+    background: var(--bg-dark-3);
+  }
+
+  .faq-category-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .faq-category-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .faq-category-header .section-heading {
+    margin-bottom: 0;
+  }
+
+  /* ========== FAQ ITEMS ========== */
+  .faq-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .faq-item.active {
+    border-color: rgba(230,46,45,0.3);
+    box-shadow: 0 4px 20px rgba(230,46,45,0.08);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    text-align: left;
+    transition: color 0.2s;
+    gap: 16px;
+  }
+
+  .faq-question:hover {
+    color: var(--red);
+  }
+
+  .faq-item.active .faq-question {
+    color: var(--red);
+  }
+
+  .faq-question .faq-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.1);
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.3s;
+    color: var(--red);
+  }
+
+  .faq-item.active .faq-question .faq-icon {
+    transform: rotate(180deg);
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .faq-item.active .faq-answer {
+    max-height: 300px;
+  }
+
+  .faq-answer-inner {
+    padding: 0 24px 20px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* ========== CTA ========== */
+  .faq-cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .faq-cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .faq-section {
+      padding: 48px 0;
+    }
+
+    .faq-nav {
+      gap: 8px;
+    }
+
+    .faq-nav-item {
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+
+    .faq-nav-icon :global(svg) {
+      width: 16px;
+      height: 16px;
+    }
+
+    .faq-category-header {
+      margin-bottom: 28px;
+    }
+
+    .faq-category-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .faq-question {
+      padding: 16px 20px;
+      font-size: 15px;
+    }
+
+    .faq-answer-inner {
+      padding: 0 20px 16px;
+      font-size: 14px;
+    }
+
+    .faq-cta-section {
+      padding: 48px 0;
+    }
+
+    .faq-cta-section h2 {
+      font-size: 24px;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    var faqButtons = document.querySelectorAll('[data-faq-toggle]');
+    faqButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var item = this.parentElement;
+        var isActive = item.classList.contains('active');
+        var allItems = document.querySelectorAll('.faq-item');
+        allItems.forEach(function(faqItem) {
+          faqItem.classList.remove('active');
+        });
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // Smooth scroll for nav links
+    var navLinks = document.querySelectorAll('.faq-nav-item');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  })();
+</script>
