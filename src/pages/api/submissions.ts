@@ -1,7 +1,9 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase';
+import { verifyAdmin, UNAUTHORIZED } from '../../lib/auth';
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ request, url }) => {
+  if (!verifyAdmin(request)) return UNAUTHORIZED;
   const source = url.searchParams.get('source');
   const limit = parseInt(url.searchParams.get('limit') || '50');
 

@@ -1,0 +1,941 @@
+---
+import StructuredData from './StructuredData.astro';
+import CarCard from './CarCard.astro';
+import { supabase } from '../lib/supabase';
+import type { Car } from '../types/car';
+
+interface CityConfig {
+  name: string;
+  slug: string;
+  distance: string;
+  driveTime: string;
+  description: string;
+  seoIntro: string;
+  deliveryText: string;
+  localText: string;
+}
+
+interface Props {
+  city: CityConfig;
+}
+
+const { city } = Astro.props;
+
+let allCars: Car[] = [];
+let brands: string[] = [];
+
+try {
+  const { data: cars } = await supabase
+    .from('cars')
+    .select('*')
+    .eq('is_active', true)
+    .eq('is_sold', false)
+    .order('created_at', { ascending: false });
+
+  allCars = (cars || []) as Car[];
+
+  const { data: brandData } = await supabase
+    .from('cars')
+    .select('brand')
+    .eq('is_active', true)
+    .eq('is_sold', false);
+
+  brands = [...new Set((brandData || []).map((c: { brand: string }) => c.brand))].sort();
+} catch {
+  // Supabase not configured
+}
+
+const faqItems = [
+  {
+    question: `Kan ni leverera bilar till ${city.name}?`,
+    answer: `Ja, absolut! Vi levererar bilar direkt hem till dig i ${city.name}. Du behöver inte åka till Luleå — vi kommer till dig. Leveransen tar normalt ${city.driveTime} och ingår ofta i köpet.`
+  },
+  {
+    question: `Hur köper jag en bil från ${city.name}?`,
+    answer: `Det är enkelt! Bläddra bland våra bilar online, kontakta oss för frågor eller provkörning. Vi kan komma till ${city.name} med bilen så du kan provköra den hemma hos dig. Allt pappersarbete kan skötas digitalt.`
+  },
+  {
+    question: 'Har ni garanti på begagnade bilar?',
+    answer: `Ja, alla bilar vi säljer levereras med garanti — oavsett om du bor i ${city.name} eller någon annanstans. Vi kvalitetskontrollerar varje fordon noggrant innan försäljning.`
+  },
+  {
+    question: 'Kan jag finansiera mitt bilköp?',
+    answer: `Absolut! Vi erbjuder flexibla finansieringslösningar i samarbete med ledande kreditgivare. Du kan ansöka om billån helt digitalt från ${city.name} och får oftast besked samma dag.`
+  },
+  {
+    question: `Kan jag byta in min bil om jag bor i ${city.name}?`,
+    answer: `Ja, vi erbjuder inbyte oavsett var du bor. Skicka bilder och uppgifter om din bil så ger vi dig en preliminär värdering. Vi kan sedan komma till ${city.name} för att hämta din gamla bil och leverera den nya.`
+  },
+  {
+    question: 'Kostar hemleveransen extra?',
+    answer: `Leverans till ${city.name} (${city.distance} från Luleå) ingår ofta i köpet. Vid vissa tillfällen kan en mindre transportkostnad tillkomma. Kontakta oss för exakt pris — vi gör alltid vårt bästa för att hitta en bra lösning.`
+  }
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer }
+  }))
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Hem', item: 'https://begbilnorr.se/' },
+    { '@type': 'ListItem', position: 2, name: `Begagnade bilar ${city.name}`, item: `https://begbilnorr.se/begagnade-bilar-${city.slug}` }
+  ]
+};
+---
+
+<Fragment slot="head">
+  <StructuredData data={faqSchema} />
+  <StructuredData data={breadcrumbSchema} />
+</Fragment>
+
+<!-- Page Hero -->
+<section class="seo-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/">Hem</a>
+      <span class="separator">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
+      <span class="current">Begagnade bilar {city.name}</span>
+    </div>
+    <h1>Begagnade bilar i {city.name}</h1>
+    <p class="hero-intro">{city.seoIntro}</p>
+  </div>
+</section>
+
+<!-- Delivery Banner -->
+<section class="delivery-banner">
+  <div class="container">
+    <div class="delivery-inner">
+      <div class="delivery-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+      </div>
+      <div class="delivery-content">
+        <h2>Du behöver inte komma till oss — vi kommer till dig!</h2>
+        <p>{city.deliveryText}</p>
+      </div>
+      <div class="delivery-stats">
+        <div class="delivery-stat">
+          <span class="stat-value">{city.distance}</span>
+          <span class="stat-label">avstånd</span>
+        </div>
+        <div class="delivery-stat">
+          <span class="stat-value">{city.driveTime}</span>
+          <span class="stat-label">leveranstid</span>
+        </div>
+        <div class="delivery-stat">
+          <span class="stat-value">Gratis*</span>
+          <span class="stat-label">hemleverans</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how-section">
+  <div class="container">
+    <div class="section-label" style="text-align:center;">SÅ FUNGERAR DET</div>
+    <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Köp bil från {city.name} i 3 enkla steg</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <h3>Välj din bil online</h3>
+        <p>Bläddra bland våra kvalitetskontrollerade bilar nedan. Alla bilar finns med detaljerade bilder, specifikationer och historik.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <h3>Kontakta oss</h3>
+        <p>Ring, maila eller WhatsApp:a oss. Vi kan ordna provkörning i {city.name} — vi kör ut bilen till dig så du kan testa den hemma.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <h3>Vi levererar hem till dig</h3>
+        <p>Signera digitalt, betala med Swish eller finansiering, och vi levererar bilen direkt hem till din dörr i {city.name}.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Car Grid Section -->
+<section class="seo-cars-section">
+  <div class="container">
+    <div class="cars-header">
+      <span class="section-label">VÅRT LAGER</span>
+      <p class="cars-count">Visar <strong>{allCars.length}</strong> bilar tillgängliga för leverans till {city.name}</p>
+    </div>
+    <div class="car-grid">
+      {allCars.map((car) => <CarCard car={car} />)}
+    </div>
+
+    {allCars.length === 0 && (
+      <div class="empty-state">
+        <p>Inga bilar tillgängliga just nu.</p>
+        <a href="/bilar">Visa alla bilar</a>
+      </div>
+    )}
+  </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="benefits-section">
+  <div class="container">
+    <h2>Varför köpa bil hos Begbilnorr från {city.name}?</h2>
+    <p class="benefits-intro">
+      {city.description}
+    </p>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+        </div>
+        <h3>Hemleverans till {city.name}</h3>
+        <p>Vi kör ut bilen direkt hem till dig i {city.name}. Du behöver inte ta dig till Luleå — vi sköter allt åt dig. Smidigt, enkelt och personligt.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h3>Garanti på alla bilar</h3>
+        <p>Samtliga bilar säljs med garanti — oavsett om du bor i {city.name} eller Luleå. Vi kvalitetskontrollerar varje fordon noggrant innan försäljning.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+        </div>
+        <h3>Provkörning hemma hos dig</h3>
+        <p>Vi kan köra ut bilen till {city.name} så du kan provköra den i lugn och ro. Ingen press, inga stressiga besök — prova bilen på hemmaplan.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        </div>
+        <h3>Digital finansiering</h3>
+        <p>Ansök om billån helt digitalt — du behöver inte besöka oss. Snabbt besked, oftast samma dag. Vi hittar bästa räntan för din situation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Popular Brands Section -->
+<section class="brands-section">
+  <div class="container">
+    <h2>Begagnade bilar i {city.name} efter märke</h2>
+    <p class="brands-intro">
+      Utforska vårt utbud av begagnade bilar efter märke. Alla bilar kan levereras hem till dig i {city.name}.
+    </p>
+    <div class="brands-grid">
+      {brands.map((b) => (
+        <a href={`/begagnade-bilar-lulea/${b.toLowerCase()}`} class="brand-card">
+          <span class="brand-name">{b}</span>
+          <span class="brand-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </span>
+        </a>
+      ))}
+    </div>
+    {brands.length === 0 && (
+      <p class="no-brands">Inga bilmärken tillgängliga just nu.</p>
+    )}
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+  <div class="container">
+    <h2>Vanliga frågor — köpa bil från {city.name}</h2>
+    <p class="faq-intro">
+      Här svarar vi på vanliga frågor från kunder i {city.name} som vill köpa begagnad bil hos oss.
+    </p>
+    <div class="faq-list">
+      {faqItems.map((item, i) => (
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls={`faq-answer-${i}`}>
+            <span>{item.question}</span>
+            <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer" id={`faq-answer-${i}`}>
+            <p>{item.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- SEO Content Section -->
+<section class="seo-content-section">
+  <div class="container">
+    <div class="seo-content">
+      <h2>Begagnade bilar med leverans till {city.name}</h2>
+      <p>{city.localText}</p>
+      <p>
+        Vi erbjuder allt från ekonomiska småbilar och familjevänliga kombibilar till kraftfulla SUV:ar och premium-modeller.
+        Alla bilar har genomgått en grundlig teknisk kontroll och levereras med garanti för din trygghet.
+        Som bilhandlare i Norrbotten förstår vi de speciella krav som klimatet ställer — våra bilar är redo för vinter och is.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container" style="text-align:center;">
+    <h2>Hitta din drömbil — vi levererar till {city.name}</h2>
+    <p>Bläddra bland våra bilar eller kontakta oss direkt. Vi kör ut bilen till dig för provkörning och leverans.</p>
+    <div class="cta-buttons">
+      <a href="/bilar" class="btn-primary">Se alla bilar</a>
+      <a href="/kontakt" class="btn-outline">Kontakta oss</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hero */
+  .seo-hero {
+    background: var(--bg-dark-2);
+    padding: 60px 0 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .seo-hero h1 {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+
+  .hero-intro {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.8;
+    max-width: 800px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+
+  .breadcrumb a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--red);
+  }
+
+  .breadcrumb .separator {
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumb .current {
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Delivery Banner */
+  .delivery-banner {
+    background: var(--bg-dark-3);
+    padding: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .delivery-inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 32px;
+    padding: 40px 0;
+    border-left: 4px solid var(--red);
+    padding-left: 32px;
+  }
+
+  .delivery-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .delivery-content h2 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .delivery-content p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  .delivery-stats {
+    display: flex;
+    gap: 24px;
+  }
+
+  .delivery-stat {
+    text-align: center;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    min-width: 90px;
+  }
+
+  .delivery-stat .stat-value {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .delivery-stat .stat-label {
+    display: block;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* How it works */
+  .how-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .step-card {
+    text-align: center;
+    padding: 32px 24px;
+  }
+
+  .step-number {
+    font-size: 48px;
+    font-weight: 800;
+    color: rgba(230,46,45,0.15);
+    margin-bottom: 16px;
+    font-family: var(--sans);
+  }
+
+  .step-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .step-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* Cars Section */
+  .seo-cars-section {
+    background: var(--bg-dark-2);
+    padding: 0 0 64px;
+  }
+
+  .cars-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cars-count {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .cars-count strong {
+    color: var(--white);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 64px 0;
+  }
+
+  .empty-state p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 12px;
+  }
+
+  .empty-state a {
+    color: var(--red);
+    font-weight: 600;
+    font-size: 15px;
+    transition: opacity 0.2s;
+  }
+
+  .empty-state a:hover {
+    opacity: 0.8;
+  }
+
+  /* Benefits */
+  .benefits-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .benefits-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .benefits-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto 48px;
+    text-align: center;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .benefit-card {
+    background: var(--bg-dark-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 36px 24px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .benefit-card:hover {
+    border-color: rgba(230,46,45,0.3);
+    transform: translateY(-4px);
+  }
+
+  .benefit-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--red);
+    transition: all 0.3s;
+  }
+
+  .benefit-card:hover .benefit-icon {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .benefit-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .benefit-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* Brands */
+  .brands-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .brands-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .brands-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+
+  .brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .brand-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .brand-card:hover {
+    border-color: rgba(230,46,45,0.4);
+    transform: translateY(-2px);
+    background: rgba(230,46,45,0.05);
+  }
+
+  .brand-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .brand-arrow {
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+  }
+
+  .brand-card:hover .brand-arrow {
+    color: var(--red);
+  }
+
+  .no-brands {
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 15px;
+  }
+
+  /* FAQ */
+  .faq-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .faq-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+
+  .faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    background: var(--bg-dark-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .faq-item.open {
+    border-color: rgba(230,46,45,0.3);
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: 16px;
+  }
+
+  .faq-question span {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.4;
+  }
+
+  .faq-chevron {
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  .faq-item.open .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--red);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 24px;
+  }
+
+  .faq-item.open .faq-answer {
+    max-height: 300px;
+    padding: 0 24px 20px;
+  }
+
+  .faq-answer p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  /* SEO Content */
+  .seo-content-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .seo-content h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .seo-content p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    max-width: 800px;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .benefits-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .delivery-inner {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .delivery-icon {
+      margin: 0 auto;
+    }
+
+    .delivery-content {
+      text-align: center;
+    }
+
+    .delivery-content p {
+      max-width: none;
+      margin: 0 auto;
+    }
+
+    .delivery-stats {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .seo-hero h1 {
+      font-size: 36px;
+    }
+
+    .benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .brands-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .steps-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .step-card {
+      padding: 24px 16px;
+    }
+
+    .step-number {
+      font-size: 36px;
+    }
+
+    .delivery-inner {
+      padding-left: 20px;
+    }
+
+    .delivery-stats {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .delivery-stat {
+      min-width: auto;
+    }
+
+    .delivery-content h2 {
+      font-size: 20px;
+    }
+
+    .benefits-section h2,
+    .brands-section h2,
+    .faq-section h2,
+    .cta-section h2 {
+      font-size: 26px;
+    }
+
+    .seo-content h2 {
+      font-size: 24px;
+    }
+
+    .faq-question span {
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .brands-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  function initFaqAccordion() {
+    document.querySelectorAll('.faq-question').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item') as HTMLElement;
+        const isOpen = item.classList.contains('open');
+
+        document.querySelectorAll('.faq-item.open').forEach((openItem) => {
+          openItem.classList.remove('open');
+          const openBtn = openItem.querySelector('.faq-question');
+          if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
+  initFaqAccordion();
+  document.addEventListener('astro:after-swap', initFaqAccordion);
+</script>

@@ -1,8 +1,10 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase';
 import { sendEmail } from '../../lib/email';
+import { verifyAdmin, UNAUTHORIZED } from '../../lib/auth';
 
 export const POST: APIRoute = async ({ request }) => {
+  if (!verifyAdmin(request)) return UNAUTHORIZED;
   try {
     const body = await request.json();
     const { subject, html, testEmail } = body;

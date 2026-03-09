@@ -981,6 +981,15 @@ export const prerender = false;
   const LOCKOUT_KEY = 'admin_lockout';
   const ATTEMPTS_KEY = 'admin_attempts';
   const SESSION_KEY = 'admin_auth';
+  const TOKEN_KEY = 'admin_token';
+
+  function getAuthHeaders(extra: Record<string, string> = {}): Record<string, string> {
+    const token = sessionStorage.getItem(TOKEN_KEY) || '';
+    return { 'Authorization': `Basic ${token}`, ...extra };
+  }
+  function authJson(): Record<string, string> {
+    return getAuthHeaders({ 'Content-Type': 'application/json' });
+  }
 
   function getAttempts(): number { return parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10); }
   function getLockoutEnd(): number { return parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10); }
@@ -1033,6 +1042,7 @@ export const prerender = false;
       });
       if (res.ok) {
         sessionStorage.setItem(SESSION_KEY, 'authenticated');
+        sessionStorage.setItem(TOKEN_KEY, btoa(user + ':' + pass));
         localStorage.removeItem(ATTEMPTS_KEY);
         localStorage.removeItem(LOCKOUT_KEY);
         overlay.classList.add('hidden');
@@ -1056,7 +1066,7 @@ export const prerender = false;
   });
 
   // Logout
-  function logout() { sessionStorage.removeItem(SESSION_KEY); window.location.reload(); }
+  function logout() { sessionStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(TOKEN_KEY); window.location.reload(); }
   document.getElementById('logoutBtn')?.addEventListener('click', logout);
   document.getElementById('logoutBtnMobile')?.addEventListener('click', logout);
 
@@ -1118,7 +1128,7 @@ export const prerender = false;
 
   async function loadAnnouncement() {
     try {
-      const res = await fetch('/api/announcement');
+      const res = await fetch('/api/announcement', { headers: getAuthHeaders() });
       const data = await res.json();
       textInput.value = data.text || '';
       linkInput.value = data.link || '';
@@ -1130,7 +1140,7 @@ export const prerender = false;
     saveBtn.disabled = true; saveBtn.textContent = 'Sparar...';
     try {
       const res = await fetch('/api/announcement', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: authJson(),
         body: JSON.stringify({ text: textInput.value, link: linkInput.value, visible: visibleCheck.checked }),
       });
       statusMsg.textContent = res.ok ? 'Sparat!' : 'Fel vid sparning.';
@@ -1162,7 +1172,7 @@ export const prerender = false;
 
   async function updateCar(id: string, updates: Record<string, any>) {
     const res = await fetch('/api/cars', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: authJson(),
       body: JSON.stringify({ id, ...updates }),
     });
     if (res.ok) { await loadCars(); closeCarModal(); }
@@ -1173,7 +1183,7 @@ export const prerender = false;
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch('/api/upload', { method: 'POST', headers: getAuthHeaders(), body: formData });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         console.error('Upload failed:', d.error || res.status);
@@ -1425,7 +1435,7 @@ export const prerender = false;
 
       try {
         const res = await fetch('/api/cars', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: authJson(),
           body: JSON.stringify({
             action: 'create', reg_no, brand, model, variant, year, mileage, price,
             fuel_type, gearbox, body_type, monthly_payment, description,
@@ -1519,7 +1529,7 @@ export const prerender = false;
     document.getElementById('deleteCar')?.addEventListener('click', async () => {
       if (!confirm('Är du säker på att du vill ta bort denna bil?')) return;
       const res = await fetch('/api/cars', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: authJson(),
         body: JSON.stringify({ action: 'delete', id: car.id }),
       });
       if (res.ok) { closeCarModal(); await loadCars(); }
@@ -1602,7 +1612,7 @@ export const prerender = false;
   async function loadCars() {
     carsList.innerHTML = '<p class="empty-text">Laddar bilar...</p>';
     try {
-      const res = await fetch('/api/cars');
+      const res = await fetch('/api/cars', { headers: getAuthHeaders() });
       allCars = await res.json();
       renderCars();
       updateDashboard();
@@ -1618,7 +1628,7 @@ export const prerender = false;
   (window as any).__deleteCar = async (id: string, name: string) => {
     if (!confirm(`Är du säker på att du vill ta bort "${name}"? Detta går inte att ångra.`)) return;
     const res = await fetch('/api/cars', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: authJson(),
       body: JSON.stringify({ action: 'delete', id }),
     });
     if (res.ok) await loadCars();
@@ -1650,7 +1660,7 @@ export const prerender = false;
     submissionsList.innerHTML = '<p class="empty-text">Laddar...</p>';
     const source = sourceFilter.value;
     try {
-      const res = await fetch(`/api/submissions?source=${source}&limit=50`);
+      const res = await fetch(`/api/submissions?source=${source}&limit=50`, { headers: getAuthHeaders() });
       allSubmissions = await res.json();
       if (!allSubmissions.length) { submissionsList.innerHTML = '<p class="empty-text">Inga inlämningar.</p>'; statsEl.innerHTML = ''; return; }
 
@@ -1736,7 +1746,7 @@ export const prerender = false;
   async function loadSubscribers() {
     nlList.innerHTML = '<p class="empty-text">Laddar...</p>';
     try {
-      const res = await fetch('/api/newsletter');
+      const res = await fetch('/api/newsletter', { headers: getAuthHeaders() });
       allSubscribers = await res.json();
       renderSubscribers();
       updateDashboard();
@@ -1752,7 +1762,7 @@ export const prerender = false;
     nlAddBtn.disabled = true; nlAddBtn.textContent = 'Lägger till...';
     try {
       const res = await fetch('/api/newsletter', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: authJson(),
         body: JSON.stringify({ action: 'add', email, name: nlAddName.value.trim() || null }),
       });
       if (res.ok) {
@@ -1765,12 +1775,12 @@ export const prerender = false;
   });
 
   (window as any).__toggleNl = async (id: string, is_active: boolean) => {
-    await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'toggle', id, is_active }) });
+    await fetch('/api/newsletter', { method: 'POST', headers: authJson(), body: JSON.stringify({ action: 'toggle', id, is_active }) });
     await loadSubscribers();
   };
   (window as any).__deleteNl = async (id: string) => {
     if (!confirm('Ta bort prenumerant?')) return;
-    await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id }) });
+    await fetch('/api/newsletter', { method: 'POST', headers: authJson(), body: JSON.stringify({ action: 'delete', id }) });
     await loadSubscribers();
   };
 
@@ -1867,7 +1877,7 @@ export const prerender = false;
     nlTestBtn.disabled = true; nlTestBtn.textContent = 'Skickar...';
     try {
       const res = await fetch('/api/newsletter-send', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: authJson(),
         body: JSON.stringify({ subject: nlSubject.value, html: nlContent.value, testEmail: email }),
       });
       if (res.ok) { nlSendMsg.textContent = `Test skickat till ${email}!`; nlSendMsg.style.color = '#22C55E'; }
@@ -1884,7 +1894,7 @@ export const prerender = false;
     nlSendBtn.disabled = true; nlSendBtn.textContent = 'Skickar...';
     try {
       const res = await fetch('/api/newsletter-send', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: authJson(),
         body: JSON.stringify({ subject: nlSubject.value, html: nlContent.value }),
       });
       const d = await res.json();

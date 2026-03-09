@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase';
+import { verifyAdmin, UNAUTHORIZED } from '../../lib/auth';
 
 const ALLOWED = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 const MAX_SIZE = 4 * 1024 * 1024; // 4MB per file (Vercel limit)
 
 export const POST: APIRoute = async ({ request }) => {
+  if (!verifyAdmin(request)) return UNAUTHORIZED;
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;

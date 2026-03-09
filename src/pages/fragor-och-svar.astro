@@ -7,15 +7,15 @@ const categories = [
     title: 'Om Begbilnorr',
     icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
     items: [
-      { question: 'Var ligger Begbilnorr?', answer: 'Vi finns i Luleå, Norrbotten. Välkommen att besöka oss på plats eller kontakta oss via telefon, e-post eller WhatsApp för mer information.' },
-      { question: 'Vilka öppettider har ni?', answer: 'Vi har flexibla öppettider och välkomnar besök efter överenskommelse. Ring oss på 0920-999 86 eller maila info@begbilnorr.se för att boka en tid.' },
+      { question: 'Var ligger Begbilnorr?', answer: 'Vi finns på Fabriksvägen 18 i Luleå, Norrbotten. Välkommen att besöka oss på plats eller kontakta oss via telefon, e-post eller WhatsApp för mer information.' },
+      { question: 'Vilka öppettider har ni?', answer: 'Vi har öppet måndag–fredag 09:00–18:00 och lördag 10:00–15:00. Söndagar är det stängt. Ring oss på 0920-999 86 eller maila info@begbilnorr.se för att boka en tid.' },
       { question: 'Kan jag provköra en bil innan köp?', answer: 'Ja, självklart! Vi erbjuder provkörning på alla våra bilar. Kontakta oss för att boka en tid som passar dig.' },
       { question: 'Erbjuder ni hemleverans?', answer: 'Ja, vi kan leverera bilen hem till dig inom Norrbotten. Kontakta oss för att diskutera leveransalternativ och eventuella kostnader.' },
     ]
   },
   {
     title: 'Bilköp & Garanti',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
     items: [
       { question: 'Har ni garanti på begagnade bilar?', answer: 'Ja! Alla våra bilar säljs med garanti. Vi kvalitetskontrollerar varje fordon innan försäljning för att säkerställa att du får en pålitlig bil.' },
       { question: 'Hur kontrolleras bilarna innan försäljning?', answer: 'Varje bil genomgår en grundlig kontroll som inkluderar motor, bromsar, chassi, elektronik och övriga viktiga komponenter. Vi åtgärdar eventuella brister innan bilen läggs ut till försäljning.' },
@@ -59,6 +59,8 @@ const categories = [
   },
 ];
 
+const totalQuestions = categories.reduce((sum, cat) => sum + cat.items.length, 0);
+
 const allFaqItems = categories.flatMap(cat => cat.items);
 const faqSchema = {
   "@context": "https://schema.org",
@@ -93,40 +95,46 @@ const faqSchema = {
     </div>
   </section>
 
-  <!-- Category Navigation -->
-  <section class="faq-nav-section">
+  <!-- Category Cards -->
+  <section class="faq-categories">
     <div class="container">
-      <div class="faq-nav">
+      <div class="faq-cat-grid">
         {categories.map((cat, i) => (
-          <a href={`#kategori-${i}`} class="faq-nav-item">
-            <span class="faq-nav-icon" set:html={cat.icon} />
-            <span>{cat.title}</span>
+          <a href={`#kategori-${i}`} class="faq-cat-card">
+            <div class="faq-cat-icon" set:html={cat.icon} />
+            <div class="faq-cat-info">
+              <h3>{cat.title}</h3>
+              <span>{cat.items.length} frågor</span>
+            </div>
           </a>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- FAQ Categories -->
+  <!-- FAQ Sections -->
   {categories.map((cat, catIndex) => (
-    <section class={`faq-section ${catIndex % 2 === 0 ? 'faq-section-dark' : 'faq-section-light'}`} id={`kategori-${catIndex}`}>
+    <section class="faq-section" id={`kategori-${catIndex}`}>
       <div class="container">
-        <div class="faq-category-header">
-          <div class="faq-category-icon" set:html={cat.icon} />
+        <div class="faq-section-header">
+          <div class="section-label">{cat.title.toUpperCase()}</div>
           <h2 class="section-heading">{cat.title}</h2>
         </div>
-        <div class="faq-container">
-          {cat.items.map(item => (
+        <div class="faq-list">
+          {cat.items.map((item, itemIndex) => (
             <div class="faq-item">
               <button class="faq-question" data-faq-toggle>
-                <span>{item.question}</span>
-                <div class="faq-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                <div class="faq-q-left">
+                  <span class="faq-num">{String(itemIndex + 1).padStart(2, '0')}</span>
+                  <span>{item.question}</span>
+                </div>
+                <div class="faq-chevron">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </div>
               </button>
               <div class="faq-answer">
                 <div class="faq-answer-inner">
-                  {item.answer}
+                  <p>{item.answer}</p>
                 </div>
               </div>
             </div>
@@ -136,90 +144,97 @@ const faqSchema = {
     </section>
   ))}
 
-  <!-- CTA -->
-  <section class="faq-cta-section">
-    <div class="container" style="text-align:center;">
-      <h2>Hittar du inte svaret?</h2>
-      <p>Kontakta oss direkt så hjälper vi dig med alla dina frågor.</p>
-      <div class="cta-buttons">
-        <a href="/kontakt" class="btn-primary">Kontakta oss</a>
-        <a href="tel:0920-99986" class="btn-outline">Ring 0920-999 86</a>
+  <!-- CTA Section -->
+  <section class="faq-cta">
+    <div class="container">
+      <div class="faq-cta-card">
+        <div class="faq-cta-content">
+          <div class="section-label">BEHÖVER DU HJÄLP?</div>
+          <h2>Hittar du inte svaret?</h2>
+          <p>Kontakta oss direkt så hjälper vi dig med alla dina frågor. Vi svarar snabbt via telefon, WhatsApp eller e-post.</p>
+          <div class="faq-cta-buttons">
+            <a href="/kontakt" class="btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Kontakta oss
+            </a>
+            <a href="tel:0920-99986" class="btn-outline">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Ring 0920-999 86
+            </a>
+          </div>
+        </div>
+        <div class="faq-cta-contact">
+          <div class="faq-contact-row">
+            <div class="faq-contact-item">
+              <div class="faq-contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div>
+                <div class="faq-contact-label">Telefon</div>
+                <a href="tel:0920-99986" class="faq-contact-value">0920-999 86</a>
+              </div>
+            </div>
+            <div class="faq-contact-item">
+              <div class="faq-contact-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              </div>
+              <div>
+                <div class="faq-contact-label">E-post</div>
+                <a href="mailto:info@begbilnorr.se" class="faq-contact-value">info@begbilnorr.se</a>
+              </div>
+            </div>
+            <div class="faq-contact-item">
+              <div class="faq-contact-icon">
+                <svg viewBox="0 0 448 512" width="20" height="20" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157z"/></svg>
+              </div>
+              <div>
+                <div class="faq-contact-label">WhatsApp</div>
+                <a href="https://wa.me/46727448034" target="_blank" rel="noopener" class="faq-contact-value">0727 448 034</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  /* ========== FAQ NAV ========== */
-  .faq-nav-section {
+  /* ========== CATEGORY CARDS ========== */
+  .faq-categories {
     background: var(--bg-dark-2);
-    padding: 0 0 20px;
+    padding: 48px 0;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  .faq-nav {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
+  .faq-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
   }
 
-  .faq-nav-item {
+  .faq-cat-card {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    background: var(--bg-dark-4);
+    gap: 14px;
+    padding: 20px;
+    background: var(--bg-dark-3);
     border: 1px solid rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.7);
-    font-size: 14px;
-    font-weight: 500;
+    border-radius: var(--radius-lg);
     text-decoration: none;
     transition: all 0.3s;
   }
 
-  .faq-nav-item:hover {
+  .faq-cat-card:hover {
     border-color: rgba(230,46,45,0.3);
-    color: var(--white);
-    background: rgba(230,46,45,0.06);
+    background: rgba(230,46,45,0.04);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   }
 
-  .faq-nav-icon {
-    display: flex;
-    color: var(--red);
-  }
-
-  .faq-nav-icon :global(svg) {
-    width: 18px;
-    height: 18px;
-  }
-
-  /* ========== FAQ SECTIONS ========== */
-  .faq-section {
-    padding: 80px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .faq-section-dark {
-    background: var(--bg-dark-2);
-  }
-
-  .faq-section-light {
-    background: var(--bg-dark-3);
-  }
-
-  .faq-category-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 40px;
-  }
-
-  .faq-category-icon {
-    width: 48px;
-    height: 48px;
+  .faq-cat-icon {
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(230,46,45,0.1);
     display: flex;
@@ -229,19 +244,63 @@ const faqSchema = {
     flex-shrink: 0;
   }
 
-  .faq-category-header .section-heading {
+  .faq-cat-info h3 {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+
+  .faq-cat-info span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ========== FAQ SECTIONS ========== */
+  .faq-section {
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-section:nth-child(odd) {
+    background: var(--bg-dark-2);
+  }
+
+  .faq-section:nth-child(even) {
+    background: var(--bg-dark-3);
+  }
+
+  .faq-section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .faq-section-header .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .faq-section-header .section-heading {
     margin-bottom: 0;
   }
 
   /* ========== FAQ ITEMS ========== */
-  .faq-container {
-    max-width: 720px;
+  .faq-list {
+    max-width: 780px;
     margin: 0 auto;
   }
 
   .faq-item {
     background: var(--bg-dark-4);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     margin-bottom: 12px;
     border: 1px solid rgba(255,255,255,0.06);
     overflow: hidden;
@@ -254,20 +313,20 @@ const faqSchema = {
 
   .faq-item.active {
     border-color: rgba(230,46,45,0.3);
-    box-shadow: 0 4px 20px rgba(230,46,45,0.08);
+    box-shadow: 0 4px 20px rgba(230,46,45,0.06);
   }
 
   .faq-question {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 24px;
+    padding: 22px 24px;
     cursor: pointer;
     background: none;
     border: none;
     width: 100%;
     font-family: var(--sans);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--white);
     text-align: left;
@@ -275,28 +334,42 @@ const faqSchema = {
     gap: 16px;
   }
 
-  .faq-question:hover {
-    color: var(--red);
+  .faq-question:hover { color: var(--red); }
+  .faq-item.active .faq-question { color: var(--red); }
+
+  .faq-q-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
-  .faq-item.active .faq-question {
+  .faq-num {
+    font-size: 12px;
+    font-weight: 700;
     color: var(--red);
+    opacity: 0.5;
+    font-family: var(--sans);
+    min-width: 20px;
   }
 
-  .faq-question .faq-icon {
+  .faq-item.active .faq-num {
+    opacity: 1;
+  }
+
+  .faq-chevron {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: rgba(230,46,45,0.1);
+    background: rgba(255,255,255,0.04);
     flex-shrink: 0;
-    transition: transform 0.3s, background 0.3s;
-    color: var(--red);
+    transition: transform 0.3s, background 0.3s, color 0.3s;
+    color: rgba(255,255,255,0.4);
   }
 
-  .faq-item.active .faq-question .faq-icon {
+  .faq-item.active .faq-chevron {
     transform: rotate(180deg);
     background: var(--red);
     color: var(--white);
@@ -313,170 +386,270 @@ const faqSchema = {
   }
 
   .faq-answer-inner {
-    padding: 0 24px 20px;
+    padding: 0 24px 24px 60px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .faq-answer-inner p {
     font-size: 15px;
     color: rgba(255,255,255,0.6);
-    line-height: 1.7;
+    line-height: 1.8;
+    padding-top: 20px;
   }
 
   /* ========== CTA ========== */
-  .faq-cta-section {
-    background: var(--bg-dark-3);
+  .faq-cta {
+    background: var(--bg-dark-2);
     padding: 80px 0;
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
-  .faq-cta-section h2 {
+  .faq-cta-card {
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .faq-cta-content {
+    padding: 48px;
+    text-align: center;
+  }
+
+  .faq-cta-content .section-label {
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .faq-cta-content h2 {
     font-family: var(--serif);
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 400;
     font-style: italic;
     color: var(--white);
     margin-bottom: 12px;
   }
 
-  .faq-cta-section p {
+  .faq-cta-content p {
     font-size: 16px;
     color: rgba(255,255,255,0.6);
-    margin-bottom: 32px;
+    max-width: 500px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
   }
 
-  .cta-buttons {
+  .faq-cta-buttons {
     display: flex;
     justify-content: center;
     gap: 16px;
     flex-wrap: wrap;
   }
 
+  .faq-cta-buttons .btn-primary,
+  .faq-cta-buttons .btn-outline {
+    gap: 8px;
+  }
+
+  .faq-cta-contact {
+    background: var(--bg-dark-4);
+    padding: 28px 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .faq-contact-row {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+  }
+
+  .faq-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .faq-contact-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(230,46,45,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .faq-contact-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 2px;
+  }
+
+  .faq-contact-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .faq-contact-value:hover {
+    color: var(--red-light);
+  }
+
   /* ========== RESPONSIVE ========== */
+  @media (max-width: 1024px) {
+    .faq-cat-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   @media (max-width: 768px) {
-    .faq-nav-section {
-      padding: 0 0 16px;
+    .faq-categories {
+      padding: 32px 0;
     }
 
-    .faq-nav {
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      gap: 8px;
-      padding: 0 16px;
-    }
-
-    .faq-nav::-webkit-scrollbar {
-      display: none;
-    }
-
-    .faq-nav-item {
-      padding: 8px 14px;
-      font-size: 12px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .faq-nav-icon :global(svg) {
-      width: 14px;
-      height: 14px;
-    }
-
-    .faq-section {
-      padding: 40px 0;
-    }
-
-    .faq-category-header {
-      margin-bottom: 24px;
+    .faq-cat-grid {
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    .faq-category-icon {
+    .faq-cat-card {
+      padding: 14px;
+      gap: 10px;
+    }
+
+    .faq-cat-icon {
       width: 36px;
       height: 36px;
     }
 
-    .faq-category-icon :global(svg) {
-      width: 18px;
-      height: 18px;
+    .faq-cat-icon :global(svg) {
+      width: 16px;
+      height: 16px;
     }
 
-    .faq-category-header .section-heading {
-      font-size: 22px;
+    .faq-cat-info h3 {
+      font-size: 13px;
     }
 
-    .faq-container {
-      padding: 0 4px;
+    .faq-cat-info span {
+      font-size: 11px;
     }
 
-    .faq-item {
-      margin-bottom: 8px;
-      border-radius: 10px;
+    .faq-section {
+      padding: 48px 0;
+    }
+
+    .faq-section-header {
+      margin-bottom: 28px;
+    }
+
+    .faq-section-header .section-heading {
+      font-size: 24px;
     }
 
     .faq-question {
-      padding: 14px 16px;
+      padding: 16px 18px;
       font-size: 14px;
       gap: 12px;
     }
 
-    .faq-question .faq-icon {
+    .faq-q-left {
+      gap: 12px;
+    }
+
+    .faq-num {
+      font-size: 11px;
+      min-width: 18px;
+    }
+
+    .faq-chevron {
       width: 28px;
       height: 28px;
     }
 
-    .faq-question .faq-icon svg {
+    .faq-chevron svg {
       width: 14px;
       height: 14px;
     }
 
     .faq-answer-inner {
-      padding: 0 16px 14px;
+      padding: 0 18px 18px 48px;
+    }
+
+    .faq-answer-inner p {
       font-size: 13px;
-      line-height: 1.6;
+      padding-top: 16px;
     }
 
-    .faq-cta-section {
-      padding: 48px 0;
+    .faq-cta-content {
+      padding: 32px 24px;
     }
 
-    .faq-cta-section h2 {
-      font-size: 24px;
+    .faq-cta-content h2 {
+      font-size: 26px;
     }
 
-    .faq-cta-section p {
+    .faq-cta-content p {
       font-size: 14px;
-      padding: 0 16px;
     }
 
-    .cta-buttons {
+    .faq-cta-buttons {
       flex-direction: column;
       align-items: center;
-      padding: 0 16px;
     }
 
-    .cta-buttons a {
+    .faq-cta-buttons a {
       width: 100%;
       text-align: center;
+      justify-content: center;
+    }
+
+    .faq-cta-contact {
+      padding: 20px 24px;
+    }
+
+    .faq-contact-row {
+      flex-direction: column;
+      gap: 16px;
     }
   }
 
   @media (max-width: 480px) {
-    .faq-nav-item {
-      padding: 7px 12px;
-      font-size: 11px;
+    .faq-cat-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
     }
 
     .faq-question {
-      padding: 12px 14px;
+      padding: 14px 16px;
       font-size: 13px;
     }
 
     .faq-answer-inner {
-      padding: 0 14px 12px;
-      font-size: 12px;
+      padding: 0 16px 16px 16px;
     }
 
-    .faq-category-header .section-heading {
-      font-size: 20px;
+    .faq-answer-inner p {
+      font-size: 13px;
+    }
+
+    .faq-section-header .section-heading {
+      font-size: 22px;
+    }
+
+    .faq-cta-content h2 {
+      font-size: 22px;
     }
   }
 </style>
@@ -498,14 +671,16 @@ const faqSchema = {
       });
     });
 
-    // Smooth scroll for nav links
-    var navLinks = document.querySelectorAll('.faq-nav-item');
-    navLinks.forEach(function(link) {
-      link.addEventListener('click', function(e) {
+    // Smooth scroll for category cards
+    var catCards = document.querySelectorAll('.faq-cat-card');
+    catCards.forEach(function(card) {
+      card.addEventListener('click', function(e) {
         e.preventDefault();
         var target = document.querySelector(this.getAttribute('href'));
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          var offset = 20;
+          var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
         }
       });
     });

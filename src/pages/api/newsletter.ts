@@ -1,7 +1,9 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase';
+import { verifyAdmin, UNAUTHORIZED } from '../../lib/auth';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
+  if (!verifyAdmin(request)) return UNAUTHORIZED;
   const { data, error } = await supabase
     .from('newsletter_subscribers')
     .select('*')
@@ -19,6 +21,7 @@ export const GET: APIRoute = async () => {
 };
 
 export const POST: APIRoute = async ({ request }) => {
+  if (!verifyAdmin(request)) return UNAUTHORIZED;
   try {
     const body = await request.json();
     const { action } = body;

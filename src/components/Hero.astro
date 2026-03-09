@@ -227,7 +227,7 @@
 
 <script>
   // Three.js Hero Shader
-  (function() {
+  function initShader() {
     var container = document.querySelector('.hero-shader-bg');
     if (!container || typeof THREE === 'undefined') return;
     var camera = new THREE.Camera();
@@ -247,5 +247,7 @@
     function resize(){var w=container.clientWidth,h=container.clientHeight;renderer.setSize(w,h);uniforms.resolution.value.set(w*window.devicePixelRatio,h*window.devicePixelRatio);}
     resize();window.addEventListener('resize',resize);
     (function animate(){requestAnimationFrame(animate);uniforms.time.value+=0.05;renderer.render(scene,camera);})();
-  })();
+  }
+  if (typeof THREE !== 'undefined') { initShader(); }
+  else { document.addEventListener('three-loaded', initShader); }
 </script>

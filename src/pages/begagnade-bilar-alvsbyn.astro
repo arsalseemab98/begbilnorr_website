@@ -1,0 +1,22 @@
+---
+import Layout from '../components/Layout.astro';
+import CityCarPage from '../components/CityCarPage.astro';
+
+const city = {
+  name: 'Älvsbyn',
+  slug: 'alvsbyn',
+  distance: '65 km',
+  driveTime: 'ca 50 min',
+  description: 'Älvsbyn ligger 65 kilometer från Luleå och vi levererar regelbundet bilar till kommunen. Du behöver inte ta dig in till Luleå för att köpa bil — vi kommer till dig i Älvsbyn med bilen, redo för provkörning. Hela köpprocessen kan skötas digitalt och vi levererar bilen hem till dörren.',
+  seoIntro: 'Letar du efter en begagnad bil i Älvsbyn? Begbilnorr levererar kvalitetskontrollerade begagnade bilar med garanti direkt hem till dig i Älvsbyn. Du behöver inte åka till Luleå — vi kör ut bilen till dig för provkörning och leverans. Finansiering, garanti och personlig service ingår.',
+  deliveryText: 'Bor du i Älvsbyn? Vi levererar din nya bil direkt hem till dörren. Cirka 50 minuter bort — vi kör ut bilen för provkörning och leverans utan krångel.',
+  localText: 'Begbilnorr har flera nöjda kunder i Älvsbyn som köpt bil med hemleverans. Vi förstår att det inte alltid är enkelt att ta sig till Luleå, särskilt under vinterhalvåret. Därför erbjuder vi hemleverans och provkörning på plats i Älvsbyn — du provar bilen hemma och bestämmer dig utan stress.',
+};
+---
+
+<Layout
+  title="Begagnade bilar i Älvsbyn — Hemleverans från Begbilnorr"
+  description="Köp begagnad bil i Älvsbyn med hemleverans från Begbilnorr. Kvalitetskontrollerade bilar med garanti. Vi kör ut bilen till dig — enkelt och smidigt!"
+>
+  <CityCarPage city={city} />
+</Layout>
