@@ -218,9 +218,23 @@ try {
 
   <!-- Car Grid -->
   <div class="container">
-    <div class="car-grid">
-      {allCars.map((car) => <CarCard car={car} />)}
+    <div class="car-grid" id="car-grid">
+      {allCars.map((car, i) => (
+        <div class:list={['car-grid-item', { 'car-hidden': i >= 8 }]} data-index={i}>
+          <CarCard car={car} />
+        </div>
+      ))}
     </div>
+
+    {allCars.length > 8 && (
+      <div class="load-more-wrap" id="load-more-wrap">
+        <div class="load-more-sentinel" id="load-more-sentinel"></div>
+        <button class="load-more-btn" id="load-more-btn" type="button">
+          Visa fler bilar
+          <span id="load-more-count">({allCars.length - 8} till)</span>
+        </button>
+      </div>
+    )}
 
     {allCars.length === 0 && (
       <div class="empty-state">
@@ -230,6 +244,54 @@ try {
       </div>
     )}
   </div>
+
+  <script>
+    (function () {
+      const BATCH = 8;
+      const grid = document.getElementById('car-grid');
+      if (!grid) return;
+
+      const items = grid.querySelectorAll('.car-grid-item');
+      const btn = document.getElementById('load-more-btn');
+      const wrap = document.getElementById('load-more-wrap');
+      const countEl = document.getElementById('load-more-count');
+      const sentinel = document.getElementById('load-more-sentinel');
+      if (!btn || !wrap) return;
+
+      let shown = Math.min(BATCH, items.length);
+
+      function showMore() {
+        const end = Math.min(shown + BATCH, items.length);
+        for (let i = shown; i < end; i++) {
+          items[i].classList.remove('car-hidden');
+        }
+        shown = end;
+        const remaining = items.length - shown;
+        if (remaining <= 0) {
+          wrap.style.display = 'none';
+        } else if (countEl) {
+          countEl.textContent = '(' + remaining + ' till)';
+        }
+      }
+
+      // Button fallback
+      btn.addEventListener('click', showMore);
+
+      // IntersectionObserver: auto-load when sentinel is near viewport
+      if ('IntersectionObserver' in window && sentinel) {
+        const observer = new IntersectionObserver(
+          function (entries) {
+            if (entries[0].isIntersecting) {
+              showMore();
+              if (shown >= items.length) observer.disconnect();
+            }
+          },
+          { rootMargin: '200px' }
+        );
+        observer.observe(sentinel);
+      }
+    })();
+  </script>
 </Layout>
 
 <style>
@@ -283,6 +345,51 @@ try {
 
   .empty-state a:hover {
     opacity: 0.8;
+  }
+
+  /* Lazy-load car cards */
+  .car-grid-item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .car-hidden {
+    display: none;
+  }
+
+  .load-more-wrap {
+    text-align: center;
+    padding: 32px 0 48px;
+  }
+
+  .load-more-sentinel {
+    height: 1px;
+    margin-bottom: 16px;
+  }
+
+  .load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .load-more-btn:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .load-more-btn span {
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
   }
 
   @media (max-width: 768px) {

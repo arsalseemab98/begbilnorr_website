@@ -1,0 +1,22 @@
+---
+import Layout from '../components/Layout.astro';
+import CityCarPage from '../components/CityCarPage.astro';
+
+const city = {
+  name: 'Umeå',
+  slug: 'umea',
+  distance: '400 km',
+  driveTime: 'ca 4.5 tim',
+  description: 'Umeå är Norrlands största stad, men det betyder inte att du behöver begränsa dig till det lokala utbudet. Begbilnorr levererar bilar i hela Sverige — och Umeå är en av de städer vi skickar bilar till allt oftare. Hela processen sköts digitalt: bläddra bland våra bilar, ansök om finansiering och få bilen levererad hem till dig. Tryggt, smidigt och med garanti.',
+  seoIntro: 'Letar du efter en begagnad bil i Umeå? Begbilnorr levererar kvalitetskontrollerade begagnade bilar med garanti direkt hem till dig i Umeå. Vi erbjuder ett helt digitalt bilköp — välj bil online, ordna finansiering och få hemleverans. Bredare urval, bättre priser och trygg affär.',
+  deliveryText: 'Bor du i Umeå? Vi levererar bilen hela vägen hem till dig. Köp bil helt digitalt — välj ur vårt sortiment, sköt finansieringen online och vi kör bilen till Umeå. Ingen resa behövs. Vi levererar bilar i hela Sverige.',
+  localText: 'Som universitetstad och Norrlands befolkningscentrum har Umeå en stor efterfrågan på begagnade bilar. Tyvärr betyder hög efterfrågan ofta höga priser lokalt. Med Begbilnorr kan du bredda ditt sökande och hitta bilar till bättre priser i Luleå — med leverans direkt hem till dig i Umeå. Vi erbjuder digital finansiering, garanti på alla fordon och en personlig service trots avståndet. Fler och fler Umeåbor väljer att köpa bil hos oss för enkelheten och prisbilden.',
+};
+---
+
+<Layout
+  title="Begagnade bilar i Umeå — Hemleverans från Begbilnorr"
+  description="Köp begagnad bil i Umeå — hemleverans från Begbilnorr! Vi levererar kvalitetskontrollerade begagnade bilar med garanti till Umeå. Digitalt bilköp, finansiering och leverans i hela Sverige."
+>
+  <CityCarPage city={city} />
+</Layout>

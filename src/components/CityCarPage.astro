@@ -45,6 +45,21 @@ try {
   // Supabase not configured
 }
 
+const allCities = [
+  { name: 'Luleå', slug: 'lulea' },
+  { name: 'Boden', slug: 'boden' },
+  { name: 'Piteå', slug: 'pitea' },
+  { name: 'Kalix', slug: 'kalix' },
+  { name: 'Älvsbyn', slug: 'alvsbyn' },
+  { name: 'Gällivare', slug: 'gallivare' },
+  { name: 'Kiruna', slug: 'kiruna' },
+  { name: 'Haparanda', slug: 'haparanda' },
+  { name: 'Skellefteå', slug: 'skelleftea' },
+  { name: 'Umeå', slug: 'umea' },
+];
+
+const otherCities = allCities.filter((c) => c.slug !== city.slug);
+
 const faqItems = [
   {
     question: `Kan jag provköra en bil i ${city.name}?`,
@@ -282,6 +297,18 @@ const breadcrumbSchema = {
         Alla bilar har genomgått en grundlig teknisk kontroll och levereras med garanti för din trygghet.
         Som bilhandlare i Norrbotten förstår vi de speciella krav som klimatet ställer — våra bilar är redo för vinter och is.
       </p>
+    </div>
+  </div>
+</section>
+
+<!-- Other Cities Section -->
+<section class="other-cities-section">
+  <div class="container">
+    <p class="other-cities-label">Vi levererar också till:</p>
+    <div class="other-cities-links">
+      {otherCities.map((c) => (
+        <a href={`/begagnade-bilar-${c.slug}`} class="other-city-link">{c.name}</a>
+      ))}
     </div>
   </div>
 </section>
@@ -791,6 +818,48 @@ const breadcrumbSchema = {
     line-height: 1.8;
     margin-bottom: 16px;
     max-width: 800px;
+  }
+
+  /* Other Cities */
+  .other-cities-section {
+    background: var(--bg-dark-2);
+    padding: 40px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .other-cities-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .other-cities-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .other-city-link {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .other-city-link:hover {
+    color: var(--white);
+    border-color: rgba(230,46,45,0.4);
+    background: rgba(230,46,45,0.08);
   }
 
   /* CTA */

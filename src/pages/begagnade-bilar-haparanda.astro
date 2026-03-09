@@ -1,0 +1,22 @@
+---
+import Layout from '../components/Layout.astro';
+import CityCarPage from '../components/CityCarPage.astro';
+
+const city = {
+  name: 'Haparanda',
+  slug: 'haparanda',
+  distance: '170 km',
+  driveTime: 'ca 2 tim',
+  description: 'Haparanda ligger vid finska gränsen, cirka 170 kilometer från Luleå. Vi levererar bilar regelbundet till Haparanda och Tornedalen — du slipper köra tur och retur till Luleå för att hitta din nästa bil. Boka en provkörning hemma hos dig så tar vi med bilen till Haparanda. Många av våra kunder i gränsstaden har valt att köpa bil hos oss just för enkelheten.',
+  seoIntro: 'Letar du efter en begagnad bil i Haparanda? Begbilnorr levererar kvalitetskontrollerade begagnade bilar med garanti direkt hem till dig i Haparanda. Istället för att köra 3,5 timmar tur och retur till Luleå kan du boka provkörning hemma och sköta hela köpet smidigt. Finansiering, garanti och hemleverans ingår.',
+  deliveryText: 'Bor du i Haparanda eller Tornedalen? Vi kör ut bilen till dig för provkörning — testa den hemma utan stress. Gillar du bilen? Då levererar vi den på plats. Vi levererar bilar i hela Sverige.',
+  localText: 'Haparanda är gränsstaden där Sverige möter Finland, och vi vet att det lokala bilutbudet inte alltid erbjuder det du söker. Som kund i Haparanda får du tillgång till hela vårt sortiment i Luleå utan att behöva resa. Vi har lång erfarenhet av att leverera bilar till Haparanda och Tornedalen — och våra kunder uppskattar att de kan sköta allt från hemmet. Provkörning på plats, digital finansiering och garanti på varje bil.',
+};
+---
+
+<Layout
+  title="Begagnade bilar i Haparanda — Hemleverans från Begbilnorr"
+  description="Köp begagnad bil i Haparanda — provkör hemma hos dig! Begbilnorr kör ut bilen till Haparanda för provkörning. Garanti, finansiering och leverans i hela Sverige."
+>
+  <CityCarPage city={city} />
+</Layout>

@@ -1,0 +1,22 @@
+---
+import Layout from '../components/Layout.astro';
+import CityCarPage from '../components/CityCarPage.astro';
+
+const city = {
+  name: 'Kiruna',
+  slug: 'kiruna',
+  distance: '330 km',
+  driveTime: 'ca 4 tim',
+  description: 'Kiruna är Sveriges nordligaste stad — men det hindrar inte oss från att leverera bilar dit. Vi kör regelbundet bilar upp till Kiruna och erbjuder provkörning på plats. Du väljer bil ur vårt sortiment i Luleå, vi fixar finansiering och garanti, och sedan kör vi bilen hela vägen upp till dig. Enkelt, tryggt och utan att du behöver lämna hemmet.',
+  seoIntro: 'Letar du efter en begagnad bil i Kiruna? Begbilnorr levererar kvalitetskontrollerade begagnade bilar med garanti direkt hem till dig i Kiruna. Vårt breda sortiment i Luleå ger dig fler valmöjligheter än den lokala marknaden. Digital finansiering, personlig service och hemleverans till Sveriges nordligaste stad.',
+  deliveryText: 'Bor du i Kiruna? Vi levererar bilar i hela Sverige och kör gärna upp din nya bil till dig. Boka provkörning hemma — vi tar med bilen till Kiruna så du kan testa den i lugn och ro innan du bestämmer dig.',
+  localText: 'Kiruna genomgår just nu en historisk stadsomvandling och behovet av pålitliga bilar är stort. Vi förstår att utbudet av begagnade bilar lokalt inte alltid räcker till, särskilt när det gäller kvalitetskontrollerade fordon med garanti. Därför erbjuder Begbilnorr hemleverans från Luleå — du får tillgång till ett mycket bredare urval och kan sköta hela köpet digitalt. Finansiering, garanti och leverans — vi tar hand om allt.',
+};
+---
+
+<Layout
+  title="Begagnade bilar i Kiruna — Hemleverans från Begbilnorr"
+  description="Köp begagnad bil i Kiruna — vi levererar hem till dig! Begbilnorr kör ut bilen till Kiruna för provkörning. Garanti, finansiering och leverans i hela Sverige."
+>
+  <CityCarPage city={city} />
+</Layout>

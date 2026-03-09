@@ -48,17 +48,27 @@ const carSchema = {
   "brand": { "@type": "Brand", "name": car.brand },
   "model": car.model,
   "vehicleModelDate": String(car.year),
-  "mileageFromOdometer": { "@type": "QuantitativeValue", "value": car.mileage, "unitCode": "SMI" },
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": car.mileage,
+    "unitCode": "KMT"
+  },
   "fuelType": car.fuel_type,
   "vehicleTransmission": car.gearbox,
+  ...(car.body_type ? { "bodyType": car.body_type } : {}),
+  "vehicleIdentificationNumber": car.reg_no,
+  "image": car.images?.length ? car.images : mainImage,
   "offers": {
     "@type": "Offer",
     "price": car.price,
     "priceCurrency": "SEK",
     "availability": "https://schema.org/InStock",
-    "seller": { "@type": "AutoDealer", "name": "Begbilnorr", "url": "https://begbilnorr.se" }
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "Begbilnorr",
+      "url": "https://begbilnorr.se"
+    }
   },
-  "image": mainImage,
   "url": `https://begbilnorr.se/bilar/${car.slug}`
 };
 

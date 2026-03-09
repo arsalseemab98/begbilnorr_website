@@ -1,0 +1,22 @@
+---
+import Layout from '../components/Layout.astro';
+import CityCarPage from '../components/CityCarPage.astro';
+
+const city = {
+  name: 'Skellefteå',
+  slug: 'skelleftea',
+  distance: '270 km',
+  driveTime: 'ca 3 tim',
+  description: 'Skellefteå växer snabbt och behovet av bilar har aldrig varit större. Vi levererar bilar i hela Sverige — och Skellefteå är inget undantag. Hela köpet kan skötas digitalt: välj bil, ansök om finansiering online och få bilen levererad hem till dig. Du behöver aldrig åka till Luleå. Vi erbjuder garanti på alla bilar och en smidig process från start till leverans.',
+  seoIntro: 'Letar du efter en begagnad bil i Skellefteå? Begbilnorr levererar kvalitetskontrollerade begagnade bilar med garanti direkt hem till dig i Skellefteå. Sköt hela bilköpet digitalt — från val av bil till finansiering och leverans. Stort urval, trygg affär och hemleverans till Skellefteå.',
+  deliveryText: 'Bor du i Skellefteå? Vi levererar bilen direkt hem till din dörr. Hela köpet kan skötas digitalt — välj bil, ordna finansiering och få bilen levererad utan att du behöver resa. Vi levererar bilar i hela Sverige.',
+  localText: 'Skellefteå är en av Norrbottens snabbast växande städer, inte minst tack vare Northvolt och den gröna omställningen. Med inflyttning och tillväxt ökar behovet av prisvärda, kvalitetskontrollerade bilar. Begbilnorr erbjuder ett digitalt bilköp med hemleverans — perfekt för dig som är nyinflyttad eller helt enkelt vill slippa resa för att köpa bil. Vi tar hand om finansiering, garanti och leverans så att du kan fokusera på annat.',
+};
+---
+
+<Layout
+  title="Begagnade bilar i Skellefteå — Hemleverans från Begbilnorr"
+  description="Köp begagnad bil i Skellefteå — hemleverans från Begbilnorr! Vi levererar kvalitetskontrollerade begagnade bilar med garanti till Skellefteå. Digital finansiering och leverans i hela Sverige."
+>
+  <CityCarPage city={city} />
+</Layout>

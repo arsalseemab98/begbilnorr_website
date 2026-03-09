@@ -1,0 +1,22 @@
+---
+import Layout from '../components/Layout.astro';
+import CityCarPage from '../components/CityCarPage.astro';
+
+const city = {
+  name: 'Gällivare',
+  slug: 'gallivare',
+  distance: '340 km',
+  driveTime: 'ca 4 tim',
+  description: 'Gällivare ligger visserligen 340 kilometer från Luleå, men tack vare vår leveransservice behöver du aldrig lämna Malmberget eller Koskullskulle för att köpa bil. Vi levererar bilar i hela Sverige — och Gällivare är en av de orter i Norrbotten vi regelbundet kör till. Du kan boka provkörning hemma hos dig, och vi tar med oss bilen upp till gruvstaden.',
+  seoIntro: 'Letar du efter en begagnad bil i Gällivare? Begbilnorr levererar kvalitetskontrollerade begagnade bilar med garanti direkt till dig i Gällivare. Slipp leta bland fåtalet lokala bilar — välj ur vårt breda sortiment i Luleå och låt oss köra bilen till dig. Provkörning, finansiering och garanti ingår.',
+  deliveryText: 'Bor du i Gällivare, Malmberget eller Koskullskulle? Vi kör gärna upp bilen till dig för provkörning — och om du gillar den levererar vi den på plats. Du kan också välja att vi kör hem bilen helt utan att du behöver resa alls.',
+  localText: 'Gällivare kommun är känd för sin gruvhistoria och sitt starka samhälle mitt i Norrbottens inland. Vi vet att bilutbudet lokalt kan vara begränsat, och det är just därför vi erbjuder hemleverans från vårt lager i Luleå. Välj bland ett stort urval kvalitetskontrollerade bilar, ansök om finansiering digitalt och få bilen levererad hem till dig med garanti. Vi har hjälpt flera kunder i Gällivare att hitta rätt bil utan att behöva köra söderut.',
+};
+---
+
+<Layout
+  title="Begagnade bilar i Gällivare — Hemleverans från Begbilnorr"
+  description="Köp begagnad bil i Gällivare — vi levererar hem till dig! Begbilnorr kör ut bilen till Gällivare för provkörning. Garanti, finansiering och leverans i hela Sverige."
+>
+  <CityCarPage city={city} />
+</Layout>
