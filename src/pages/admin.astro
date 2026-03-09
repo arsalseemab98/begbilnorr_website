@@ -1047,8 +1047,9 @@ export const prerender = false;
           loginError.textContent = 'För många felaktiga försök.';
         } else {
         loginError.textContent = `Fel användarnamn eller lösenord. ${MAX_ATTEMPTS - attempts} försök kvar.`;
+        }
       }
-    } catch {
+    } catch (_e) {
       loginError.textContent = 'Kunde inte ansluta till servern.';
     }
     loginBtn.disabled = false; loginBtn.textContent = 'Logga in';
