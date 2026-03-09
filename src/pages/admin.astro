@@ -1414,13 +1414,22 @@ export const prerender = false;
         return;
       }
 
+      // Filter out blob URLs (local previews that failed to upload)
+      const validImages = uploadedImages.filter(u => !u.startsWith('blob:'));
+      if (validImages.length === 0 && uploadedImages.length > 0) {
+        progress.textContent = 'Bilderna laddades inte upp korrekt. Försök igen.';
+        progress.style.color = '#EF4444';
+        btn.disabled = false; btn.textContent = 'Spara bil';
+        return;
+      }
+
       try {
         const res = await fetch('/api/cars', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'create', reg_no, brand, model, variant, year, mileage, price,
             fuel_type, gearbox, body_type, monthly_payment, description,
-            equipment, images: uploadedImages,
+            equipment, images: validImages,
           }),
         });
         const data = await res.json();
@@ -1532,7 +1541,8 @@ export const prerender = false;
       const is_active = (document.getElementById('editActive') as HTMLInputElement).checked;
       const is_sold = (document.getElementById('editSold') as HTMLInputElement).checked;
 
-      await updateCar(car.id, { brand, model, variant, price, mileage, monthly_payment, description, equipment, is_active, is_sold, images: uploadedImages });
+      const validImages = uploadedImages.filter(u => !u.startsWith('blob:'));
+      await updateCar(car.id, { brand, model, variant, price, mileage, monthly_payment, description, equipment, is_active, is_sold, images: validImages });
       btn.disabled = false; btn.textContent = 'Spara ändringar';
     });
   }
