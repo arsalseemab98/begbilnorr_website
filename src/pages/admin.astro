@@ -976,17 +976,11 @@ export const prerender = false;
 
 <script>
   // === AUTH ===
-  const AUTH_HASH = '0346ac86d2eec468045e22cda09213d76ae87930139b5c28b3709396f0e076c4';
   const MAX_ATTEMPTS = 5;
   const LOCKOUT_MINUTES = 15;
   const LOCKOUT_KEY = 'admin_lockout';
   const ATTEMPTS_KEY = 'admin_attempts';
   const SESSION_KEY = 'admin_auth';
-
-  async function sha256(str: string): Promise<string> {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
 
   function getAttempts(): number { return parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10); }
   function getLockoutEnd(): number { return parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10); }
@@ -1009,7 +1003,7 @@ export const prerender = false;
   const loginLocked = document.getElementById('loginLocked')!;
   const loginBtn = document.getElementById('loginBtn') as HTMLButtonElement;
 
-  if (sessionStorage.getItem(SESSION_KEY) === AUTH_HASH) {
+  if (sessionStorage.getItem(SESSION_KEY) === 'authenticated') {
     overlay.classList.add('hidden');
     adminContent.style.display = '';
   }
@@ -1031,25 +1025,33 @@ export const prerender = false;
     if (isLockedOut()) { updateLockoutUI(); return; }
     const user = (document.getElementById('loginUser') as HTMLInputElement).value.trim();
     const pass = (document.getElementById('loginPass') as HTMLInputElement).value;
-    const hash = await sha256(`${user}:${pass}`);
-    if (hash === AUTH_HASH) {
-      sessionStorage.setItem(SESSION_KEY, AUTH_HASH);
-      localStorage.removeItem(ATTEMPTS_KEY);
-      localStorage.removeItem(LOCKOUT_KEY);
-      overlay.classList.add('hidden');
-      adminContent.style.display = '';
-      initAdmin();
-    } else {
-      const attempts = getAttempts() + 1;
-      localStorage.setItem(ATTEMPTS_KEY, String(attempts));
-      if (attempts >= MAX_ATTEMPTS) {
-        localStorage.setItem(LOCKOUT_KEY, String(Date.now() + LOCKOUT_MINUTES * 60 * 1000));
-        updateLockoutUI();
-        loginError.textContent = 'För många felaktiga försök.';
+    loginBtn.disabled = true; loginBtn.textContent = 'Loggar in...';
+    try {
+      const res = await fetch('/api/admin-auth', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass }),
+      });
+      if (res.ok) {
+        sessionStorage.setItem(SESSION_KEY, 'authenticated');
+        localStorage.removeItem(ATTEMPTS_KEY);
+        localStorage.removeItem(LOCKOUT_KEY);
+        overlay.classList.add('hidden');
+        adminContent.style.display = '';
+        initAdmin();
       } else {
+        const attempts = getAttempts() + 1;
+        localStorage.setItem(ATTEMPTS_KEY, String(attempts));
+        if (attempts >= MAX_ATTEMPTS) {
+          localStorage.setItem(LOCKOUT_KEY, String(Date.now() + LOCKOUT_MINUTES * 60 * 1000));
+          updateLockoutUI();
+          loginError.textContent = 'För många felaktiga försök.';
+        } else {
         loginError.textContent = `Fel användarnamn eller lösenord. ${MAX_ATTEMPTS - attempts} försök kvar.`;
       }
+    } catch {
+      loginError.textContent = 'Kunde inte ansluta till servern.';
     }
+    loginBtn.disabled = false; loginBtn.textContent = 'Logga in';
   });
 
   // Logout
@@ -1939,7 +1941,7 @@ export const prerender = false;
   }
 
   // Run init if already logged in
-  if (sessionStorage.getItem(SESSION_KEY) === AUTH_HASH) {
+  if (sessionStorage.getItem(SESSION_KEY) === 'authenticated') {
     initAdmin();
   }
 </script>
