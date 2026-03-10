@@ -537,6 +537,19 @@ body.menu-open {
     letter-spacing: 0.5px;
 }
 
+.car-card-image .badge-vat {
+    position: absolute;
+    top: 38px;
+    right: 14px;
+    background: rgba(0,0,0,0.6);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+}
+
 .car-vat-line {
     font-size: 12px;
     color: rgba(255,255,255,0.7);
