@@ -24,3 +24,8 @@ export function calculateMonthlyPayment(price: number, downPaymentPercent = 20, 
 export function formatMileage(mileage: number): string {
   return mileage.toLocaleString('sv-SE') + ' mil';
 }
+
+export function formatPriceExVat(price: number): string {
+  const exVat = Math.round(price / 1.25);
+  return exVat.toLocaleString('sv-SE') + ' kr';
+}

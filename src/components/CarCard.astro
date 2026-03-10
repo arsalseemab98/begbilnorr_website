@@ -1,6 +1,6 @@
 ---
 import type { Car } from '../types/car';
-import { formatPrice, formatMileage, calculateMonthlyPayment } from '../lib/utils';
+import { formatPrice, formatMileage, calculateMonthlyPayment, formatPriceExVat } from '../lib/utils';
 
 interface Props {
   car: Car;
@@ -23,6 +23,9 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
     )}
     <div class="watermark">Begbilnorr</div>
     <span class="badge-fuel">{car.fuel_type}</span>
+    {car.is_vat_deductible && (
+      <span class="badge-vat">Moms</span>
+    )}
     {hasMultiple && (
       <>
         <button class="carousel-arrow carousel-prev" aria-label="Föregående bild" type="button">
@@ -60,6 +63,9 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
     <div class="car-card-footer">
       <div>
         <div class="car-price">{formatPrice(car.price)}</div>
+        {car.is_vat_deductible && (
+          <div class="car-price-ex-vat">{formatPriceExVat(car.price)} ex. moms</div>
+        )}
         <span class="car-monthly">fr. {monthly}</span>
         <button class="calc-icon" data-calc-trigger data-price={car.price} data-name={car.full_name} title="Beräkna månadskostnad" type="button">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/></svg>

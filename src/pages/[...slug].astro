@@ -1,0 +1,29 @@
+---
+export const prerender = false;
+
+import { supabase } from '../lib/supabase';
+
+const slugPath = Astro.params.slug;
+
+if (slugPath) {
+  // Look up redirect in Supabase
+  const { data } = await supabase
+    .from('redirects')
+    .select('id, target_url, click_count')
+    .eq('slug', slugPath)
+    .eq('is_active', true)
+    .single();
+
+  if (data) {
+    // Increment click count
+    const newCount = (data.click_count || 0) + 1;
+    await supabase.from('redirects').update({ click_count: newCount }).eq('id', data.id);
+
+    // Redirect — pass path directly, Astro handles relative URLs
+    return Astro.redirect(data.target_url, 301);
+  }
+}
+
+// No redirect found — return 404
+return new Response(null, { status: 404 });
+---

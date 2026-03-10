@@ -63,6 +63,10 @@ export const prerender = false;
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           <span>Nyhetsbrev</span>
         </button>
+        <button class="sidebar-link" data-tab="redirects">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>Omdirigeringar</span>
+        </button>
         <button class="sidebar-link" data-tab="settings">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
           <span>Inställningar</span>
@@ -299,6 +303,42 @@ export const prerender = false;
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Redirects -->
+      <div class="tab-content" id="tab-redirects">
+        <div class="page-header">
+          <div>
+            <h1>Omdirigeringar</h1>
+            <p class="page-desc">Hantera korta marknadsföringslänkar</p>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-body">
+            <h3 style="margin-bottom:12px;font-size:15px;font-weight:600;">Lägg till omdirigering</h3>
+            <div class="inline-form">
+              <div style="position:relative;flex:1;">
+                <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:13px;">begbilnorr.se/</span>
+                <input type="text" id="rdSlug" placeholder="sm" class="input" style="padding-left:120px;" />
+              </div>
+              <div style="position:relative;flex:1;">
+                <input type="text" id="rdTarget" placeholder="/salj-bil eller https://..." class="input" />
+              </div>
+              <button class="btn btn-primary" id="rdAddBtn" type="button">Lägg till</button>
+            </div>
+            <p id="rdAddMsg" class="form-msg"></p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div class="toolbar-right">
+            <button class="btn btn-ghost" id="refreshRdBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="list-container" id="redirectsList">
+          <p class="empty-text">Laddar...</p>
         </div>
       </div>
 
@@ -630,6 +670,12 @@ export const prerender = false;
   .btn-success { background: rgba(34,197,94,0.1); color: #22C55E; border: 1px solid rgba(34,197,94,0.2); }
   .btn-success:hover { background: rgba(34,197,94,0.2); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ========== DATA TABLE ========== */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { text-align: left; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .data-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 
   /* ========== FORM ELEMENTS ========== */
   .select {
@@ -1074,7 +1120,7 @@ export const prerender = false;
   const sidebar = document.getElementById('adminSidebar')!;
   const sidebarOverlay = document.getElementById('sidebarOverlay')!;
   const topbarTitle = document.getElementById('topbarTitle')!;
-  const tabLabels: Record<string, string> = { dashboard: 'Dashboard', cars: 'Bilar', submissions: 'Formulär', newsletter: 'Nyhetsbrev', settings: 'Inställningar' };
+  const tabLabels: Record<string, string> = { dashboard: 'Dashboard', cars: 'Bilar', submissions: 'Formulär', newsletter: 'Nyhetsbrev', redirects: 'Omdirigeringar', settings: 'Inställningar' };
 
   document.getElementById('sidebarToggle')?.addEventListener('click', () => {
     sidebar.classList.toggle('open');
@@ -1954,11 +2000,100 @@ export const prerender = false;
   }
 
   // === INIT ===
+  // === REDIRECTS ===
+  const rdSlug = document.getElementById('rdSlug') as HTMLInputElement;
+  const rdTarget = document.getElementById('rdTarget') as HTMLInputElement;
+  const rdAddBtn = document.getElementById('rdAddBtn') as HTMLButtonElement;
+  const rdAddMsg = document.getElementById('rdAddMsg') as HTMLParagraphElement;
+  const redirectsList = document.getElementById('redirectsList')!;
+
+  let allRedirects: any[] = [];
+
+  async function loadRedirects() {
+    try {
+      const res = await fetch('/api/redirects', { headers: getAuthHeaders() });
+      allRedirects = await res.json();
+      renderRedirects();
+    } catch { redirectsList.innerHTML = '<p class="empty-text">Kunde inte ladda omdirigeringar.</p>'; }
+  }
+
+  function renderRedirects() {
+    if (!allRedirects.length) {
+      redirectsList.innerHTML = '<p class="empty-text">Inga omdirigeringar ännu.</p>';
+      return;
+    }
+    redirectsList.innerHTML = `<table class="data-table">
+      <thead><tr><th>Slug</th><th>Mål</th><th>Klick</th><th>Status</th><th>Skapad</th><th></th></tr></thead>
+      <tbody>${allRedirects.map(r => `<tr>
+        <td><code style="background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:4px;font-size:13px;">/${r.slug}</code></td>
+        <td style="font-size:13px;color:rgba(255,255,255,0.7);">${r.target_url}</td>
+        <td style="font-size:13px;text-align:center;">${r.click_count || 0}</td>
+        <td><span class="badge ${r.is_active ? 'badge-green' : 'badge-gray'}">${r.is_active ? 'Aktiv' : 'Inaktiv'}</span></td>
+        <td style="font-size:12px;color:rgba(255,255,255,0.4);">${formatDate(r.created_at)}</td>
+        <td style="text-align:right;">
+          <button class="btn btn-ghost btn-sm" onclick="window._toggleRedirect('${r.id}', ${!r.is_active})" title="${r.is_active ? 'Inaktivera' : 'Aktivera'}">${r.is_active ? 'Av' : 'På'}</button>
+          <button class="btn btn-ghost btn-sm btn-danger" onclick="window._deleteRedirect('${r.id}', '${r.slug}')" title="Ta bort">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          </button>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }
+
+  rdAddBtn?.addEventListener('click', async () => {
+    const slug = rdSlug.value.trim();
+    const target = rdTarget.value.trim();
+    rdAddMsg.textContent = '';
+    rdAddMsg.className = 'form-msg';
+
+    if (!slug || !target) { rdAddMsg.textContent = 'Fyll i båda fälten.'; rdAddMsg.classList.add('error'); return; }
+
+    rdAddBtn.disabled = true; rdAddBtn.textContent = 'Lägger till...';
+    try {
+      const res = await fetch('/api/redirects', {
+        method: 'POST', headers: authJson(),
+        body: JSON.stringify({ action: 'create', slug, target_url: target }),
+      });
+      const data = await res.json();
+      if (!res.ok) { rdAddMsg.textContent = data.error || 'Fel.'; rdAddMsg.classList.add('error'); }
+      else {
+        rdSlug.value = ''; rdTarget.value = '';
+        rdAddMsg.textContent = 'Omdirigering skapad!'; rdAddMsg.classList.add('success');
+        loadRedirects();
+      }
+    } catch { rdAddMsg.textContent = 'Kunde inte skapa.'; rdAddMsg.classList.add('error'); }
+    rdAddBtn.disabled = false; rdAddBtn.textContent = 'Lägg till';
+  });
+
+  (window as any)._toggleRedirect = async (id: string, active: boolean) => {
+    try {
+      await fetch('/api/redirects', {
+        method: 'POST', headers: authJson(),
+        body: JSON.stringify({ action: 'update', id, is_active: active }),
+      });
+      loadRedirects();
+    } catch {}
+  };
+
+  (window as any)._deleteRedirect = async (id: string, slug: string) => {
+    if (!confirm(`Ta bort omdirigering /${slug}?`)) return;
+    try {
+      await fetch('/api/redirects', {
+        method: 'POST', headers: authJson(),
+        body: JSON.stringify({ action: 'delete', id }),
+      });
+      loadRedirects();
+    } catch {}
+  };
+
+  document.getElementById('refreshRdBtn')?.addEventListener('click', loadRedirects);
+
   function initAdmin() {
     loadAnnouncement();
     loadCars();
     loadSubmissions();
     loadSubscribers();
+    loadRedirects();
   }
 
   // Run init if already logged in

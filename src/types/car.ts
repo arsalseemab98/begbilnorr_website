@@ -21,4 +21,5 @@ export interface Car {
   images: string[];
   is_active: boolean;
   is_sold: boolean;
+  is_vat_deductible: boolean;
 }
