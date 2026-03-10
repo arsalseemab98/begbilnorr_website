@@ -23,6 +23,8 @@ Begbilnorr.se — begagnade bilar i Luleå (Fabriksvägen 18, 972 54). Astro 5 S
   - `cars` — 22 bilar totalt, 14 aktiva (reg_no, slug, brand, model, variant, full_name, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, description, specifications, equipment[], images[], is_active, is_sold, is_vat_deductible)
   - `settings` — Inställningar (key/value)
   - `contact_submissions` — Kontaktformulär (name, email, phone, message, car_slug, car_name, source, sent_successfully, utm_data JSONB)
+  - `leads` — Unika leads med email/phone, sources[], form_labels[], submission_count (upsert på email)
+  - `newsletter_subscribers` — Nyhetsbrevsprenumeranter (email, source, is_active)
 - **Bildata:** Synkas manuellt från Blocket (dealer 7514308). Beskrivningar hämtas från Blocket-annonser. Bilar som inte längre finns på Blocket markeras `is_active=false, is_sold=true`.
 
 ## Vercel

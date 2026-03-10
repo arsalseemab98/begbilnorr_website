@@ -82,6 +82,64 @@ export const POST: APIRoute = async ({ request }) => {
       utm_data: utm_data || {},
     });
 
+    // Save lead (upsert by email or insert by phone)
+    const formLabels: Record<string, string> = {
+      'kontakt': 'Kontaktformulär',
+      'kontakt-footer': 'Kontaktmodal (footer)',
+      'vardering': 'Värderingsformulär',
+      'salj-bil-footer': 'Sälj bil (footer)',
+      'bevakning': 'Prisbevakning',
+      'newsletter': 'Nyhetsbrev',
+      'newsletter-footer': 'Nyhetsbrev (footer)',
+    };
+    const formLabel = formLabels[source || ''] || source || 'Okänd';
+    const leadEmail = senderEmail || null;
+    const leadPhone = phone || null;
+
+    if (leadEmail || leadPhone) {
+      try {
+        if (leadEmail) {
+          const { data: existing } = await supabase
+            .from('leads')
+            .select('id, sources, form_labels, submission_count')
+            .eq('email', leadEmail)
+            .maybeSingle();
+
+          if (existing) {
+            const sources = existing.sources || [];
+            const labels = existing.form_labels || [];
+            if (!sources.includes(source || '')) sources.push(source || '');
+            if (!labels.includes(formLabel)) labels.push(formLabel);
+            await supabase.from('leads').update({
+              name: senderName !== 'Okänd' ? senderName : undefined,
+              phone: leadPhone || undefined,
+              sources,
+              form_labels: labels,
+              submission_count: (existing.submission_count || 1) + 1,
+              updated_at: new Date().toISOString(),
+            }).eq('id', existing.id);
+          } else {
+            await supabase.from('leads').insert({
+              email: leadEmail,
+              phone: leadPhone,
+              name: senderName !== 'Okänd' ? senderName : null,
+              sources: [source || ''],
+              form_labels: [formLabel],
+            });
+          }
+        } else if (leadPhone) {
+          await supabase.from('leads').insert({
+            phone: leadPhone,
+            name: senderName !== 'Okänd' ? senderName : null,
+            sources: [source || ''],
+            form_labels: [formLabel],
+          });
+        }
+      } catch (leadError) {
+        console.error('Lead save error:', leadError);
+      }
+    }
+
     return new Response(
       JSON.stringify({ success: true, emailSent: sentSuccessfully }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
