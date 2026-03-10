@@ -272,9 +272,17 @@ const breadcrumbSchema = {
       </div>
 
       <!-- Description -->
-      {car.specifications && (
+      {car.description && (
         <div class="specifications-section">
           <h2>Beskrivning</h2>
+          <div class="specifications-text" set:html={car.description.replace(/\n/g, '<br />')} />
+        </div>
+      )}
+
+      <!-- Specifications -->
+      {car.specifications && (
+        <div class="specifications-section">
+          <h2>Specifikationer</h2>
           <div class="specifications-text">{car.specifications}</div>
         </div>
       )}
