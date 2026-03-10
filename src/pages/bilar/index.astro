@@ -69,7 +69,7 @@ try {
 
   if (brand) query = query.ilike('brand', brand);
   if (fuel) query = query.ilike('fuel_type', `%${fuel}%`);
-  if (gearbox) query = query.ilike('gearbox', `%${gearbox}%`);
+  if (gearbox) query = query.eq('gearbox', gearbox);
   if (search) query = query.or(`full_name.ilike.%${search}%,brand.ilike.%${search}%,model.ilike.%${search}%`);
 
   // Year range filter (legacy dropdown + new min/max)
