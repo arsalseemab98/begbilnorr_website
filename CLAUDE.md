@@ -20,9 +20,9 @@ Begbilnorr.se — begagnade bilar i Luleå (Fabriksvägen 18, 972 54). Astro 5 S
 - **URL:** `https://lgtmzyspwbdjukoozwec.supabase.co`
 - **Region:** eu-north-1 (Stockholm)
 - **Tabeller:**
-  - `cars` — 22 bilar totalt, 14 aktiva (reg_no, slug, brand, model, variant, full_name, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, description, specifications, equipment[], images[], is_active, is_sold)
+  - `cars` — 22 bilar totalt, 14 aktiva (reg_no, slug, brand, model, variant, full_name, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, description, specifications, equipment[], images[], is_active, is_sold, is_vat_deductible)
   - `settings` — Inställningar (key/value)
-  - `contact_submissions` — Kontaktformulär
+  - `contact_submissions` — Kontaktformulär (name, email, phone, message, car_slug, car_name, source, sent_successfully, utm_data JSONB)
 - **Bildata:** Synkas manuellt från Blocket (dealer 7514308). Beskrivningar hämtas från Blocket-annonser. Bilar som inte längre finns på Blocket markeras `is_active=false, is_sold=true`.
 
 ## Vercel
@@ -56,10 +56,12 @@ src/
 │   ├── om-oss.astro        — Om oss
 │   ├── kontakt.astro       — Kontakt
 │   ├── admin.astro         — Admin-panel
+│   ├── integritetspolicy.astro — Integritetspolicy (GDPR)
+│   ├── anvandarvillkor.astro — Användarvillkor
 │   └── sitemap.xml.ts      — Dynamisk sitemap
 ├── lib/
 │   ├── supabase.ts         — Supabase client
-│   └── utils.ts            — formatPrice, formatMileage, calculateMonthlyPayment
+│   └── utils.ts            — formatPrice, formatPriceExVat, formatMileage, calculateMonthlyPayment
 ├── types/
 │   └── car.ts              — Car interface
 └── styles/
@@ -68,14 +70,17 @@ src/
 
 ## Bilkort (CarCard)
 - Visar: år / miltal / växellåda (Manuell/Automat) / LULEÅ
-- Bränsletyp-badge på bilden
+- Bränsletyp-badge på bilden + "Moms"-badge under (om `is_vat_deductible`)
+- "Moms avdragsgill · X kr ex. moms" text under bilnamn (om moms)
+- Pris ex. moms beräknas: `price / 1.25`
 - USP-strip: Hemleverans, Garanti, Finansiering
 - Bildkarusell: pilar, dots, swipe, räknare "1 / 8", max 8 bilder
 - CSS i `global.css` under "CAR CARD CAROUSEL"
 
 ## Bil-detaljsida ([slug].astro)
 - Bildgalleri med thumbnails och pil-navigation
-- Beskrivning: `car.description` (från Blocket-annons, med radbrytningar)
+- Beskrivning: `car.description` (från Blocket-annons, med `set:html` och `\n` → `<br />`)
+- "Moms avdragsgill · X kr ex. moms" under bilnamn (om moms)
 - Utrustningslista: `car.equipment[]`
 - Specs-grid: miltal, årsmodell, drivmedel, växellåda, karosseri, reg.nr
 - CTA: kontakt, WhatsApp, ring, beräkna månadskostnad
@@ -120,6 +125,12 @@ src/
   - Vid "Acceptera": consent uppdateras till `granted`, sparas i localStorage
   - Vid "Avvisa": sparas som `declined`, GA4 fortsätter denied
 - **GA4 Enhanced Measurement:** Page views, Scrolls, Outbound clicks, Site search, Video engagement, File downloads, Form interactions
+- **Formulär-villkor:** Alla formulär har obligatorisk checkbox för användarvillkor + integritetspolicy med expanderbar sammanfattning
+- **Policy-sidor:** `/integritetspolicy` och `/anvandarvillkor` — länkas i footer och formulär-checkboxar
+- **UTM-spårning:** Alla formulär skickar UTM-data (utm_source, utm_medium, utm_campaign, gclid, fbclid, referrer, landing_page). Auto-detekterar källa (google, facebook, blocket, direct). Sparas i `contact_submissions.utm_data` (JSONB) och visas i e-postnotiser.
+
+## Footer
+- "Skapat av swiftcore.se" med SwiftCore-favicon (`/images/swiftcore-favicon.png`)
 
 ## Kommandon
 ```bash
