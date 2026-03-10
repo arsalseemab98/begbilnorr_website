@@ -214,13 +214,10 @@ const breadcrumbSchema = {
 
             <h1>{car.full_name}</h1>
             <div class="car-year">Årsmodell {car.year} &middot; {car.reg_no}</div>
-            <div class="car-price">{formatPrice(car.price)}</div>
             {car.is_vat_deductible && (
-              <div class="vat-info">
-                <span class="vat-badge">Moms avdragsgill</span>
-                <span class="vat-ex-price">{formatPriceExVat(car.price)} ex. moms</span>
-              </div>
+              <div class="vat-line">Moms avdragsgill · {formatPriceExVat(car.price)} ex. moms</div>
             )}
+            <div class="car-price">{formatPrice(car.price)}</div>
             <div class="car-monthly">från <span>{monthly}</span></div>
 
             <!-- Prisberäknare / Finansiering -->
