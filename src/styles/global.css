@@ -36,6 +36,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -44,6 +45,7 @@ body {
     background: var(--bg-dark-1);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
 a {
@@ -433,6 +435,8 @@ body.menu-open {
     font-style: italic;
     color: var(--white);
     margin-bottom: 48px;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* ========== CAR CARD ========== */
@@ -1288,6 +1292,9 @@ body.menu-open {
     align-items: flex-start;
     gap: 10px;
     margin-bottom: 12px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
 }
 
 .footer-col .contact-item svg {
@@ -2421,6 +2428,8 @@ body.menu-open {
     color: var(--white);
     margin-bottom: 16px;
     line-height: 1.1;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .page-hero p {
@@ -2537,7 +2546,7 @@ body.menu-open {
 }
 
 .about-cta-content {
-    padding: 80px 60px 80px 0;
+    padding: 80px 40px 80px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -2555,6 +2564,8 @@ body.menu-open {
     color: var(--white);
     margin-bottom: 20px;
     line-height: 1.2;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .about-cta-content p {
