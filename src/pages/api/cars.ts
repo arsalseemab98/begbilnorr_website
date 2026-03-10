@@ -5,7 +5,7 @@ import { verifyAdmin, UNAUTHORIZED } from '../../lib/auth';
 export const GET: APIRoute = async () => {
   const { data, error } = await supabase
     .from('cars')
-    .select('id, full_name, reg_no, slug, brand, model, variant, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, description, specifications, equipment, images, is_active, is_sold, created_at')
+    .select('id, full_name, reg_no, slug, brand, model, variant, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, description, specifications, equipment, images, is_active, is_sold, is_vat_deductible, created_at')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Create new car
     if (action === 'create') {
-      const { reg_no, brand, model, variant, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, description, specifications, equipment, images } = body;
+      const { reg_no, brand, model, variant, year, mileage, fuel_type, gearbox, body_type, price, monthly_payment, is_vat_deductible, description, specifications, equipment, images } = body;
 
       if (!reg_no || !brand || !model || !year || !price) {
         return new Response(JSON.stringify({ error: 'Reg.nr, märke, modell, år och pris krävs.' }), {
@@ -66,6 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
           images: images || [],
           is_active: true,
           is_sold: false,
+          is_vat_deductible: is_vat_deductible || false,
         })
         .select('id')
         .single();

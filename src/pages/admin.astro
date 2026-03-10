@@ -1525,6 +1525,9 @@ export const prerender = false;
         <input type="text" id="newMonthly" class="input" placeholder="t.ex. 1 995 kr/mån" />
       </div>
       <div class="form-group">
+        <label class="checkbox-label"><input type="checkbox" id="newVat" /><span>Moms avdragsgill</span></label>
+      </div>
+      <div class="form-group">
         <label>Beskrivning</label>
         <textarea id="newDesc" class="input textarea" rows="3" placeholder="Beskrivning av bilen..."></textarea>
       </div>
@@ -1573,6 +1576,7 @@ export const prerender = false;
       const gearbox = (document.getElementById('newGearbox') as HTMLSelectElement).value;
       const body_type = (document.getElementById('newBodyType') as HTMLSelectElement).value;
       const monthly_payment = (document.getElementById('newMonthly') as HTMLInputElement).value.trim();
+      const is_vat_deductible = (document.getElementById('newVat') as HTMLInputElement).checked;
       const description = (document.getElementById('newDesc') as HTMLTextAreaElement).value.trim();
       const equipmentText = (document.getElementById('newEquipment') as HTMLTextAreaElement).value.trim();
       const equipment = equipmentText ? equipmentText.split('\n').map(s => s.trim()).filter(Boolean) : [];
@@ -1598,7 +1602,7 @@ export const prerender = false;
           method: 'POST', headers: authJson(),
           body: JSON.stringify({
             action: 'create', reg_no, brand, model, variant, year, mileage, price,
-            fuel_type, gearbox, body_type, monthly_payment, description,
+            fuel_type, gearbox, body_type, monthly_payment, is_vat_deductible, description,
             equipment, images: validImages,
           }),
         });
@@ -1633,9 +1637,36 @@ export const prerender = false;
         <div class="form-group"><label>Variant</label><input type="text" id="editVariant" class="input" value="${car.variant || ''}" /></div>
       </div>
       <div class="form-row-3">
-        <div class="form-group"><label>Pris (kr)</label><input type="number" id="editPrice" class="input" value="${car.price || ''}" /></div>
+        <div class="form-group"><label>År</label><input type="number" id="editYear" class="input" value="${car.year || ''}" /></div>
         <div class="form-group"><label>Miltal</label><input type="number" id="editMileage" class="input" value="${car.mileage || ''}" /></div>
-        <div class="form-group"><label>Månadsbetalning</label><input type="text" id="editMonthly" class="input" value="${car.monthly_payment || ''}" /></div>
+        <div class="form-group"><label>Pris (kr)</label><input type="number" id="editPrice" class="input" value="${car.price || ''}" /></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>Drivmedel</label>
+          <select id="editFuel" class="input">
+            ${['Bensin','Diesel','El','Hybrid','Laddhybrid'].map(f => `<option value="${f}" ${car.fuel_type === f ? 'selected' : ''}>${f}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Växellåda</label>
+          <select id="editGearbox" class="input">
+            ${['Automat','Manuell'].map(g => `<option value="${g}" ${car.gearbox === g ? 'selected' : ''}>${g}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Biltyp</label>
+          <select id="editBodyType" class="input">
+            ${['','Sedan','Kombi','SUV','Halvkombi','Cab','Coupé'].map(b => `<option value="${b}" ${car.body_type === b ? 'selected' : ''}>${b || 'Välj...'}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Månadsbetalning</label>
+        <input type="text" id="editMonthly" class="input" value="${car.monthly_payment || ''}" />
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label"><input type="checkbox" id="editVat" ${car.is_vat_deductible ? 'checked' : ''} /><span>Moms avdragsgill</span></label>
       </div>
       <div class="form-group">
         <label>Beskrivning</label>
@@ -1702,9 +1733,14 @@ export const prerender = false;
       const brand = (document.getElementById('editBrand') as HTMLInputElement).value.trim();
       const model = (document.getElementById('editModel') as HTMLInputElement).value.trim();
       const variant = (document.getElementById('editVariant') as HTMLInputElement).value.trim();
+      const year = parseInt((document.getElementById('editYear') as HTMLInputElement).value) || null;
       const price = parseInt((document.getElementById('editPrice') as HTMLInputElement).value) || null;
       const mileage = parseInt((document.getElementById('editMileage') as HTMLInputElement).value) || null;
+      const fuel_type = (document.getElementById('editFuel') as HTMLSelectElement).value;
+      const gearbox = (document.getElementById('editGearbox') as HTMLSelectElement).value;
+      const body_type = (document.getElementById('editBodyType') as HTMLSelectElement).value;
       const monthly_payment = (document.getElementById('editMonthly') as HTMLInputElement).value.trim() || null;
+      const is_vat_deductible = (document.getElementById('editVat') as HTMLInputElement).checked;
       const description = (document.getElementById('editDesc') as HTMLTextAreaElement).value.trim() || null;
       const equipmentText = (document.getElementById('editEquipment') as HTMLTextAreaElement).value.trim();
       const equipment = equipmentText ? equipmentText.split('\n').map(s => s.trim()).filter(Boolean) : [];
@@ -1712,7 +1748,7 @@ export const prerender = false;
       const is_sold = (document.getElementById('editSold') as HTMLInputElement).checked;
 
       const validImages = uploadedImages.filter(u => !u.startsWith('blob:'));
-      await updateCar(car.id, { brand, model, variant, price, mileage, monthly_payment, description, equipment, is_active, is_sold, images: validImages });
+      await updateCar(car.id, { brand, model, variant, year, price, mileage, fuel_type, gearbox, body_type, monthly_payment, is_vat_deductible, description, equipment, is_active, is_sold, images: validImages });
       btn.disabled = false; btn.textContent = 'Spara ändringar';
     });
   }
@@ -1753,7 +1789,11 @@ export const prerender = false;
               <span>${c.reg_no}</span>
               <span>${c.year}</span>
               <span>${formatMileage(c.mileage)}</span>
+              <span>${c.fuel_type || '-'}</span>
+              <span>${c.gearbox || '-'}</span>
+              <span>${c.body_type || '-'}</span>
               <span class="price">${formatPrice(c.price)}</span>
+              ${c.is_vat_deductible ? '<span class="badge badge-blue">Moms</span>' : ''}
               ${statusBadge}
             </div>
           </div>
