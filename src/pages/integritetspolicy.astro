@@ -1,0 +1,167 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout
+  title="Integritetspolicy — Begbilnorr Luleå"
+  description="Så hanterar vi dina uppgifter. Kort och enkelt — inga krångliga lagtexter."
+>
+  <section class="policy-page">
+    <div class="container">
+      <div class="policy-header">
+        <div class="policy-icon">&#128274;</div>
+        <h1>Integritetspolicy</h1>
+        <p class="policy-intro">Kort och enkelt — så hanterar vi dina uppgifter.</p>
+      </div>
+
+      <div class="policy-cards">
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128221;</div>
+          <h3>Vad vi samlar in</h3>
+          <p>Bara det du själv skriver i våra formulär: namn, telefon, e-post och meddelande.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#127919;</div>
+          <h3>Varför</h3>
+          <p>För att kunna svara på din förfrågan, ge dig en värdering eller skicka nyhetsbrev.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128683;</div>
+          <h3>Vi säljer aldrig dina uppgifter</h3>
+          <p>Dina uppgifter stannar hos oss. Vi delar inte med tredje part i marknadsföringssyfte.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128346;</div>
+          <h3>Hur länge sparas det?</h3>
+          <p>Max 24 månader. Nyhetsbrev tills du avregistrerar dig.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#127850;</div>
+          <h3>Cookies</h3>
+          <p>Vi använder Google Analytics och Microsoft Clarity — men bara om du godkänner det i vår cookie-banner.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128465;</div>
+          <h3>Vill du radera dina uppgifter?</h3>
+          <p>Maila <a href="mailto:info@begbilnorr.se">info@begbilnorr.se</a> eller ring <a href="tel:0920-99986">0920-999 86</a> så fixar vi det.</p>
+        </div>
+
+      </div>
+
+      <div class="policy-footer-info">
+        <p><strong>Personuppgiftsansvarig:</strong> Begbilnorr · Fabriksvägen 18, 972 54 Luleå</p>
+        <p>Senast uppdaterad: 10 mars 2026</p>
+      </div>
+
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .policy-page {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    min-height: 60vh;
+  }
+
+  .policy-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .policy-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  .policy-header h1 {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .policy-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .policy-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .policy-card {
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 28px 24px;
+  }
+
+  .pc-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .policy-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .policy-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .policy-card a {
+    color: var(--red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .policy-footer-info {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .policy-footer-info p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.8;
+  }
+
+  .policy-footer-info strong {
+    color: rgba(255,255,255,0.5);
+  }
+
+  @media (max-width: 768px) {
+    .policy-page {
+      padding: 48px 0;
+    }
+
+    .policy-header h1 {
+      font-size: 28px;
+    }
+
+    .policy-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,173 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout
+  title="Användarvillkor — Begbilnorr Luleå"
+  description="Våra användarvillkor i korthet. Enkelt och tydligt — inga krångliga lagtexter."
+>
+  <section class="policy-page">
+    <div class="container">
+      <div class="policy-header">
+        <div class="policy-icon">&#128196;</div>
+        <h1>Användarvillkor</h1>
+        <p class="policy-intro">Det viktigaste du behöver veta — kort och tydligt.</p>
+      </div>
+
+      <div class="policy-cards">
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128663;</div>
+          <h3>Bilar säljs i befintligt skick</h3>
+          <p>Om inget annat avtalas skriftligt. Vi visar alltid bilens verkliga skick.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128176;</div>
+          <h3>Priser kan ändras</h3>
+          <p>Priserna på sidan är aktuella men kan ändras utan förvarning. En bil kan redan vara såld.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128233;</div>
+          <h3>Formulär = ingen bindning</h3>
+          <p>Att skicka ett formulär är inte ett köpeavtal. Det är bara för att vi ska kunna kontakta dig.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128200;</div>
+          <h3>Värderingar är preliminära</h3>
+          <p>Online-värderingar baseras på din info. Slutgiltig värdering görs vid fysisk besiktning.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#128274;</div>
+          <h3>Dina uppgifter är skyddade</h3>
+          <p>Vi hanterar dina uppgifter enligt vår <a href="/integritetspolicy">integritetspolicy</a>. Vi säljer aldrig din info.</p>
+        </div>
+
+        <div class="policy-card">
+          <div class="pc-icon">&#127468;&#127480;</div>
+          <h3>Svensk lag gäller</h3>
+          <p>Alla avtal och villkor lyder under svensk konsumentköplag.</p>
+        </div>
+
+      </div>
+
+      <div class="policy-footer-info">
+        <p><strong>Begbilnorr</strong> · Fabriksvägen 18, 972 54 Luleå · <a href="mailto:info@begbilnorr.se">info@begbilnorr.se</a> · <a href="tel:0920-99986">0920-999 86</a></p>
+        <p>Senast uppdaterad: 10 mars 2026</p>
+      </div>
+
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .policy-page {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    min-height: 60vh;
+  }
+
+  .policy-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .policy-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  .policy-header h1 {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .policy-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .policy-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .policy-card {
+    background: var(--bg-dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 28px 24px;
+  }
+
+  .pc-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .policy-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .policy-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .policy-card a {
+    color: var(--red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .policy-footer-info {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .policy-footer-info p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.8;
+  }
+
+  .policy-footer-info strong {
+    color: rgba(255,255,255,0.5);
+  }
+
+  .policy-footer-info a {
+    color: rgba(255,255,255,0.4);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .policy-page {
+      padding: 48px 0;
+    }
+
+    .policy-header h1 {
+      font-size: 28px;
+    }
+
+    .policy-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
