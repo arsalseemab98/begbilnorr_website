@@ -123,6 +123,11 @@ import Layout from '../components/Layout.astro';
           </div>
 
           <div class="form-group">
+            <label for="v-name">Ditt namn *</label>
+            <input type="text" id="v-name" name="name" placeholder="Ditt namn" required />
+          </div>
+
+          <div class="form-group">
             <label for="v-email">E-post</label>
             <input type="email" id="v-email" name="email" placeholder="din@email.se" />
           </div>
@@ -512,10 +517,10 @@ import Layout from '../components/Layout.astro';
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Värdering',
+          name: data.name || 'Okänd',
           email: data.email || 'ej angiven',
           phone: phone,
-          message: `[VÄRDERING]\nReg: ${data.regNumber || '-'}\nMiltal: ${data.mileage || '-'}\nTelefon: ${phone}\nE-post: ${data.email || '-'}\nBeskrivning: ${data.description || '-'}`,
+          message: `[VÄRDERING]\nNamn: ${data.name || '-'}\nReg: ${data.regNumber || '-'}\nMiltal: ${data.mileage || '-'}\nTelefon: ${phone}\nE-post: ${data.email || '-'}\nBeskrivning: ${data.description || '-'}`,
           source: 'vardering',
           utm_data: (window as any).getUtmData?.(),
         }),

@@ -63,6 +63,10 @@ export const prerender = false;
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
           <span>Nyhetsbrev</span>
         </button>
+        <button class="sidebar-link" data-tab="leads">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Leads</span>
+        </button>
         <button class="sidebar-link" data-tab="redirects">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           <span>Omdirigeringar</span>
@@ -304,6 +308,46 @@ export const prerender = false;
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Leads -->
+      <div class="tab-content" id="tab-leads">
+        <div class="page-header">
+          <div>
+            <h1>Leads</h1>
+            <p class="page-desc">Alla kontakter och intresseanmälningar</p>
+          </div>
+        </div>
+        <div class="leads-filters">
+          <button class="leads-filter-btn active" data-filter="all">Alla</button>
+          <button class="leads-filter-btn" data-filter="kontakt">Kontakt</button>
+          <button class="leads-filter-btn" data-filter="kontakt-footer">Kontaktmodal</button>
+          <button class="leads-filter-btn" data-filter="vardering">Värdering</button>
+          <button class="leads-filter-btn" data-filter="salj-bil-footer">Sälj bil</button>
+          <button class="leads-filter-btn" data-filter="bevakning">Bevakning</button>
+          <button class="leads-filter-btn" data-filter="newsletter">Nyhetsbrev</button>
+        </div>
+        <div class="leads-search">
+          <input type="text" id="leadsSearch" placeholder="Sök namn, e-post, telefon..." class="admin-search-input" />
+        </div>
+        <div class="table-wrapper">
+          <table class="admin-table" id="leadsTable">
+            <thead>
+              <tr>
+                <th>Namn</th>
+                <th>E-post</th>
+                <th>Telefon</th>
+                <th>Källa</th>
+                <th>Labels</th>
+                <th>Antal</th>
+                <th>UTM</th>
+                <th>Datum</th>
+              </tr>
+            </thead>
+            <tbody id="leadsBody"></tbody>
+          </table>
+        </div>
+        <p class="empty-state" id="leadsEmpty" style="display:none;">Inga leads hittades.</p>
       </div>
 
       <!-- Redirects -->
@@ -1017,6 +1061,76 @@ export const prerender = false;
     .car-actions { width: 100%; }
     .car-actions .btn { flex: 1; justify-content: center; }
     .page-header { flex-direction: column; }
+  }
+
+  /* Leads */
+  .leads-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .leads-filter-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .leads-filter-btn:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  .leads-filter-btn.active {
+    background: var(--red, #E62E2D);
+    border-color: var(--red, #E62E2D);
+    color: #fff;
+  }
+  .leads-search {
+    margin-bottom: 16px;
+  }
+  .admin-search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    font-size: 14px;
+  }
+  .admin-search-input::placeholder { color: rgba(255,255,255,0.35); }
+  .admin-search-input:focus { outline: none; border-color: var(--red, #E62E2D); }
+  .lead-label {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 1px 2px;
+  }
+  .lead-label-kontakt { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .lead-label-vardering { background: rgba(234,179,8,0.15); color: #facc15; }
+  .lead-label-salj { background: rgba(249,115,22,0.15); color: #fb923c; }
+  .lead-label-bevakning { background: rgba(230,46,45,0.15); color: #f87171; }
+  .lead-label-newsletter { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .lead-label-default { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+  .lead-utm { font-size: 11px; color: rgba(255,255,255,0.45); }
+  .lead-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
   }
 </style>
 
@@ -2088,12 +2202,100 @@ export const prerender = false;
 
   document.getElementById('refreshRdBtn')?.addEventListener('click', loadRedirects);
 
+  // === LEADS ===
+  let allLeads: any[] = [];
+  let leadsFilter = 'all';
+  const leadsBody = document.getElementById('leadsBody');
+  const leadsEmpty = document.getElementById('leadsEmpty');
+  const leadsSearch = document.getElementById('leadsSearch') as HTMLInputElement;
+
+  function getLabelClass(label: string): string {
+    if (label.includes('Kontakt')) return 'lead-label-kontakt';
+    if (label.includes('Värdering')) return 'lead-label-vardering';
+    if (label.includes('Sälj')) return 'lead-label-salj';
+    if (label.includes('Bevakning') || label.includes('bevakning')) return 'lead-label-bevakning';
+    if (label.includes('Nyhetsbrev') || label.includes('newsletter')) return 'lead-label-newsletter';
+    return 'lead-label-default';
+  }
+
+  function renderLeads() {
+    if (!leadsBody) return;
+    const search = (leadsSearch?.value || '').toLowerCase();
+
+    const filtered = allLeads.filter(l => {
+      if (leadsFilter !== 'all') {
+        const sources = l.sources || [];
+        if (!sources.includes(leadsFilter)) return false;
+      }
+      if (search) {
+        const haystack = `${l.name || ''} ${l.email || ''} ${l.phone || ''}`.toLowerCase();
+        if (!haystack.includes(search)) return false;
+      }
+      return true;
+    });
+
+    if (!filtered.length) {
+      leadsBody.innerHTML = '';
+      if (leadsEmpty) leadsEmpty.style.display = 'block';
+      return;
+    }
+    if (leadsEmpty) leadsEmpty.style.display = 'none';
+
+    leadsBody.innerHTML = filtered.map(l => {
+      const labels = (l.form_labels || []).map((lb: string) =>
+        `<span class="lead-label ${getLabelClass(lb)}">${lb}</span>`
+      ).join('');
+
+      const utm = l.utm_data;
+      const utmStr = utm
+        ? `${utm.utm_source || ''}${utm.utm_medium ? ' / ' + utm.utm_medium : ''}${utm.utm_campaign ? ' / ' + utm.utm_campaign : ''}`
+        : '-';
+
+      return `<tr>
+        <td>${l.name || '-'}</td>
+        <td>${l.email ? `<a href="mailto:${l.email}" style="color:#60a5fa;">${l.email}</a>` : '-'}</td>
+        <td>${l.phone ? `<a href="tel:${l.phone}" style="color:#60a5fa;">${l.phone}</a>` : '-'}</td>
+        <td>${(l.sources || []).join(', ') || '-'}</td>
+        <td>${labels || '-'}</td>
+        <td><span class="lead-count">${l.submission_count || 1}</span></td>
+        <td><span class="lead-utm">${utmStr}</span></td>
+        <td style="white-space:nowrap;font-size:13px;color:rgba(255,255,255,0.5);">${formatDate(l.updated_at || l.created_at)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function loadLeads() {
+    if (!leadsBody) return;
+    leadsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.4);">Laddar...</td></tr>';
+    try {
+      const res = await fetch('/api/leads?source=all', { headers: getAuthHeaders() });
+      allLeads = await res.json();
+      renderLeads();
+    } catch {
+      leadsBody.innerHTML = '<tr><td colspan="8" style="color:#EF4444;">Kunde inte ladda leads.</td></tr>';
+    }
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.leads-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.leads-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      leadsFilter = (btn as HTMLElement).dataset.filter || 'all';
+      renderLeads();
+    });
+  });
+
+  // Search
+  leadsSearch?.addEventListener('input', () => renderLeads());
+
   function initAdmin() {
     loadAnnouncement();
     loadCars();
     loadSubmissions();
     loadSubscribers();
     loadRedirects();
+    loadLeads();
   }
 
   // Run init if already logged in

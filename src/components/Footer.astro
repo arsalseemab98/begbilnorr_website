@@ -300,6 +300,7 @@ const year = new Date().getFullYear();
         </select>
         <input type="text" class="cm-input" name="name" placeholder="Ditt namn" required />
         <input type="tel" class="cm-input" name="phone" placeholder="Telefonnummer" required />
+        <input type="email" class="cm-input" name="email" placeholder="E-postadress (valfritt)" />
         <div class="terms-group">
           <label class="terms-checkbox">
             <input type="checkbox" name="terms" required />
@@ -445,10 +446,10 @@ const year = new Date().getFullYear();
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Sälj bil (footer)',
+          name: data.name || 'Okänd',
           email: data.email || 'ej angiven',
           phone: data.phone || '',
-          message: `[SÄLJ BIL - FOOTER]\nReg: ${data.regNumber || '-'}\nTelefon: ${data.phone || '-'}`,
+          message: `[SÄLJ BIL - FOOTER]\nNamn: ${data.name || '-'}\nReg: ${data.reg || '-'}\nMiltal: ${data.miltal || '-'}\nTelefon: ${data.phone || '-'}\nE-post: ${data.email || '-'}`,
           source: 'salj-bil-footer',
           utm_data: (window as any).getUtmData?.(),
         }),
