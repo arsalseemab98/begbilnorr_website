@@ -1929,6 +1929,68 @@ body.menu-open {
     font-weight: 700;
 }
 
+/* Mobile filter toggle (hidden on desktop) */
+.filter-toggle {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.filter-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-toggle-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.filter-toggle-chevron {
+    transition: transform 0.3s ease;
+    opacity: 0.5;
+}
+
+/* Mobile filter summary (hidden on desktop) */
+.filter-mobile-summary {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    font-family: var(--sans);
+}
+
+.clear-filter-mobile {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-family: var(--sans);
+    transition: color 0.2s;
+}
+
+.clear-filter-mobile:hover {
+    color: var(--white);
+}
+
 /* Legacy filter-row and filter-select kept for sort bar */
 .filter-row {
     display: grid;
@@ -3526,26 +3588,63 @@ body.menu-open {
         height: 6px;
     }
 
-    /* --- Filter: responsive --- */
+    /* --- Filter: mobile toggle button --- */
+    .filter-toggle {
+        display: flex !important;
+    }
+
+    /* --- Filter: collapsible body --- */
+    .filter-body {
+        display: none;
+        padding-top: 16px;
+    }
+
+    .filter-body-open {
+        display: block;
+    }
+
+    .filter-toggle[aria-expanded="true"] .filter-toggle-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* --- Filter: mobile summary bar --- */
+    .filter-mobile-summary {
+        display: flex !important;
+    }
+
+    .filter-summary-hidden {
+        display: none !important;
+    }
+
+    /* --- Filter card --- */
     .filter-card {
         border-radius: 0;
-        padding: 16px;
-        margin-bottom: 16px;
+        padding: 0;
+        margin-bottom: 0;
         position: sticky;
         top: 56px;
         z-index: 100;
         border-left: none;
         border-right: none;
+        background: var(--bg-dark-3);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     .filter-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 12px;
+        padding: 0 16px;
     }
 
     .filter-group-range {
-        padding-bottom: 8px;
+        grid-column: 1 / -1;
+        padding-bottom: 12px;
         border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .filter-search {
+        padding: 0 16px;
+        margin-bottom: 16px;
     }
 
     .filter-search input {
@@ -3555,34 +3654,74 @@ body.menu-open {
     }
 
     .filter-actions {
-        gap: 10px;
-        flex-direction: column;
-        align-items: stretch;
+        gap: 12px;
+        padding: 16px 16px 16px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin-top: 16px;
     }
 
     .filter-actions-left {
-        justify-content: space-between;
+        flex: 1;
+        justify-content: stretch;
     }
 
     .filter-btn {
-        padding: 12px 24px;
-        font-size: 14px;
+        padding: 14px 24px;
+        font-size: 15px;
         border-radius: 10px;
         flex: 1;
         justify-content: center;
     }
 
+    .clear-filter {
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
     .results-count {
         text-align: center;
+        width: 100%;
     }
 
     .filter-chips {
         gap: 6px;
+        padding: 0 16px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+    }
+
+    .filter-chips::-webkit-scrollbar {
+        display: none;
     }
 
     .filter-chip {
-        font-size: 11px;
-        padding: 5px 8px 5px 10px;
+        font-size: 12px;
+        padding: 6px 10px 6px 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Range slider touch-friendly */
+    .filter-range-slider {
+        height: 32px;
+        margin-top: 6px;
+    }
+
+    .slider-thumb::-webkit-slider-thumb {
+        width: 22px;
+        height: 22px;
+    }
+
+    .slider-thumb::-moz-range-thumb {
+        width: 22px;
+        height: 22px;
+    }
+
+    .slider-track {
+        height: 5px;
     }
 
     /* Legacy filter-row for sort bar */
@@ -4068,6 +4207,16 @@ body.menu-open {
         font-size: 12px;
     }
 
+    .filter-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 0 14px;
+    }
+
+    .filter-search {
+        padding: 0 14px;
+    }
+
     .range-input-wrap input[type="number"] {
         padding: 9px 32px 9px 10px;
         font-size: 12px;
@@ -4084,6 +4233,20 @@ body.menu-open {
 
     .filter-range-hint {
         font-size: 10px;
+    }
+
+    .filter-group select {
+        padding: 10px 32px 10px 12px;
+        font-size: 13px;
+    }
+
+    .filter-actions {
+        padding: 14px;
+    }
+
+    .filter-btn {
+        padding: 13px 20px;
+        font-size: 14px;
     }
 
     /* About CTA */

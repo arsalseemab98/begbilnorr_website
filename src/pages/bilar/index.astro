@@ -162,6 +162,18 @@ const hasActiveFilters = activeFilters.length > 0;
   <section class="filter-area">
     <div class="container">
       <form class="filter-card" method="get" action="/bilar" id="filter-form">
+        <!-- Mobile Filter Toggle -->
+        <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="false">
+          <span class="filter-toggle-left">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filter
+            {hasActiveFilters && <span class="filter-toggle-badge">{activeFilters.length}</span>}
+          </span>
+          <svg class="filter-toggle-chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+
+        <!-- Collapsible filter body (mobile) -->
+        <div class="filter-body" id="filter-body">
         <!-- Search -->
         <div class="filter-search">
           <span class="search-icon">
@@ -335,6 +347,17 @@ const hasActiveFilters = activeFilters.length > 0;
             <strong>{allCars.length}</strong> {allCars.length === 1 ? 'bil' : 'bilar'} hittades
           </span>
         </div>
+        </div><!-- /filter-body -->
+
+        <!-- Mobile: results count always visible -->
+        <div class="filter-mobile-summary" id="filter-mobile-summary">
+          <span class="results-count">
+            <strong>{allCars.length}</strong> {allCars.length === 1 ? 'bil' : 'bilar'}
+          </span>
+          {hasActiveFilters && (
+            <a href="/bilar" class="clear-filter-mobile">Rensa</a>
+          )}
+        </div>
       </form>
     </div>
   </section>
@@ -407,9 +430,23 @@ const hasActiveFilters = activeFilters.length > 0;
     )}
   </div>
 
-  <!-- Range Slider Script -->
+  <!-- Filter Toggle + Range Slider Script -->
   <script>
     (function () {
+      // Mobile filter toggle
+      const toggle = document.getElementById('filter-toggle');
+      const body = document.getElementById('filter-body');
+      const summary = document.getElementById('filter-mobile-summary');
+      if (toggle && body) {
+        toggle.addEventListener('click', function () {
+          const expanded = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!expanded));
+          body.classList.toggle('filter-body-open');
+          if (summary) summary.classList.toggle('filter-summary-hidden');
+        });
+      }
+
+      // Range sliders
       document.querySelectorAll('.filter-range-slider').forEach(function (slider) {
         const thumbMin = slider.querySelector('.slider-thumb-min') as HTMLInputElement;
         const thumbMax = slider.querySelector('.slider-thumb-max') as HTMLInputElement;
@@ -568,6 +605,25 @@ const hasActiveFilters = activeFilters.length > 0;
     padding: 32px 0 0;
   }
 
+  @media (max-width: 768px) {
+    .bilar-page-hero {
+      padding: 40px 0 24px;
+    }
+
+    .bilar-page-hero h1 {
+      font-size: 28px;
+    }
+
+    .bilar-page-hero p {
+      font-size: 14px;
+      padding: 0 16px;
+    }
+
+    .filter-area {
+      padding: 0;
+    }
+  }
+
   .empty-state {
     text-align: center;
     padding: 64px 0;
@@ -635,9 +691,4 @@ const hasActiveFilters = activeFilters.length > 0;
     color: rgba(255,255,255,0.5);
   }
 
-  @media (max-width: 768px) {
-    .bilar-page-hero h1 {
-      font-size: 36px;
-    }
-  }
 </style>
