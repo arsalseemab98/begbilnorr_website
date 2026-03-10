@@ -2494,6 +2494,8 @@ body.menu-open {
     padding: 36px 24px;
     text-align: center;
     transition: transform 0.3s, border-color 0.3s;
+    min-height: 0;
+    min-width: 0;
 }
 
 .why-card:hover {
@@ -2501,7 +2503,8 @@ body.menu-open {
     border-color: rgba(230,46,45,0.3);
 }
 
-.why-card .why-icon {
+.why-card .why-icon,
+.why-card .why-card-icon {
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -2513,7 +2516,8 @@ body.menu-open {
     color: var(--red);
 }
 
-.why-card .why-icon svg {
+.why-card .why-icon svg,
+.why-card .why-card-icon svg {
     width: 22px;
     height: 22px;
 }
@@ -2524,12 +2528,14 @@ body.menu-open {
     font-weight: 700;
     color: var(--white);
     margin-bottom: 10px;
+    overflow-wrap: break-word;
 }
 
 .why-card p {
     font-size: 14px;
     color: rgba(255,255,255,0.6);
     line-height: 1.7;
+    overflow-wrap: break-word;
 }
 
 /* ========== ABOUT / CTA SECTION ========== */
@@ -3788,13 +3794,15 @@ body.menu-open {
         border-radius: 8px;
     }
 
-    .why-card .why-icon {
+    .why-card .why-icon,
+    .why-card .why-card-icon {
         width: 40px;
         height: 40px;
         margin: 0 auto 12px;
     }
 
-    .why-card .why-icon svg {
+    .why-card .why-icon svg,
+    .why-card .why-card-icon svg {
         width: 18px;
         height: 18px;
     }
@@ -4174,7 +4182,8 @@ body.menu-open {
         gap: 14px;
     }
 
-    .why-card .why-icon {
+    .why-card .why-icon,
+    .why-card .why-card-icon {
         margin: 0;
         flex-shrink: 0;
     }
