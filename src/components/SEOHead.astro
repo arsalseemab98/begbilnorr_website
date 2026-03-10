@@ -77,6 +77,34 @@ const buildId = Date.now().toString(36);
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" /></noscript>
 
+<!-- Google Analytics (GA4) with Consent Mode -->
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  // Default: deny analytics until user consents
+  gtag('consent', 'default', {
+    'analytics_storage': 'denied',
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+  });
+
+  // If user already consented, update immediately
+  if (localStorage.getItem('cookie_consent') === 'accepted') {
+    gtag('consent', 'update', {
+      'analytics_storage': 'granted',
+      'ad_storage': 'granted',
+      'ad_user_data': 'granted',
+      'ad_personalization': 'granted',
+    });
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-WRX7JK64Z0');
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WRX7JK64Z0" is:inline></script>
+
 <!-- Microsoft Clarity -->
 <script is:inline>
   (function(c,l,a,r,i,t,y){

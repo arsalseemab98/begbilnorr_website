@@ -11,7 +11,9 @@ Begbilnorr.se — begagnade bilar i Luleå (Fabriksvägen 18, 972 54). Astro 5 S
 - **Database:** Supabase (PostgreSQL)
 - **Hosting:** Vercel Pro
 - **Fonts:** DM Sans + DM Serif Display (Google Fonts)
-- **Bilder:** Blocket CDN (`images.blocketcdn.se`) för bilbilder
+- **Bilder:** Supabase Storage (`car-images` bucket) + Blocket CDN fallback
+- **Analytics:** Google Analytics GA4 (G-WRX7JK64Z0) + Microsoft Clarity (vtjfc41xfh)
+- **GDPR:** Cookie consent banner med Google Consent Mode v2
 
 ## Supabase
 - **Project ID:** `lgtmzyspwbdjukoozwec`
@@ -39,7 +41,8 @@ src/
 │   ├── Navbar.astro        — Navbar + mobil-meny + bottom-nav
 │   ├── Footer.astro        — Footer med FAB-knappar
 │   ├── CarCard.astro       — Bilkort med bildkarusell (pilar, dots, swipe)
-│   ├── SEOHead.astro       — Meta-taggar (OG, Twitter, canonical)
+│   ├── SEOHead.astro       — Meta-taggar (OG, Twitter, canonical, GA4, Clarity)
+│   ├── CookieConsent.astro — GDPR cookie consent banner (sv)
 │   └── StructuredData.astro — JSON-LD injection
 ├── pages/
 │   ├── index.astro         — Startsida (hero med three.js)
@@ -101,13 +104,22 @@ src/
 - Navbar-logo: `/images/begbilnorr-logo-nav.webp` (4KB, 150x90)
 - Footer-logo: `/images/begbilnorr-logo.webp` (15KB, 200x120)
 - Bank-logotyper: `/banks/*.webp` (Swish-sidan)
-- Bilbilder: Blocket CDN (inga lokala bilbilder)
+- Bilbilder: Supabase Storage (`car-images` bucket, public)
 
 ## Blocket-integration
 - Dealer-sida: https://www.blocket.se/mobility/dealer/7514308/begbilnorr
 - Bilder: `https://images.blocketcdn.se/dynamic/default/item/{id}/{uuid}`
 - Beskrivningar: Hämtas från Blocket-annonser och sparas i `cars.description`
 - Utrustning: Hämtas från Blocket och sparas i `cars.equipment[]`
+
+## Analytics & GDPR
+- **Google Analytics:** GA4 property `real_begbilnorr`, Measurement ID `G-WRX7JK64Z0`
+- **Microsoft Clarity:** Tag ID `vtjfc41xfh`
+- **Cookie Consent:** CookieConsent.astro — GDPR banner med Google Consent Mode v2
+  - Default: `analytics_storage: denied` (ingen spårning utan samtycke)
+  - Vid "Acceptera": consent uppdateras till `granted`, sparas i localStorage
+  - Vid "Avvisa": sparas som `declined`, GA4 fortsätter denied
+- **GA4 Enhanced Measurement:** Page views, Scrolls, Outbound clicks, Site search, Video engagement, File downloads, Form interactions
 
 ## Kommandon
 ```bash
