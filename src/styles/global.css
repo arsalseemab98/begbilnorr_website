@@ -1345,6 +1345,14 @@ body.menu-open {
     color: rgba(255,255,255,0.7);
     text-decoration: none;
     transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.swiftcore-icon {
+    vertical-align: middle;
+    border-radius: 3px;
 }
 
 .footer-credit a:hover {
