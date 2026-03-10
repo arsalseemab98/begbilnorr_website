@@ -496,6 +496,44 @@ import Layout from '../components/Layout.astro';
       padding: 32px 24px;
     }
   }
+
+  @media (max-width: 480px) {
+    .valuation-card {
+      padding: 24px 16px;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .phone-input-wrapper {
+      flex-direction: column;
+    }
+
+    .phone-input-wrapper .country-code-select {
+      width: 100%;
+    }
+
+    .submit-btn {
+      width: 100%;
+      min-height: 48px;
+      font-size: 15px;
+    }
+
+    .sell-text h2 {
+      font-size: 24px;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-buttons a {
+      width: 100%;
+      text-align: center;
+    }
+  }
 </style>
 
 <script>

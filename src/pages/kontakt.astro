@@ -485,6 +485,31 @@ import Layout from '../components/Layout.astro';
       gap: 8px;
     }
   }
+
+  @media (max-width: 480px) {
+    .quick-contact-card {
+      padding: 16px;
+    }
+
+    .quick-contact-card h4 {
+      font-size: 14px;
+    }
+
+    .contact-info,
+    .contact-form-card {
+      padding: 20px 16px;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .submit-btn {
+      width: 100%;
+      min-height: 48px;
+      font-size: 15px;
+    }
+  }
 </style>
 
 <script>
