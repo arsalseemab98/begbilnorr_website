@@ -539,8 +539,8 @@ body.menu-open {
 
 .car-card-image .badge-vat {
     position: absolute;
-    top: 14px;
-    left: 14px;
+    top: 38px;
+    right: 14px;
     background: #2e7d32;
     color: var(--white);
     font-size: 11px;
