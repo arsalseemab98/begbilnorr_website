@@ -164,6 +164,26 @@ import Layout from '../components/Layout.astro';
               <textarea id="message" name="message" placeholder="Skriv ditt meddelande här..." required rows="5"></textarea>
             </div>
 
+            <div class="terms-group">
+              <label class="terms-checkbox">
+                <input type="checkbox" name="terms" required />
+                <span class="checkmark"></span>
+                <span class="terms-text">Jag godkänner <a href="/anvandarvillkor" target="_blank">användarvillkoren</a> och <a href="/integritetspolicy" target="_blank">integritetspolicyn</a></span>
+              </label>
+              <button type="button" class="terms-toggle" onclick="this.parentElement.querySelector('.terms-summary').classList.toggle('open')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                Kort sammanfattning
+              </button>
+              <div class="terms-summary">
+                <ul>
+                  <li>Vi sparar namn, e-post och telefon för att hantera din förfrågan</li>
+                  <li>Vi säljer aldrig dina uppgifter till tredje part</li>
+                  <li>Du kan begära radering av dina uppgifter när som helst</li>
+                  <li>Formuläret innebär inte ett bindande avtal</li>
+                </ul>
+              </div>
+            </div>
+
             <button type="submit" class="submit-btn" id="submitBtn">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
               Skicka meddelande
@@ -489,6 +509,7 @@ import Layout from '../components/Layout.astro';
           phone: data.phone,
           message: data.subject ? `[${data.subject}] ${data.message}` : data.message,
           source: 'kontakt',
+          utm_data: (window as any).getUtmData?.(),
         }),
       });
 

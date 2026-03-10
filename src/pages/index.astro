@@ -1083,6 +1083,7 @@ const faqSchema = {
             email: email,
             message: `[NEWSLETTER] Ny prenumerant: ${email}`,
             source: 'newsletter',
+            utm_data: (window as any).getUtmData?.(),
           }),
         });
       } catch {}

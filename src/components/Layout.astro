@@ -35,5 +35,64 @@ const props = Astro.props;
   <Footer />
   <FinanceCalcModal />
   <CookieConsent />
+  <script>
+    // Capture UTM parameters and referrer on first visit
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+      const utm: Record<string, string> = {};
+
+      utmKeys.forEach(key => {
+        const val = params.get(key);
+        if (val) utm[key] = val;
+      });
+
+      // Auto-detect source if no utm_source
+      if (!utm.utm_source) {
+        const ref = document.referrer;
+        if (ref) {
+          try {
+            const host = new URL(ref).hostname;
+            if (host.includes('google')) utm.utm_source = 'google';
+            else if (host.includes('facebook') || host.includes('fb.')) utm.utm_source = 'facebook';
+            else if (host.includes('instagram')) utm.utm_source = 'instagram';
+            else if (host.includes('tiktok')) utm.utm_source = 'tiktok';
+            else if (host.includes('blocket')) utm.utm_source = 'blocket';
+            else utm.utm_source = host;
+            if (!utm.utm_medium) utm.utm_medium = 'referral';
+          } catch {}
+        } else {
+          utm.utm_source = 'direct';
+          utm.utm_medium = 'none';
+        }
+      }
+
+      // If gclid present, it's Google Ads
+      if (utm.gclid && !utm.utm_medium) {
+        utm.utm_source = 'google';
+        utm.utm_medium = 'cpc';
+      }
+
+      // If fbclid present, it's Facebook
+      if (utm.fbclid && !utm.utm_medium) {
+        utm.utm_source = 'facebook';
+        utm.utm_medium = 'cpc';
+      }
+
+      utm.landing_page = window.location.pathname;
+
+      // Only store on first visit in session
+      if (!sessionStorage.getItem('utm_data')) {
+        sessionStorage.setItem('utm_data', JSON.stringify(utm));
+      }
+    })();
+
+    // Global helper to get UTM data
+    (window as any).getUtmData = function() {
+      try {
+        return JSON.parse(sessionStorage.getItem('utm_data') || '{}');
+      } catch { return {}; }
+    };
+  </script>
 </body>
 </html>

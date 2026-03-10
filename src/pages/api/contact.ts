@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { name, email, phone, message, carSlug, carName, source } = body;
+    const { name, email, phone, message, carSlug, carName, source, utm_data } = body;
 
     if (!message) {
       return new Response(
@@ -54,6 +54,7 @@ export const POST: APIRoute = async ({ request }) => {
           ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ''}
           <p><strong>Meddelande:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
+          ${utm_data ? `<hr><p><strong>Trafikkälla:</strong> ${utm_data.utm_source || '-'} / ${utm_data.utm_medium || '-'}${utm_data.utm_campaign ? ` / ${utm_data.utm_campaign}` : ''}${utm_data.landing_page ? ` (${utm_data.landing_page})` : ''}</p>` : ''}
         `,
       });
       sentSuccessfully = true;
@@ -78,6 +79,7 @@ export const POST: APIRoute = async ({ request }) => {
       car_name: carName || null,
       source: source || null,
       sent_successfully: sentSuccessfully,
+      utm_data: utm_data || {},
     });
 
     return new Response(

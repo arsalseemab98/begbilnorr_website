@@ -193,6 +193,24 @@ const year = new Date().getFullYear();
         <input type="email" class="cm-input" name="email" placeholder="Din e-postadress" required />
         <input type="tel" class="cm-input" name="phone" placeholder="Telefonnummer (valfritt)" />
         <textarea class="cm-input cm-textarea" name="message" placeholder="Meddelande (valfritt)" id="cmMessage"></textarea>
+        <div class="terms-group">
+          <label class="terms-checkbox">
+            <input type="checkbox" name="terms" required />
+            <span class="checkmark"></span>
+            <span class="terms-text">Jag godkänner <a href="/anvandarvillkor" target="_blank">villkoren</a> och <a href="/integritetspolicy" target="_blank">integritetspolicyn</a></span>
+          </label>
+          <button type="button" class="terms-toggle" onclick="this.parentElement.querySelector('.terms-summary').classList.toggle('open')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            Sammanfattning
+          </button>
+          <div class="terms-summary">
+            <ul>
+              <li>Vi sparar dina uppgifter för att hantera din förfrågan</li>
+              <li>Vi säljer aldrig dina uppgifter</li>
+              <li>Du kan begära radering när som helst</li>
+            </ul>
+          </div>
+        </div>
         <button type="submit" class="cm-submit">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
           Skicka meddelande
@@ -237,6 +255,13 @@ const year = new Date().getFullYear();
         <input type="hidden" name="carName" id="bmCarName" />
         <input type="hidden" name="carSlug" id="bmCarSlug" />
         <input type="hidden" name="regNo" id="bmRegNo" />
+        <div class="terms-group">
+          <label class="terms-checkbox">
+            <input type="checkbox" name="terms" required />
+            <span class="checkmark"></span>
+            <span class="terms-text">Jag godkänner <a href="/anvandarvillkor" target="_blank">villkoren</a> och <a href="/integritetspolicy" target="_blank">integritetspolicyn</a></span>
+          </label>
+        </div>
         <button type="submit" class="cm-submit" style="background:linear-gradient(135deg,#E62E2D,#C72625);">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           Bevaka
@@ -275,6 +300,13 @@ const year = new Date().getFullYear();
         </select>
         <input type="text" class="cm-input" name="name" placeholder="Ditt namn" required />
         <input type="tel" class="cm-input" name="phone" placeholder="Telefonnummer" required />
+        <div class="terms-group">
+          <label class="terms-checkbox">
+            <input type="checkbox" name="terms" required />
+            <span class="checkmark"></span>
+            <span class="terms-text">Jag godkänner <a href="/anvandarvillkor" target="_blank">villkoren</a> och <a href="/integritetspolicy" target="_blank">integritetspolicyn</a></span>
+          </label>
+        </div>
         <button type="submit" class="cm-submit">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
           Få gratis värdering
@@ -383,7 +415,7 @@ const year = new Date().getFullYear();
       await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, source: 'kontakt-footer' }),
+        body: JSON.stringify({ ...data, source: 'kontakt-footer', utm_data: (window as any).getUtmData?.() }),
       });
     } catch {}
 
@@ -418,6 +450,7 @@ const year = new Date().getFullYear();
           phone: data.phone || '',
           message: `[SÄLJ BIL - FOOTER]\nReg: ${data.regNumber || '-'}\nTelefon: ${data.phone || '-'}`,
           source: 'salj-bil-footer',
+          utm_data: (window as any).getUtmData?.(),
         }),
       });
     } catch {}
@@ -488,6 +521,7 @@ const year = new Date().getFullYear();
           carName: data.carName || '',
           carSlug: data.carSlug || '',
           source: 'bevakning',
+          utm_data: (window as any).getUtmData?.(),
         }),
       });
     } catch {}
@@ -521,6 +555,7 @@ const year = new Date().getFullYear();
             email: email,
             message: `[NEWSLETTER] Ny prenumerant: ${email}`,
             source: 'newsletter-footer',
+            utm_data: (window as any).getUtmData?.(),
           }),
         });
       } catch {}
