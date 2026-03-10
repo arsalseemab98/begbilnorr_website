@@ -55,7 +55,7 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
     </div>
   </div>
   <div class="car-card-body">
-    <div class="car-specs">{car.year} &nbsp;/&nbsp; {formatMileage(car.mileage).toUpperCase()} &nbsp;/&nbsp; LULEÅ</div>
+    <div class="car-specs">{car.year} &nbsp;/&nbsp; {formatMileage(car.mileage).toUpperCase()} &nbsp;/&nbsp; {car.gearbox} &nbsp;/&nbsp; LULEÅ</div>
     <div class="car-name">{car.full_name}</div>
     <div class="car-card-footer">
       <div>
