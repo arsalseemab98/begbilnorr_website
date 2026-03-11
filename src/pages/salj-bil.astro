@@ -122,9 +122,15 @@ import Layout from '../components/Layout.astro';
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="v-email">E-post</label>
-            <input type="email" id="v-email" name="email" placeholder="din@email.se" />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="v-email">E-post</label>
+              <input type="email" id="v-email" name="email" placeholder="din@email.se" />
+            </div>
+            <div class="form-group">
+              <label for="v-price">Prisförväntning (kr)</label>
+              <input type="text" id="v-price" name="priceExpectation" placeholder="T.ex. 120 000 kr" />
+            </div>
           </div>
 
           <div class="form-group">
@@ -551,7 +557,7 @@ import Layout from '../components/Layout.astro';
           name: 'Värdering',
           email: data.email || 'ej angiven',
           phone: phone,
-          message: `[VÄRDERING]\nReg: ${data.regNumber || '-'}\nMiltal: ${data.mileage || '-'}\nTelefon: ${phone}\nE-post: ${data.email || '-'}\nBeskrivning: ${data.description || '-'}`,
+          message: `[VÄRDERING]\nReg: ${data.regNumber || '-'}\nMiltal: ${data.mileage || '-'}\nPrisförväntning: ${data.priceExpectation || '-'}\nTelefon: ${phone}\nE-post: ${data.email || '-'}\nBeskrivning: ${data.description || '-'}`,
           source: 'vardering',
           utm_data: (window as any).getUtmData?.(),
         }),
