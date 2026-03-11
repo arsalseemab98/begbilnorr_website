@@ -2144,12 +2144,18 @@ body.menu-open {
     gap: 40px;
 }
 
+.gallery {
+    max-width: 100%;
+    overflow: hidden;
+}
+
 .gallery-main {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
     background: var(--bg-dark-4);
     min-height: 400px;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3977,8 +3983,16 @@ body.menu-open {
     }
 
     .gallery-arrow {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .gallery-arrow-left {
+        left: 8px;
+    }
+
+    .gallery-arrow-right {
+        right: 8px;
     }
 
     .gallery-thumbnails {
@@ -4250,6 +4264,24 @@ body.menu-open {
     /* Gallery */
     .gallery-main {
         min-height: 220px;
+    }
+
+    .gallery-arrow {
+        width: 32px;
+        height: 32px;
+    }
+
+    .gallery-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .gallery-arrow-left {
+        left: 6px;
+    }
+
+    .gallery-arrow-right {
+        right: 6px;
     }
 
     .gallery-thumbnails {

@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
         : source === 'newsletter' || source === 'newsletter-footer'
           ? `Ny prenumerant: ${senderEmail || senderName}`
           : source === 'vardering' || source === 'salj-bil-footer'
-            ? `Värdering: ${senderName}`
+            ? `Ny värderingsförfrågan${phone ? ` — ${phone}` : ''}`
             : source === 'bevakning'
               ? `Bevakning: ${carName || senderName}`
               : `Begbilnorr.se: ${senderName}`;
