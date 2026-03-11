@@ -136,19 +136,17 @@ import Layout from '../components/Layout.astro';
             <label class="terms-checkbox">
               <input type="checkbox" name="terms" required />
               <span class="checkmark"></span>
-              <span class="terms-text">Jag godkänner <a href="/anvandarvillkor" target="_blank">användarvillkoren</a> och <a href="/integritetspolicy" target="_blank">integritetspolicyn</a></span>
+              <span class="terms-text">Genom att skicka detta formulär samtycker jag till behandling av mina personuppgifter i enlighet med gällande dataskyddslagstiftning (GDPR).</span>
             </label>
-            <button type="button" class="terms-toggle" onclick="this.parentElement.querySelector('.terms-summary').classList.toggle('open')">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              Kort sammanfattning
-            </button>
-            <div class="terms-summary">
-              <ul>
-                <li>Vi sparar dina uppgifter för att ge dig en värdering</li>
-                <li>Vi säljer aldrig dina uppgifter till tredje part</li>
-                <li>Värderingen är preliminär — slutgiltig värdering vid besiktning</li>
-                <li>Du kan begära radering av dina uppgifter när som helst</li>
-              </ul>
+            <div class="terms-links">
+              <a href="/integritetspolicy" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                Integritetspolicy
+              </a>
+              <a href="/anvandarvillkor" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                Användarvillkor
+              </a>
             </div>
           </div>
 
