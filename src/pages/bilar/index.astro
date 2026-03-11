@@ -179,7 +179,7 @@ const hasActiveFilters = activeFilters.length > 0;
           <span class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </span>
-          <input type="text" name="search" placeholder="Sök märke, modell, variant..." value={search} />
+          <input type="text" name="search" placeholder="Sök märke, modell, variant..." value={search} aria-label="Sök bilar" />
         </div>
 
         <!-- Filter Grid -->
@@ -190,7 +190,7 @@ const hasActiveFilters = activeFilters.length > 0;
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
               Märke
             </label>
-            <select name="brand">
+            <select name="brand" aria-label="Filtrera på märke">
               <option value="">Alla märken</option>
               {brands.map((b) => (
                 <option value={b} selected={brand === b}>{b}</option>
@@ -207,12 +207,12 @@ const hasActiveFilters = activeFilters.length > 0;
             </label>
             <div class="filter-range-inputs">
               <div class="range-input-wrap">
-                <input type="number" name="price_min" placeholder={formatNum(inventoryMinPrice)} value={priceMin} min={inventoryMinPrice} max={inventoryMaxPrice} step="5000" />
+                <input type="number" name="price_min" placeholder={formatNum(inventoryMinPrice)} value={priceMin} min={inventoryMinPrice} max={inventoryMaxPrice} step="5000" aria-label="Pris från" />
                 <span class="range-unit">kr</span>
               </div>
               <span class="range-separator">—</span>
               <div class="range-input-wrap">
-                <input type="number" name="price_max" placeholder={formatNum(inventoryMaxPrice)} value={priceMax} min={inventoryMinPrice} max={inventoryMaxPrice} step="5000" />
+                <input type="number" name="price_max" placeholder={formatNum(inventoryMaxPrice)} value={priceMax} min={inventoryMinPrice} max={inventoryMaxPrice} step="5000" aria-label="Pris till" />
                 <span class="range-unit">kr</span>
               </div>
             </div>
@@ -220,8 +220,8 @@ const hasActiveFilters = activeFilters.length > 0;
               <div class="slider-track">
                 <div class="slider-fill"></div>
               </div>
-              <input type="range" class="slider-thumb slider-thumb-min" min={inventoryMinPrice} max={inventoryMaxPrice} value={priceMin || inventoryMinPrice} step="5000" />
-              <input type="range" class="slider-thumb slider-thumb-max" min={inventoryMinPrice} max={inventoryMaxPrice} value={priceMax || inventoryMaxPrice} step="5000" />
+              <input type="range" class="slider-thumb slider-thumb-min" min={inventoryMinPrice} max={inventoryMaxPrice} value={priceMin || inventoryMinPrice} step="5000" aria-label="Pris från (skjutreglage)" />
+              <input type="range" class="slider-thumb slider-thumb-max" min={inventoryMinPrice} max={inventoryMaxPrice} value={priceMax || inventoryMaxPrice} step="5000" aria-label="Pris till (skjutreglage)" />
             </div>
           </div>
 
@@ -234,19 +234,19 @@ const hasActiveFilters = activeFilters.length > 0;
             </label>
             <div class="filter-range-inputs">
               <div class="range-input-wrap">
-                <input type="number" name="year_min" placeholder={String(inventoryMinYear)} value={yearMin} min={inventoryMinYear} max={inventoryMaxYear} step="1" />
+                <input type="number" name="year_min" placeholder={String(inventoryMinYear)} value={yearMin} min={inventoryMinYear} max={inventoryMaxYear} step="1" aria-label="Årsmodell från" />
               </div>
               <span class="range-separator">—</span>
               <div class="range-input-wrap">
-                <input type="number" name="year_max" placeholder={String(inventoryMaxYear)} value={yearMax} min={inventoryMinYear} max={inventoryMaxYear} step="1" />
+                <input type="number" name="year_max" placeholder={String(inventoryMaxYear)} value={yearMax} min={inventoryMinYear} max={inventoryMaxYear} step="1" aria-label="Årsmodell till" />
               </div>
             </div>
             <div class="filter-range-slider" data-min={inventoryMinYear} data-max={inventoryMaxYear} data-current-min={yearMin || inventoryMinYear} data-current-max={yearMax || inventoryMaxYear} data-input-min="year_min" data-input-max="year_max">
               <div class="slider-track">
                 <div class="slider-fill"></div>
               </div>
-              <input type="range" class="slider-thumb slider-thumb-min" min={inventoryMinYear} max={inventoryMaxYear} value={yearMin || inventoryMinYear} step="1" />
-              <input type="range" class="slider-thumb slider-thumb-max" min={inventoryMinYear} max={inventoryMaxYear} value={yearMax || inventoryMaxYear} step="1" />
+              <input type="range" class="slider-thumb slider-thumb-min" min={inventoryMinYear} max={inventoryMaxYear} value={yearMin || inventoryMinYear} step="1" aria-label="Årsmodell från (skjutreglage)" />
+              <input type="range" class="slider-thumb slider-thumb-max" min={inventoryMinYear} max={inventoryMaxYear} value={yearMax || inventoryMaxYear} step="1" aria-label="Årsmodell till (skjutreglage)" />
             </div>
           </div>
 
@@ -259,12 +259,12 @@ const hasActiveFilters = activeFilters.length > 0;
             </label>
             <div class="filter-range-inputs">
               <div class="range-input-wrap">
-                <input type="number" name="mileage_min" placeholder={formatNum(inventoryMinMileage)} value={mileageMin} min={inventoryMinMileage} max={inventoryMaxMileage} step="500" />
+                <input type="number" name="mileage_min" placeholder={formatNum(inventoryMinMileage)} value={mileageMin} min={inventoryMinMileage} max={inventoryMaxMileage} step="500" aria-label="Miltal från" />
                 <span class="range-unit">mil</span>
               </div>
               <span class="range-separator">—</span>
               <div class="range-input-wrap">
-                <input type="number" name="mileage_max" placeholder={formatNum(inventoryMaxMileage)} value={mileageMax} min={inventoryMinMileage} max={inventoryMaxMileage} step="500" />
+                <input type="number" name="mileage_max" placeholder={formatNum(inventoryMaxMileage)} value={mileageMax} min={inventoryMinMileage} max={inventoryMaxMileage} step="500" aria-label="Miltal till" />
                 <span class="range-unit">mil</span>
               </div>
             </div>
@@ -272,8 +272,8 @@ const hasActiveFilters = activeFilters.length > 0;
               <div class="slider-track">
                 <div class="slider-fill"></div>
               </div>
-              <input type="range" class="slider-thumb slider-thumb-min" min={inventoryMinMileage} max={inventoryMaxMileage} value={mileageMin || inventoryMinMileage} step="500" />
-              <input type="range" class="slider-thumb slider-thumb-max" min={inventoryMinMileage} max={inventoryMaxMileage} value={mileageMax || inventoryMaxMileage} step="500" />
+              <input type="range" class="slider-thumb slider-thumb-min" min={inventoryMinMileage} max={inventoryMaxMileage} value={mileageMin || inventoryMinMileage} step="500" aria-label="Miltal från (skjutreglage)" />
+              <input type="range" class="slider-thumb slider-thumb-max" min={inventoryMinMileage} max={inventoryMaxMileage} value={mileageMax || inventoryMaxMileage} step="500" aria-label="Miltal till (skjutreglage)" />
             </div>
           </div>
 
@@ -283,7 +283,7 @@ const hasActiveFilters = activeFilters.length > 0;
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V2h12v10h4a2 2 0 0 1 2 2v5a2 2 0 0 0 4 0v-8h-2"/><path d="M7 10h4"/><path d="M7 6h4"/></svg>
               Drivmedel
             </label>
-            <select name="fuel">
+            <select name="fuel" aria-label="Filtrera på drivmedel">
               <option value="">Alla</option>
               {fuelTypes.map((f) => (
                 <option value={f} selected={fuel === f}>{f}</option>
@@ -297,7 +297,7 @@ const hasActiveFilters = activeFilters.length > 0;
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="m16.24 7.76 2.83-2.83"/></svg>
               Växellåda
             </label>
-            <select name="gearbox">
+            <select name="gearbox" aria-label="Filtrera på växellåda">
               <option value="">Alla</option>
               {gearboxTypes.map((g) => (
                 <option value={g} selected={gearbox === g}>{g}</option>
@@ -381,7 +381,7 @@ const hasActiveFilters = activeFilters.length > 0;
           {yearMax && <input type="hidden" name="year_max" value={yearMax} />}
           {mileageMin && <input type="hidden" name="mileage_min" value={mileageMin} />}
           {mileageMax && <input type="hidden" name="mileage_max" value={mileageMax} />}
-          <select name="sort" class="sort-select" onchange="this.form.submit()">
+          <select name="sort" class="sort-select" onchange="this.form.submit()" aria-label="Sortera bilar">
             <option value="newest" selected={sort === 'newest'}>Senast inlagda</option>
             <option value="price-asc" selected={sort === 'price-asc'}>Pris lågt-högt</option>
             <option value="price-desc" selected={sort === 'price-desc'}>Pris högt-lågt</option>
@@ -391,10 +391,10 @@ const hasActiveFilters = activeFilters.length > 0;
         </form>
       </div>
       <div class="view-toggle">
-        <button class="view-btn active" title="Rutnät">
+        <button class="view-btn active" title="Rutnät" aria-label="Visa som rutnät">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
         </button>
-        <button class="view-btn" title="Lista">
+        <button class="view-btn" title="Lista" aria-label="Visa som lista">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
         </button>
       </div>
@@ -403,10 +403,10 @@ const hasActiveFilters = activeFilters.length > 0;
 
   <!-- Car Grid -->
   <div class="container">
-    <div class="car-grid" id="car-grid">
+    <div class="car-grid" id="car-grid" aria-live="polite">
       {allCars.map((car, i) => (
         <div class:list={['car-grid-item', { 'car-hidden': i >= 8 }]} data-index={i}>
-          <CarCard car={car} />
+          <CarCard car={car} eager={i === 0} />
         </div>
       ))}
     </div>

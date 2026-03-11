@@ -120,7 +120,7 @@ const breadcrumbSchema = {
         <div class="gallery">
           <div class="gallery-main" id="galleryMain" data-images={JSON.stringify(car.images || [])}>
             {mainImage ? (
-              <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} id="mainImage" />
+              <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} id="mainImage" fetchpriority="high" />
             ) : (
               <span style="font-size:80px;opacity:0.2;">&#128663;</span>
             )}

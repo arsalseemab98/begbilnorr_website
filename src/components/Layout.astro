@@ -27,9 +27,10 @@ const props = Astro.props;
   <slot name="head" />
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Hoppa till innehåll</a>
   <AnnouncementBar />
   <Navbar />
-  <main>
+  <main id="main-content">
     <slot />
   </main>
   <Footer />

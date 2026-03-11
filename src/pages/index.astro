@@ -141,7 +141,7 @@ const faqSchema = {
       <div class="car-grid">
         {latestCars.map((car, i) => (
           <div class:list={['car-grid-item', { 'mobile-hidden': i >= 3 }]}>
-            <CarCard car={car} />
+            <CarCard car={car} eager={i === 0} />
           </div>
         ))}
       </div>

@@ -4,9 +4,10 @@ import { formatPrice, formatMileage, calculateMonthlyPayment, formatPriceExVat }
 
 interface Props {
   car: Car;
+  eager?: boolean;
 }
 
-const { car } = Astro.props;
+const { car, eager = false } = Astro.props;
 const images = car.images?.slice(0, 8) || [];
 const mainImage = images[0];
 const hasMultiple = images.length > 1;
@@ -17,7 +18,7 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
   <a href={`/bilar/${car.slug}`} class="car-card-link" aria-label={`Visa ${car.full_name}`}></a>
   <div class="car-card-image" data-images={hasMultiple ? JSON.stringify(images) : undefined}>
     {mainImage ? (
-      <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} loading="lazy" width="400" height="220" class="carousel-img" />
+      <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} loading={eager ? "eager" : "lazy"} width="400" height="220" class="carousel-img" {...(eager ? { fetchpriority: "high" as const } : {})} />
     ) : (
       <span style="font-size:64px;opacity:0.2;">&#128663;</span>
     )}

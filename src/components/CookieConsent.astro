@@ -7,7 +7,7 @@
     <div class="cookie-content">
       <div class="cookie-icon">&#127850;</div>
       <h3>Vi värnar om din integritet</h3>
-      <p>Vi använder cookies för att förbättra din upplevelse och analysera trafik. Du måste godkänna cookies för att fortsätta använda sidan.</p>
+      <p>Vi använder cookies och analysverktyg (Google Analytics och Microsoft Clarity) för att förbättra din upplevelse och analysera trafik. Du måste godkänna cookies för att fortsätta använda sidan.</p>
       <p id="cookie-warning" class="cookie-warning" style="display:none;">Du måste godkänna cookies för att kunna använda webbplatsen.</p>
       <div class="cookie-actions">
         <button id="cookie-decline" class="cookie-btn cookie-btn-decline" type="button">Avvisa</button>
@@ -157,6 +157,9 @@
           'ad_personalization': 'granted',
         });
       }
+
+      // Dispatch event so Clarity (and other consent-gated scripts) can load
+      window.dispatchEvent(new Event('cookie-consent-accepted'));
     });
 
     declineBtn.addEventListener('click', () => {
