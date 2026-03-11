@@ -45,9 +45,11 @@ const carSchema = {
   "@context": "https://schema.org",
   "@type": "Car",
   "name": car.full_name,
+  "description": car.description?.split('\n')[0] || `Begagnad ${car.full_name} till salu hos Begbilnorr i Luleå`,
   "brand": { "@type": "Brand", "name": car.brand },
   "model": car.model,
-  "vehicleModelDate": String(car.year),
+  "vehicleModelDate": `${car.year}-01-01`,
+  "vehicleConfiguration": "Used",
   "mileageFromOdometer": {
     "@type": "QuantitativeValue",
     "value": car.mileage,
@@ -63,6 +65,7 @@ const carSchema = {
     "price": car.price,
     "priceCurrency": "SEK",
     "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/UsedCondition",
     "seller": {
       "@type": "AutoDealer",
       "name": "Begbilnorr",
@@ -84,7 +87,7 @@ const breadcrumbSchema = {
 ---
 
 <Layout
-  title={`${car.full_name} -- ${formatPrice(car.price)} | Begbilnorr Luleå`}
+  title={`${car.full_name} ${car.year} — ${formatPrice(car.price)} | Begbilnorr Luleå`}
   description={car.description || `Köp begagnad ${car.full_name} hos Begbilnorr i Luleå. ${formatPrice(car.price)}. Garanti och finansiering ingår.`}
   ogType="product"
   ogImage={mainImage}
@@ -118,9 +121,9 @@ const breadcrumbSchema = {
       <div class="detail-grid">
         <!-- Gallery -->
         <div class="gallery">
-          <div class="gallery-main" id="galleryMain" data-images={JSON.stringify(car.images || [])}>
+          <div class="gallery-main" id="galleryMain" data-images={JSON.stringify(car.images || [])} data-car-name={car.full_name}>
             {mainImage ? (
-              <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} id="mainImage" fetchpriority="high" />
+              <img src={mainImage} alt={`Begagnad ${car.full_name} ${car.year} till salu i Luleå — ${formatPrice(car.price)}`} id="mainImage" fetchpriority="high" />
             ) : (
               <span style="font-size:80px;opacity:0.2;">&#128663;</span>
             )}
@@ -145,7 +148,7 @@ const breadcrumbSchema = {
             <div class="gallery-thumbnails" id="galleryThumbnails">
               {car.images.map((img, i) => (
                 <div class={`gallery-thumb ${i === 0 ? 'active' : ''}`} data-src={img} data-index={i}>
-                  <img src={img} alt={`${car.full_name} bild ${i + 1}`} loading="lazy" />
+                  <img src={img} alt={`${car.full_name} — bild ${i + 1} av ${car.images.length}`} loading="lazy" />
                 </div>
               ))}
             </div>
@@ -543,6 +546,8 @@ const breadcrumbSchema = {
     if (!mainImg || galleryImages.length === 0) return;
     currentIdx = (idx + galleryImages.length) % galleryImages.length;
     mainImg.src = galleryImages[currentIdx];
+    const carName = galleryMain?.dataset.carName || '';
+    mainImg.alt = `${carName} — bild ${currentIdx + 1} av ${galleryImages.length}`;
     document.querySelectorAll('.gallery-thumb').forEach((t) => t.classList.remove('active'));
     const activeThumb = document.querySelector(`.gallery-thumb[data-index="${currentIdx}"]`);
     activeThumb?.classList.add('active');
