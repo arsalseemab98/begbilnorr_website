@@ -25,6 +25,7 @@ Begbilnorr.se — begagnade bilar i Luleå (Fabriksvägen 18, 972 54). Astro 5 S
   - `contact_submissions` — Kontaktformulär (name, email, phone, message, car_slug, car_name, source, sent_successfully, utm_data JSONB)
   - `leads` — Unika leads med email/phone, sources[], form_labels[], submission_count (upsert på email)
   - `newsletter_subscribers` — Nyhetsbrevsprenumeranter (email, source, is_active)
+  - `redirects` — 301-redirects (slug, target_url, is_active, click_count). Hanteras av `[...slug].astro` catch-all
 - **Bildata:** Synkas manuellt från Blocket (dealer 7514308). Beskrivningar hämtas från Blocket-annonser. Bilar som inte längre finns på Blocket markeras `is_active=false, is_sold=true`.
 
 ## Vercel
@@ -60,6 +61,8 @@ src/
 │   ├── admin.astro         — Admin-panel
 │   ├── integritetspolicy.astro — Integritetspolicy (GDPR)
 │   ├── anvandarvillkor.astro — Användarvillkor
+│   ├── fragor-och-svar.astro — FAQ med kategorier
+│   ├── [...slug].astro     — Catch-all: Supabase redirects + 404
 │   └── sitemap.xml.ts      — Dynamisk sitemap
 ├── lib/
 │   ├── supabase.ts         — Supabase client
@@ -125,11 +128,19 @@ src/
 - **Cookie Consent:** CookieConsent.astro — GDPR banner med Google Consent Mode v2
   - Default: `analytics_storage: denied` (ingen spårning utan samtycke)
   - Vid "Acceptera": consent uppdateras till `granted`, sparas i localStorage
-  - Vid "Avvisa": sparas som `declined`, GA4 fortsätter denied
+  - Vid "Avvisa": varningstext visas, overlay stannar kvar — användaren måste godkänna för att använda sidan
 - **GA4 Enhanced Measurement:** Page views, Scrolls, Outbound clicks, Site search, Video engagement, File downloads, Form interactions
 - **Formulär-villkor:** Alla formulär har obligatorisk checkbox för användarvillkor + integritetspolicy med expanderbar sammanfattning
 - **Policy-sidor:** `/integritetspolicy` och `/anvandarvillkor` — länkas i footer och formulär-checkboxar
 - **UTM-spårning:** Alla formulär skickar UTM-data (utm_source, utm_medium, utm_campaign, gclid, fbclid, referrer, landing_page). Auto-detekterar källa (google, facebook, blocket, direct). Sparas i `contact_submissions.utm_data` (JSONB) och visas i e-postnotiser.
+
+## Redirects (gamla WordPress-URLs)
+Hanteras via `redirects`-tabellen i Supabase + `[...slug].astro` catch-all (301).
+- `/hem/` → `/`, `/bilfinansiering/` → `/finansiering`, `/kopabil/` → `/bilar`
+- `/kontakta-oss/` → `/kontakt`, `/saljabil/` → `/salj-bil`, `/garanti/` → `/fragor-och-svar`
+- `/product/*` → `/bilar`, `/product-category/*` → `/bilar`
+- `/hemleverans/` → `/bilar`, `/tjanster/` → `/bilar`
+- Nya redirects läggs till via admin-panelen eller direkt i Supabase
 
 ## Footer
 - "Skapat av swiftcore.se" med SwiftCore-favicon (`/images/swiftcore-favicon.png`)
