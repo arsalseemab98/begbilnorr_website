@@ -418,6 +418,9 @@ const year = new Date().getFullYear();
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, source: 'kontakt-footer', utm_data: (window as any).getUtmData?.() }),
       });
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Lead', { content_name: 'Kontakt Footer' });
+      }
     } catch {}
 
     const cmBody = document.getElementById('cmBody');
@@ -454,6 +457,9 @@ const year = new Date().getFullYear();
           utm_data: (window as any).getUtmData?.(),
         }),
       });
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Lead', { content_name: 'Sälj Bil Footer' });
+      }
     } catch {}
 
     const smBody = document.getElementById('smBody');
@@ -525,6 +531,9 @@ const year = new Date().getFullYear();
           utm_data: (window as any).getUtmData?.(),
         }),
       });
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Lead', { content_name: 'Bevakning' });
+      }
     } catch {}
 
     const bmBody = document.getElementById('bmBody');
