@@ -129,3 +129,34 @@ const buildId = Date.now().toString(36);
     window.addEventListener('cookie-consent-accepted', loadClarity);
   })();
 </script>
+
+<!-- Meta Pixel (consent-gated) -->
+<script is:inline>
+  (function() {
+    var fbPixelLoaded = false;
+
+    function loadFBPixel() {
+      if (fbPixelLoaded) return;
+      fbPixelLoaded = true;
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1248277947434113');
+      fbq('track', 'PageView');
+    }
+
+    // If user already consented, load Meta Pixel immediately
+    if (localStorage.getItem('cookie_consent') === 'accepted') {
+      loadFBPixel();
+    }
+
+    // Listen for consent event to load Meta Pixel dynamically
+    window.addEventListener('cookie-consent-accepted', loadFBPixel);
+  })();
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1248277947434113&ev=PageView&noscript=1" /></noscript>
