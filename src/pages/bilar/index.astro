@@ -140,7 +140,7 @@ const hasActiveFilters = activeFilters.length > 0;
 
 <Layout
   title="Begagnade bilar Luleå — Köp bil med garanti | Begbilnorr"
-  description="Hitta din nästa bil hos Begbilnorr i Luleå. Kvalitetskontrollerade begagnade bilar med garanti. Filtrera på märke, modell och pris."
+  description="Hitta din nästa bil hos Begbilnorr i Luleå. Kvalitetskontrollerade begagnade bilar med garanti, finansiering och hemleverans i hela Sverige. Köp tryggt — bläddra och filtrera nu!"
 >
   <!-- Page Hero -->
   <section class="bilar-page-hero">
@@ -489,35 +489,47 @@ const hasActiveFilters = activeFilters.length > 0;
           updateFill();
         });
 
-        // Sync number inputs → sliders
+        // Sync number inputs → sliders (with clamping + crossover validation)
         inputMin.addEventListener('input', function () {
-          thumbMin.value = inputMin.value || thumbMin.min;
+          let val = Number(inputMin.value);
+          if (!inputMin.value) { thumbMin.value = thumbMin.min; updateFill(); return; }
+          if (val < rangeMin) val = rangeMin;
+          if (val > Number(thumbMax.value)) val = Number(thumbMax.value);
+          thumbMin.value = String(val);
+          inputMin.value = String(val);
           updateFill();
         });
         inputMax.addEventListener('input', function () {
-          thumbMax.value = inputMax.value || thumbMax.max;
+          let val = Number(inputMax.value);
+          if (!inputMax.value) { thumbMax.value = thumbMax.max; updateFill(); return; }
+          if (val > rangeMax) val = rangeMax;
+          if (val < Number(thumbMin.value)) val = Number(thumbMin.value);
+          thumbMax.value = String(val);
+          inputMax.value = String(val);
           updateFill();
         });
 
         updateFill();
       });
 
-      // Remove empty inputs before submit to keep URL clean
+      // Remove empty/default inputs before submit to keep URL clean
       const form = document.getElementById('filter-form') as HTMLFormElement;
       if (form) {
         form.addEventListener('submit', function () {
-          form.querySelectorAll('input, select').forEach(function (el) {
-            const input = el as HTMLInputElement | HTMLSelectElement;
-            if (!input.value || input.value === '' || input.value === input.getAttribute('min') && input.name.endsWith('_min') || input.value === input.getAttribute('max') && input.name.endsWith('_max')) {
-              // Check if it's a range input at default position
-              const slider = input.closest('.filter-range-slider');
-              if (slider) return; // Don't disable slider thumbs
-              if (!input.value) input.disabled = true;
-            }
-          });
-          // Disable range inputs at default values
+          // Disable range number inputs that are empty or at their default min/max
           form.querySelectorAll('.filter-range-inputs input[type="number"]').forEach(function (el) {
             const input = el as HTMLInputElement;
+            if (!input.value) {
+              input.disabled = true;
+            } else if (input.name.endsWith('_min') && input.value === input.getAttribute('min')) {
+              input.disabled = true;
+            } else if (input.name.endsWith('_max') && input.value === input.getAttribute('max')) {
+              input.disabled = true;
+            }
+          });
+          // Disable empty selects and other inputs
+          form.querySelectorAll('select, input[type="text"]').forEach(function (el) {
+            const input = el as HTMLInputElement | HTMLSelectElement;
             if (!input.value) input.disabled = true;
           });
         });
