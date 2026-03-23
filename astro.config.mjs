@@ -7,7 +7,7 @@ export default defineConfig({
   adapter: vercel({
     isr: {
       expiration: 60,
-      exclude: ['/api/cars', '/api/upload', '/api/newsletter-send', '/api/newsletter-subscribe', '/api/contact', '/api/admin-auth', '/admin'],
+      exclude: ['/api/cars', '/api/upload', '/api/newsletter-send', '/api/newsletter-subscribe', '/api/contact', '/api/admin-auth', '/admin', '/bilar'],
     },
   }),
   site: 'https://begbilnorr.se',
