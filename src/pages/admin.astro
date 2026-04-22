@@ -2407,6 +2407,88 @@ export const prerender = false;
     updateSelectionUi();
   });
 
+  // Send modal
+  const sendModal = document.getElementById('leadsSendModal') as HTMLDivElement | null;
+  const sendBtn = document.getElementById('leadsSendBtn') as HTMLButtonElement | null;
+  const sendRecipients = document.getElementById('leadsSendRecipients') as HTMLParagraphElement | null;
+  const sendSubject = document.getElementById('leadsSendSubject') as HTMLInputElement | null;
+  const sendHtml = document.getElementById('leadsSendHtml') as HTMLTextAreaElement | null;
+  const sendTestTo = document.getElementById('leadsSendTestTo') as HTMLInputElement | null;
+  const sendTestBtn = document.getElementById('leadsSendTestBtn') as HTMLButtonElement | null;
+  const sendCancel = document.getElementById('leadsSendCancel') as HTMLButtonElement | null;
+  const sendConfirm = document.getElementById('leadsSendConfirm') as HTMLButtonElement | null;
+  const sendMsg = document.getElementById('leadsSendMsg') as HTMLParagraphElement | null;
+
+  function setSendMsg(text: string, color: string) {
+    if (sendMsg) { sendMsg.textContent = text; sendMsg.style.color = color; }
+  }
+
+  sendBtn?.addEventListener('click', () => {
+    if (selectedEmails.size === 0 || !sendModal) return;
+    if (sendRecipients) sendRecipients.textContent = `${selectedEmails.size} mottagare`;
+    setSendMsg('', '#fff');
+    sendModal.style.display = 'flex';
+  });
+
+  sendCancel?.addEventListener('click', () => {
+    if (sendModal) sendModal.style.display = 'none';
+  });
+
+  sendTestBtn?.addEventListener('click', async () => {
+    const to = sendTestTo?.value.trim();
+    const subject = sendSubject?.value.trim();
+    const html = sendHtml?.value.trim();
+    if (!to) { setSendMsg('Ange test-epost.', '#EF4444'); return; }
+    if (!subject || !html) { setSendMsg('Ämne och innehåll krävs.', '#EF4444'); return; }
+    setSendMsg('Skickar test...', 'rgba(255,255,255,0.6)');
+    try {
+      const res = await fetch('/api/leads-send', {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, html, testEmail: to }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setSendMsg(data.error || 'Test-utskick misslyckades.', '#EF4444'); return; }
+      setSendMsg(`Test skickat till ${to}.`, '#10B981');
+    } catch {
+      setSendMsg('Nätverksfel. Försök igen.', '#EF4444');
+    }
+  });
+
+  sendConfirm?.addEventListener('click', async () => {
+    const subject = sendSubject?.value.trim();
+    const html = sendHtml?.value.trim();
+    if (!subject || !html) { setSendMsg('Ämne och innehåll krävs.', '#EF4444'); return; }
+    if (selectedEmails.size === 0) { setSendMsg('Inga mottagare valda.', '#EF4444'); return; }
+    if (!confirm(`Skicka till ${selectedEmails.size} leads?`)) return;
+
+    setSendMsg(`Skickar till ${selectedEmails.size} mottagare...`, 'rgba(255,255,255,0.6)');
+    sendConfirm.disabled = true;
+
+    try {
+      const res = await fetch('/api/leads-send', {
+        method: 'POST',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emails: Array.from(selectedEmails), subject, html }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setSendMsg(data.error || 'Utskick misslyckades.', '#EF4444'); sendConfirm.disabled = false; return; }
+
+      setSendMsg(
+        `Skickat: ${data.sent} · Misslyckades: ${data.failed} · Avregistrerade (hoppade över): ${data.skipped_unsubscribed}`,
+        '#10B981'
+      );
+      // Clear selection and reload leads to refresh last_emailed_at
+      selectedEmails.clear();
+      sendConfirm.disabled = false;
+      await loadLeads();
+      setTimeout(() => { if (sendModal) sendModal.style.display = 'none'; }, 2000);
+    } catch {
+      setSendMsg('Nätverksfel. Försök igen.', '#EF4444');
+      sendConfirm.disabled = false;
+    }
+  });
+
   // Filter buttons
   document.querySelectorAll('.leads-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
