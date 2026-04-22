@@ -330,6 +330,10 @@ export const prerender = false;
         <div class="leads-search">
           <input type="text" id="leadsSearch" placeholder="Sök namn, e-post, telefon..." class="admin-search-input" />
         </div>
+        <div class="leads-bulk-toolbar" style="display:flex;align-items:center;gap:12px;margin:8px 0;flex-wrap:wrap;">
+          <span id="leadsSelectedCount" style="font-size:13px;color:rgba(255,255,255,0.6);">0 valda</span>
+          <button id="leadsSendBtn" class="btn btn-red" disabled style="opacity:0.5;cursor:not-allowed;">Skicka e-post till valda</button>
+        </div>
         <div class="table-wrapper">
           <table class="admin-table" id="leadsTable">
             <thead>
@@ -2246,6 +2250,7 @@ export const prerender = false;
 
   // === LEADS ===
   let allLeads: any[] = [];
+  const selectedEmails = new Set<string>();
   let leadsFilter = 'all';
   const leadsBody = document.getElementById('leadsBody');
   const leadsEmpty = document.getElementById('leadsEmpty');
@@ -2318,6 +2323,39 @@ export const prerender = false;
         <td style="white-space:nowrap;font-size:13px;color:rgba(255,255,255,0.5);">${formatDate(l.updated_at || l.created_at)}</td>
       </tr>`;
     }).join('');
+
+    // Restore prior selections after re-render (filter/search can re-render)
+    leadsBody.querySelectorAll<HTMLInputElement>('.lead-check').forEach(cb => {
+      const email = cb.dataset.email || '';
+      if (selectedEmails.has(email)) cb.checked = true;
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedEmails.add(email);
+        else selectedEmails.delete(email);
+        updateSelectionUi();
+      });
+    });
+    updateSelectionUi();
+  }
+
+  function updateSelectionUi() {
+    const countEl = document.getElementById('leadsSelectedCount');
+    const btn = document.getElementById('leadsSendBtn') as HTMLButtonElement | null;
+    const selectAll = document.getElementById('leadsSelectAll') as HTMLInputElement | null;
+    const count = selectedEmails.size;
+    if (countEl) countEl.textContent = `${count} valda`;
+    if (btn) {
+      btn.disabled = count === 0;
+      btn.style.opacity = count === 0 ? '0.5' : '1';
+      btn.style.cursor = count === 0 ? 'not-allowed' : 'pointer';
+      btn.textContent = count === 0 ? 'Skicka e-post till valda' : `Skicka e-post till ${count} valda`;
+    }
+    if (selectAll && leadsBody) {
+      const boxes = leadsBody.querySelectorAll<HTMLInputElement>('.lead-check');
+      const total = boxes.length;
+      const checked = Array.from(boxes).filter(b => b.checked).length;
+      selectAll.checked = total > 0 && checked === total;
+      selectAll.indeterminate = checked > 0 && checked < total;
+    }
   }
 
   async function loadLeads() {
@@ -2331,6 +2369,18 @@ export const prerender = false;
       leadsBody.innerHTML = '<tr><td colspan="10" style="color:#EF4444;">Kunde inte ladda leads.</td></tr>';
     }
   }
+
+  const leadsSelectAll = document.getElementById('leadsSelectAll') as HTMLInputElement | null;
+  leadsSelectAll?.addEventListener('change', () => {
+    const boxes = leadsBody?.querySelectorAll<HTMLInputElement>('.lead-check') ?? [];
+    boxes.forEach(cb => {
+      cb.checked = leadsSelectAll.checked;
+      const email = cb.dataset.email || '';
+      if (cb.checked) selectedEmails.add(email);
+      else selectedEmails.delete(email);
+    });
+    updateSelectionUi();
+  });
 
   // Filter buttons
   document.querySelectorAll('.leads-filter-btn').forEach(btn => {
