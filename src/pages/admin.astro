@@ -332,6 +332,17 @@ export const prerender = false;
         </div>
         <div class="leads-bulk-toolbar" style="display:flex;align-items:center;gap:12px;margin:8px 0;flex-wrap:wrap;">
           <span id="leadsSelectedCount" style="font-size:13px;color:rgba(255,255,255,0.6);">0 valda</span>
+          <span id="leadsHiddenCount" style="font-size:13px;color:rgba(255,255,255,0.4);"></span>
+          <label style="font-size:13px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:6px;">
+            Dölj nyligen mejlade:
+            <select id="leadsHideRecent" class="input" style="padding:4px 8px;font-size:13px;">
+              <option value="0">Visa alla</option>
+              <option value="7">Senaste 7 dagar</option>
+              <option value="14">Senaste 14 dagar</option>
+              <option value="30">Senaste 30 dagar</option>
+              <option value="90">Senaste 90 dagar</option>
+            </select>
+          </label>
           <button id="leadsSendBtn" class="btn btn-red" disabled style="opacity:0.5;cursor:not-allowed;">Skicka e-post till valda</button>
         </div>
         <div class="table-wrapper">
