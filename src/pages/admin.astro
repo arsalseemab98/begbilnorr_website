@@ -371,6 +371,8 @@ export const prerender = false;
             <h3 style="margin:0 0 4px;">Skicka e-post till valda leads</h3>
             <p id="leadsSendRecipients" style="margin:0 0 20px;color:rgba(255,255,255,0.5);font-size:13px;">0 mottagare</p>
 
+            <p id="leadsSendWarning" style="margin:0 0 16px;padding:10px 12px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:8px;color:#FBBF24;font-size:13px;display:none;"></p>
+
             <label style="display:block;font-size:13px;margin-bottom:4px;">Ämne</label>
             <input id="leadsSendSubject" type="text" class="input" style="width:100%;margin-bottom:16px;" placeholder="Ex: Nya bilar i lager hos Begbilnorr" />
 
@@ -2456,6 +2458,26 @@ export const prerender = false;
   sendBtn?.addEventListener('click', () => {
     if (selectedEmails.size === 0 || !sendModal) return;
     if (sendRecipients) sendRecipients.textContent = `${selectedEmails.size} mottagare`;
+
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const recent = Array.from(selectedEmails).filter(email => {
+      const lead = allLeads.find(l => l.email === email);
+      if (!lead?.last_emailed_at) return false;
+      const ts = new Date(lead.last_emailed_at).getTime();
+      return ts > cutoff;
+    }).length;
+
+    const warn = document.getElementById('leadsSendWarning') as HTMLParagraphElement | null;
+    if (warn) {
+      if (recent > 0) {
+        warn.textContent = `⚠ ${recent} av ${selectedEmails.size} valda leads har fått mejl de senaste 30 dagarna.`;
+        warn.style.display = 'block';
+      } else {
+        warn.textContent = '';
+        warn.style.display = 'none';
+      }
+    }
+
     setSendMsg('', '#fff');
     sendModal.style.display = 'flex';
   });
