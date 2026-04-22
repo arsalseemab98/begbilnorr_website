@@ -334,12 +334,14 @@ export const prerender = false;
           <table class="admin-table" id="leadsTable">
             <thead>
               <tr>
+                <th style="width:36px;"><input type="checkbox" id="leadsSelectAll" title="Välj alla" /></th>
                 <th>Namn</th>
                 <th>E-post</th>
                 <th>Telefon</th>
                 <th>Källa</th>
                 <th>Labels</th>
                 <th>Antal</th>
+                <th>Senast mejlad</th>
                 <th>UTM</th>
                 <th>Datum</th>
               </tr>
@@ -2291,13 +2293,27 @@ export const prerender = false;
         ? `${utm.utm_source || ''}${utm.utm_medium ? ' / ' + utm.utm_medium : ''}${utm.utm_campaign ? ' / ' + utm.utm_campaign : ''}`
         : '-';
 
-      return `<tr>
-        <td>${l.name || '-'}</td>
+      const isUnsub = !!l.unsubscribed_at;
+      const rowStyle = isUnsub ? 'opacity:0.45;' : '';
+      const checkbox = l.email && !isUnsub
+        ? `<input type="checkbox" class="lead-check" data-email="${l.email}" />`
+        : '';
+      const lastMailed = l.last_emailed_at
+        ? formatDate(l.last_emailed_at)
+        : '<span style="color:rgba(255,255,255,0.3);">—</span>';
+      const unsubBadge = isUnsub
+        ? ' <span class="badge badge-gray" style="font-size:10px;">Avregistrerad</span>'
+        : '';
+
+      return `<tr style="${rowStyle}">
+        <td>${checkbox}</td>
+        <td>${l.name || '-'}${unsubBadge}</td>
         <td>${l.email ? `<a href="mailto:${l.email}" style="color:#60a5fa;">${l.email}</a>` : '-'}</td>
         <td>${l.phone ? `<a href="tel:${l.phone}" style="color:#60a5fa;">${l.phone}</a>` : '-'}</td>
         <td>${(l.sources || []).join(', ') || '-'}</td>
         <td>${labels || '-'}</td>
         <td><span class="lead-count">${l.submission_count || 1}</span></td>
+        <td style="white-space:nowrap;font-size:13px;">${lastMailed}</td>
         <td><span class="lead-utm">${utmStr}</span></td>
         <td style="white-space:nowrap;font-size:13px;color:rgba(255,255,255,0.5);">${formatDate(l.updated_at || l.created_at)}</td>
       </tr>`;
@@ -2306,13 +2322,13 @@ export const prerender = false;
 
   async function loadLeads() {
     if (!leadsBody) return;
-    leadsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.4);">Laddar...</td></tr>';
+    leadsBody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:rgba(255,255,255,0.4);">Laddar...</td></tr>';
     try {
       const res = await fetch('/api/leads?source=all', { headers: getAuthHeaders() });
       allLeads = await res.json();
       renderLeads();
     } catch {
-      leadsBody.innerHTML = '<tr><td colspan="8" style="color:#EF4444;">Kunde inte ladda leads.</td></tr>';
+      leadsBody.innerHTML = '<tr><td colspan="10" style="color:#EF4444;">Kunde inte ladda leads.</td></tr>';
     }
   }
 
