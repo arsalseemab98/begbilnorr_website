@@ -2288,6 +2288,7 @@ export const prerender = false;
   let allLeads: any[] = [];
   const selectedEmails = new Set<string>();
   let leadsFilter = 'all';
+  let leadsHideDays = 0;
   const leadsBody = document.getElementById('leadsBody');
   const leadsEmpty = document.getElementById('leadsEmpty');
   const leadsSearch = document.getElementById('leadsSearch') as HTMLInputElement;
@@ -2305,6 +2306,7 @@ export const prerender = false;
     if (!leadsBody) return;
     const search = (leadsSearch?.value || '').toLowerCase();
 
+    const hideCutoff = leadsHideDays > 0 ? Date.now() - leadsHideDays * 24 * 60 * 60 * 1000 : 0;
     const filtered = allLeads.filter(l => {
       if (leadsFilter !== 'all') {
         const sources = l.sources || [];
@@ -2313,6 +2315,11 @@ export const prerender = false;
       if (search) {
         const haystack = `${l.name || ''} ${l.email || ''} ${l.phone || ''}`.toLowerCase();
         if (!haystack.includes(search)) return false;
+      }
+      if (hideCutoff > 0 && l.last_emailed_at) {
+        // new Date(invalid).getTime() → NaN, which fails the > cutoff comparison, so invalid dates fall through harmlessly
+        const ts = new Date(l.last_emailed_at).getTime();
+        if (ts > hideCutoff) return false;
       }
       return true;
     });
@@ -2371,6 +2378,12 @@ export const prerender = false;
       });
     });
     updateSelectionUi();
+
+    const hiddenEl = document.getElementById('leadsHiddenCount');
+    if (hiddenEl) {
+      const hidden = allLeads.length - filtered.length;
+      hiddenEl.textContent = leadsHideDays > 0 && hidden > 0 ? `${hidden} dolda` : '';
+    }
   }
 
   function updateSelectionUi() {
@@ -2405,6 +2418,12 @@ export const prerender = false;
       leadsBody.innerHTML = '<tr><td colspan="10" style="color:#EF4444;">Kunde inte ladda leads.</td></tr>';
     }
   }
+
+  const leadsHideRecent = document.getElementById('leadsHideRecent') as HTMLSelectElement | null;
+  leadsHideRecent?.addEventListener('change', () => {
+    leadsHideDays = parseInt(leadsHideRecent.value, 10) || 0;
+    renderLeads();
+  });
 
   const leadsSelectAll = document.getElementById('leadsSelectAll') as HTMLInputElement | null;
   leadsSelectAll?.addEventListener('change', () => {
