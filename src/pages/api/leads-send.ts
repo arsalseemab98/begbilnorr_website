@@ -74,27 +74,23 @@ export const POST: APIRoute = async ({ request }) => {
 
   let sent = 0;
   let failed = 0;
-  const sentEmails: string[] = [];
 
-  // Send one-at-a-time so each recipient gets a unique unsubscribe token
+  // Send one-at-a-time so each recipient gets a unique unsubscribe token.
+  // last_emailed_at is also written per-lead to avoid the Supabase .in() URL limit.
   for (const lead of eligible) {
     try {
       const footer = unsubscribeFooter(signUnsubscribeToken(lead.id));
       await sendEmail({ to: [lead.email], subject, html: html + footer });
       sent++;
-      sentEmails.push(lead.email);
+      const { error: updErr } = await supabase
+        .from('leads')
+        .update({ last_emailed_at: new Date().toISOString() })
+        .eq('id', lead.id);
+      if (updErr) console.error(`last_emailed_at update failed for ${lead.email}:`, updErr);
     } catch (e) {
       console.error(`Send failed for ${lead.email}:`, e);
       failed++;
     }
-  }
-
-  if (sentEmails.length) {
-    const { error: updErr } = await supabase
-      .from('leads')
-      .update({ last_emailed_at: new Date().toISOString() })
-      .in('email', sentEmails);
-    if (updErr) console.error('last_emailed_at update failed:', updErr);
   }
 
   return new Response(
