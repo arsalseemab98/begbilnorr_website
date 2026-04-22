@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin as supabase } from '../../lib/supabase-admin';
 import { verifyUnsubscribeToken } from '../../lib/unsubscribe-token';
 
 function page(title: string, body: string, status: number): Response {

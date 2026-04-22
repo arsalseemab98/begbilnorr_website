@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { supabase } from '../../lib/supabase';
+import { supabaseAdmin as supabase } from '../../lib/supabase-admin';
 import { sendEmail } from '../../lib/email';
 import { verifyAdmin, UNAUTHORIZED } from '../../lib/auth';
 import { signUnsubscribeToken } from '../../lib/unsubscribe-token';
