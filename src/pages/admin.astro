@@ -354,6 +354,31 @@ export const prerender = false;
           </table>
         </div>
         <p class="empty-state" id="leadsEmpty" style="display:none;">Inga leads hittades.</p>
+
+        <div id="leadsSendModal" class="modal-overlay" style="display:none;">
+          <div class="modal-card" style="max-width:640px;width:100%;background:#151515;border:1px solid #262626;border-radius:12px;padding:24px;">
+            <h3 style="margin:0 0 4px;">Skicka e-post till valda leads</h3>
+            <p id="leadsSendRecipients" style="margin:0 0 20px;color:rgba(255,255,255,0.5);font-size:13px;">0 mottagare</p>
+
+            <label style="display:block;font-size:13px;margin-bottom:4px;">Ämne</label>
+            <input id="leadsSendSubject" type="text" class="input" style="width:100%;margin-bottom:16px;" placeholder="Ex: Nya bilar i lager hos Begbilnorr" />
+
+            <label style="display:block;font-size:13px;margin-bottom:4px;">HTML-innehåll</label>
+            <textarea id="leadsSendHtml" class="input" style="width:100%;height:220px;font-family:monospace;font-size:13px;margin-bottom:8px;" placeholder="<h1>Hej!</h1><p>...</p>"></textarea>
+            <p style="font-size:11px;color:rgba(255,255,255,0.4);margin:0 0 16px;">Ett avregistreringsblock läggs automatiskt till i botten av varje utskick.</p>
+
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+              <input id="leadsSendTestTo" type="email" class="input" placeholder="Test-epost" style="flex:1;min-width:180px;" />
+              <button id="leadsSendTestBtn" class="btn btn-gray">Skicka test</button>
+            </div>
+            <p id="leadsSendMsg" style="margin:0 0 16px;font-size:13px;min-height:18px;"></p>
+
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+              <button id="leadsSendCancel" class="btn btn-gray">Avbryt</button>
+              <button id="leadsSendConfirm" class="btn btn-red">Skicka nu</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Redirects -->
