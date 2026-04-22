@@ -11,6 +11,13 @@ interface SendBody {
   testEmail?: string;
 }
 
+function json(data: unknown, status: number): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
 function unsubscribeFooter(token: string): string {
   const link = `https://begbilnorr.se/api/unsubscribe?token=${encodeURIComponent(token)}`;
   return `<hr style="border:none;border-top:1px solid #ddd;margin:32px 0 16px;" />
@@ -27,12 +34,13 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'Ogiltig JSON.' }), { status: 400 });
+    return json({ error: 'Ogiltig JSON.' }, 400);
   }
 
+  // `html` is trusted admin input (endpoint is behind verifyAdmin). Do not escape or sanitize.
   const { subject, html, testEmail } = body;
   if (!subject || !html) {
-    return new Response(JSON.stringify({ error: 'Ämne och innehåll krävs.' }), { status: 400 });
+    return json({ error: 'Ämne och innehåll krävs.' }, 400);
   }
 
   // Test mode — single dummy token so the unsubscribe link renders
@@ -40,15 +48,19 @@ export const POST: APIRoute = async ({ request }) => {
     const previewHtml = html + unsubscribeFooter(signUnsubscribeToken('test-preview'));
     try {
       await sendEmail({ to: [testEmail], subject: `[TEST] ${subject}`, html: previewHtml });
-      return new Response(JSON.stringify({ success: true, sent: 1, test: true }), { status: 200 });
+      return json({ success: true, sent: 1, test: true }, 200);
     } catch (e) {
       console.error('Test send failed:', e);
-      return new Response(JSON.stringify({ error: 'Test-utskick misslyckades.' }), { status: 500 });
+      return json({ error: 'Test-utskick misslyckades.' }, 500);
     }
   }
 
   if (!Array.isArray(body.emails) || body.emails.length === 0) {
-    return new Response(JSON.stringify({ error: 'Inga mottagare valda.' }), { status: 400 });
+    return json({ error: 'Inga mottagare valda.' }, 400);
+  }
+  // Cap protects against Supabase .in() URL-length silent failure (documented in MEMORY.md).
+  if (body.emails.length > 100) {
+    return json({ error: 'För många mottagare i ett utskick (max 100).' }, 400);
   }
 
   // Look up lead rows for the chosen emails, skipping unsubscribed ones
@@ -59,17 +71,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (lookupErr) {
     console.error('Lead lookup failed:', lookupErr);
-    return new Response(JSON.stringify({ error: 'Kunde inte hämta leads.' }), { status: 500 });
+    return json({ error: 'Kunde inte hämta leads.' }, 500);
   }
 
   const eligible = (leads || []).filter(l => l.email && !l.unsubscribed_at);
   const skipped = (leads || []).length - eligible.length;
 
   if (eligible.length === 0) {
-    return new Response(
-      JSON.stringify({ error: 'Alla valda mottagare är avregistrerade.', skipped_unsubscribed: skipped }),
-      { status: 400 }
-    );
+    return json({ error: 'Alla valda mottagare är avregistrerade.', skipped_unsubscribed: skipped }, 400);
   }
 
   let sent = 0;
@@ -93,14 +102,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  return new Response(
-    JSON.stringify({
-      success: true,
-      sent,
-      failed,
-      total: eligible.length,
-      skipped_unsubscribed: skipped,
-    }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
+  return json(
+    { success: true, sent, failed, total: eligible.length, skipped_unsubscribed: skipped },
+    200
   );
 };
