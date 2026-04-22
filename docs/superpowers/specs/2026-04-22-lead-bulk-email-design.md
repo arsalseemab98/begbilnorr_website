@@ -49,8 +49,8 @@ No new table. `contact_submissions` and `newsletter_subscribers` are untouched.
 - If `testEmail` is set: send once to that address with `[TEST]` subject prefix, ignore `emails`
 - Otherwise: filter `emails` through `leads` table, exclude any row where `unsubscribed_at IS NOT NULL`
 - Append unsubscribe footer HTML to body before sending (per-recipient link with signed token)
-- Batch 10 recipients per `sendEmail()` call
-- On batch success: `UPDATE leads SET last_emailed_at = now() WHERE email = ANY($batch)`
+- Send **one `sendEmail()` call per recipient** so each gets a unique unsubscribe token. Batching would mean shared tokens — the unsubscribe link couldn't identify the actual recipient.
+- After all sends: `UPDATE leads SET last_emailed_at = now() WHERE email = ANY($sentEmails)`
 - Return `{ success, sent, failed, total, skipped_unsubscribed }`
 
 **Unsubscribe footer HTML** (appended server-side, not composed by admin):
