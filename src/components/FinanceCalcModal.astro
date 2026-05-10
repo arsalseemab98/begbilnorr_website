@@ -33,6 +33,19 @@
       </div>
     </div>
 
+    <div class="calc-field">
+      <label>Ränta</label>
+      <div class="calc-chips" id="calcRate">
+        <button data-val="3.95" type="button">3,95%</button>
+        <button data-val="4.95" type="button">4,95%</button>
+        <button data-val="5.95" type="button">5,95%</button>
+        <button data-val="6.95" type="button">6,95%</button>
+        <button data-val="7.95" type="button">7,95%</button>
+        <button data-val="8.95" class="active" type="button">8,95%</button>
+      </div>
+      <div class="calc-rate-hint">Din ränta beror på vilka villkor banken har för dig</div>
+    </div>
+
     <div class="calc-result-box">
       <div class="calc-result-row">
         <span>Månadskostnad</span>
@@ -55,13 +68,35 @@
       </div>
     </div>
 
-    <div class="calc-rate-info">Ränta: 8,95% (rörlig). Exemplet är vägledande.</div>
+    <div class="calc-rate-info">Ränta från 3,95% till 8,95% (rörlig) beroende på din bank. Exemplet är vägledande.</div>
+
+    <div class="calc-contact">
+      <div class="calc-contact-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <strong>Intresserad av finansiering?</strong>
+      </div>
+      <p class="calc-contact-sub">Lämna ditt nummer eller e-post så kontaktar vi dig med ett lånebesked — oftast samma dag.</p>
+      <div class="calc-contact-form" id="calcContactForm">
+        <div class="calc-contact-input-wrap">
+          <input type="text" id="calcContactInput" placeholder="Mobilnummer eller e-post" autocomplete="email tel" />
+        </div>
+        <button type="button" class="calc-contact-btn" id="calcContactBtn">
+          Kontakta mig
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+        </button>
+      </div>
+      <div class="calc-contact-success" id="calcContactSuccess" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <span>Tack! Vi återkommer till dig inom kort.</span>
+      </div>
+    </div>
+
     <a href="/finansiering#kalkylator" class="calc-link">Fullständig kalkylator &rarr;</a>
   </div>
 </div>
 
 <script>
-  const CALC_RATE = 0.0895;
+  const CALC_DEFAULT_RATE = 0.0895;
   const CALC_DEFAULT_DOWN = 20;
   const CALC_DEFAULT_MONTHS = 144;
 
@@ -73,6 +108,7 @@
     let price = 0;
     let down = CALC_DEFAULT_DOWN;
     let months = CALC_DEFAULT_MONTHS;
+    let rate = CALC_DEFAULT_RATE;
 
     function fmt(n: number): string {
       return Math.round(n).toLocaleString('sv-SE') + ' kr';
@@ -81,7 +117,7 @@
     function calc() {
       const downAmt = price * down / 100;
       const principal = price - downAmt;
-      const mr = CALC_RATE / 12;
+      const mr = rate / 12;
       const monthly = principal > 0
         ? principal * (mr * Math.pow(1 + mr, months)) / (Math.pow(1 + mr, months) - 1)
         : 0;
@@ -116,6 +152,15 @@
         calc();
       });
     });
+    modal.querySelectorAll('#calcRate button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        modal.querySelectorAll('#calcRate button').forEach(b => b.classList.remove('active'));
+        (btn as HTMLElement).classList.add('active');
+        rate = Number((btn as HTMLElement).dataset.val) / 100;
+        calc();
+      });
+    });
 
     // Close
     modal.querySelector('.calc-close')?.addEventListener('click', () => {
@@ -130,22 +175,73 @@
       }
     });
 
+    // Contact form
+    const contactBtn = document.getElementById('calcContactBtn');
+    const contactInput = document.getElementById('calcContactInput') as HTMLInputElement;
+    const contactForm = document.getElementById('calcContactForm');
+    const contactSuccess = document.getElementById('calcContactSuccess');
+
+    contactBtn?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const val = contactInput?.value?.trim();
+      if (!val) {
+        contactInput?.focus();
+        const wrap = contactInput?.closest('.calc-contact-input-wrap') as HTMLElement;
+        if (wrap) {
+          wrap.style.borderColor = 'var(--red)';
+          setTimeout(() => { wrap.style.borderColor = ''; }, 2000);
+        }
+        return;
+      }
+
+      const carName = document.getElementById('calcCarName')?.textContent || '';
+      const monthlyEl = document.getElementById('calcMonthly')?.textContent || '';
+
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'financing',
+            contact: val,
+            car: carName,
+            monthly: monthlyEl,
+            price: fmt(price),
+            downPayment: down + '%',
+            term: months + ' mån',
+          }),
+        });
+      } catch {}
+
+      if (contactForm) contactForm.style.display = 'none';
+      if (contactSuccess) contactSuccess.style.display = 'flex';
+    });
+
     // Global open function
     (window as any).__openCalc = (p: number, name: string) => {
       price = p;
       down = CALC_DEFAULT_DOWN;
       months = CALC_DEFAULT_MONTHS;
+      rate = CALC_DEFAULT_RATE;
       modal.querySelectorAll('#calcDown button').forEach(b => {
         b.classList.toggle('active', (b as HTMLElement).dataset.val === String(CALC_DEFAULT_DOWN));
       });
       modal.querySelectorAll('#calcTerm button').forEach(b => {
         b.classList.toggle('active', (b as HTMLElement).dataset.val === String(CALC_DEFAULT_MONTHS));
       });
+      modal.querySelectorAll('#calcRate button').forEach(b => {
+        b.classList.toggle('active', (b as HTMLElement).dataset.val === '8.95');
+      });
       const nameEl = document.getElementById('calcCarName');
       const priceEl = document.getElementById('calcPrice');
       if (nameEl) nameEl.textContent = name;
       if (priceEl) priceEl.textContent = fmt(price);
       calc();
+      // Reset contact form
+      if (contactForm) contactForm.style.display = 'flex';
+      if (contactSuccess) contactSuccess.style.display = 'none';
+      if (contactInput) contactInput.value = '';
       modal.classList.add('open');
     };
   }

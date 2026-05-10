@@ -189,7 +189,7 @@ const faqSchema = {
           </tbody>
         </table>
       </div>
-      <p class="limits-note">Gränserna kan variera. 150 000 kr är Swish-systemets maximala tak per transaktion. Se vår <a href="/hoja-swish-grans" style="color:var(--red);">guide för att höja gränsen</a> med instruktioner per bank.</p>
+      <p class="limits-note">Gränserna kan variera. 150 000 kr är Swish-systemets maximala tak per transaktion. Se vår <a href="/hoja-swish-grans" class="limits-link">guide för att höja gränsen</a> med instruktioner per bank.</p>
     </div>
   </section>
 
@@ -261,6 +261,11 @@ const faqSchema = {
     border-radius: 8px;
     background: rgba(255,255,255,0.95);
     padding: 6px 14px;
+  }
+
+  /* Brighter red for WCAG AA contrast on dark backgrounds */
+  .section-label {
+    color: #ff6b6b;
   }
 
   /* ========== STEPS ========== */
@@ -401,7 +406,7 @@ const faqSchema = {
   .limits-subtitle {
     text-align: center;
     font-size: 15px;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.65);
     margin-bottom: 48px;
     max-width: 600px;
     margin-left: auto;
@@ -456,8 +461,18 @@ const faqSchema = {
   .limits-note {
     text-align: center;
     font-size: 13px;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.6);
     margin-top: 16px;
+  }
+
+  .limits-link {
+    color: var(--red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .limits-link:hover {
+    color: var(--red-dark);
   }
 
   .bank-cell {

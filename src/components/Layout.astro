@@ -95,5 +95,39 @@ const props = Astro.props;
       } catch { return {}; }
     };
   </script>
+
+  <script>
+    (function autoRefresh() {
+      let currentVersion: string | null = null;
+      const INTERVAL = 60_000; // check every 60s
+
+      async function check() {
+        try {
+          const res = await fetch('/api/version', { cache: 'no-store' });
+          if (!res.ok) return;
+          const { v } = await res.json();
+          if (!currentVersion) {
+            currentVersion = v;
+            return;
+          }
+          if (v !== currentVersion) {
+            window.location.reload();
+          }
+        } catch {}
+      }
+
+      // Only run in production
+      if (window.location.hostname !== 'localhost') {
+        check();
+        setInterval(check, INTERVAL);
+      }
+
+      // Re-init after Astro page transitions
+      document.addEventListener('astro:after-swap', () => {
+        currentVersion = null;
+        check();
+      });
+    })();
+  </script>
 </body>
 </html>

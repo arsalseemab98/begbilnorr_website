@@ -225,9 +225,16 @@ const breadcrumbSchema = {
 
             <!-- Prisberäknare / Finansiering -->
             <button class="finance-modal-trigger" data-calc-trigger type="button" data-price={car.price} data-name={car.full_name}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
-              Beräkna månadskostnad
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              <span class="fmt-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+              </span>
+              <span class="fmt-text">
+                <span class="fmt-label">Beräkna månadskostnad</span>
+                <span class="fmt-sub">Ränta från 3,95% — Välj löptid & kontantinsats</span>
+              </span>
+              <span class="fmt-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </span>
             </button>
 
             <div class="car-buttons">
@@ -327,25 +334,86 @@ const breadcrumbSchema = {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 14px 16px;
+    gap: 14px;
+    padding: 16px 18px;
     margin-bottom: 24px;
-    background: rgba(230,46,45,0.08);
-    border: 1px solid rgba(230,46,45,0.15);
-    border-radius: 8px;
-    color: var(--red-light);
-    font-size: 14px;
-    font-weight: 600;
+    background: linear-gradient(135deg, rgba(230,46,45,0.12) 0%, rgba(230,46,45,0.06) 100%);
+    border: 1px solid rgba(230,46,45,0.2);
+    border-radius: 12px;
+    color: #fff;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     font-family: var(--sans);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .finance-modal-trigger::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(230,46,45,0.08) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.25s;
   }
   .finance-modal-trigger:hover {
-    background: rgba(230,46,45,0.14);
-    border-color: rgba(230,46,45,0.3);
+    background: linear-gradient(135deg, rgba(230,46,45,0.2) 0%, rgba(230,46,45,0.1) 100%);
+    border-color: rgba(230,46,45,0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(230,46,45,0.2);
   }
-  .finance-modal-trigger svg:last-child {
-    margin-left: auto;
+  .finance-modal-trigger:hover::before {
+    opacity: 1;
+  }
+  .finance-modal-trigger:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  .fmt-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--red);
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(230,46,45,0.3);
+  }
+  .fmt-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+  .fmt-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .fmt-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 400;
+  }
+  .fmt-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+    transition: all 0.25s;
+  }
+  .finance-modal-trigger:hover .fmt-arrow {
+    background: rgba(230,46,45,0.3);
+    color: #fff;
+    transform: translateX(2px);
   }
 
   /* Request Details CTA */
