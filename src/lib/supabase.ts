@@ -16,7 +16,11 @@ const chainable = (): any =>
   });
 
 export const supabase: SupabaseClient = isConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
+      },
+    })
   : new Proxy({} as SupabaseClient, {
       get: () => (..._args: any[]) => chainable(),
     });
