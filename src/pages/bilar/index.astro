@@ -4,6 +4,12 @@ import CarCard from '../../components/CarCard.astro';
 import { supabase } from '../../lib/supabase';
 import type { Car } from '../../types/car';
 
+export const prerender = false;
+
+Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+Astro.response.headers.set('CDN-Cache-Control', 'no-store');
+Astro.response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
+
 const url = Astro.url;
 const brand = url.searchParams.get('brand') || '';
 const fuel = url.searchParams.get('fuel') || '';
