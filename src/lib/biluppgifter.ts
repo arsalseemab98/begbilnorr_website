@@ -33,16 +33,33 @@ function normaliseRegnr(input: string): string {
   return input.toUpperCase().replace(/[\s-]/g, '');
 }
 
-function mapFuel(raw: string | undefined | null): VehicleData['fuel'] {
-  const v = (raw ?? '').toLowerCase();
-  if (v.includes('hybrid')) return 'hybrid';
-  if (v.includes('el') && !v.includes('etanol')) return 'electric';
-  if (v.includes('diesel')) return 'diesel';
+function mapFuelFromTechnical(technical: any): VehicleData['fuel'] {
+  // Hybrid detection: multiple drive entries OR explicit hybrid class
+  const drives: any[] = Array.isArray(technical?.drive) ? technical.drive : [];
+  const ecoClass = (technical?.eco_class ?? '').toLowerCase();
+  const evConfig = (technical?.electric_vehicle_configuration ?? '').toLowerCase();
+  const emissionClass = (technical?.emission_class ?? '').toLowerCase();
+
+  if (ecoClass.includes('hybrid') || evConfig.includes('hybrid') || emissionClass.includes('hybrid')) {
+    return 'hybrid';
+  }
+  if (drives.length > 1) {
+    // Multiple drives (e.g. Bensin + El) almost always means hybrid in Swedish data
+    return 'hybrid';
+  }
+
+  const primary = (drives[0]?.fuel ?? '').toLowerCase();
+  if (primary === 'el' || primary.includes('elektri')) return 'electric';
+  if (primary.includes('diesel')) return 'diesel';
   return 'petrol';
 }
 
 function mapGearbox(raw: string | undefined | null): VehicleData['gearbox'] {
-  return (raw ?? '').toLowerCase().includes('automat') ? 'automatic' : 'manual';
+  // Default to automatic — only explicit "manuell" maps to manual.
+  // Covers: Variomatic (CVT), Automat, Automatisk, DSG, S-tronic, etc.
+  const v = (raw ?? '').toLowerCase();
+  if (v.includes('manuell') || v.includes('manual')) return 'manual';
+  return 'automatic';
 }
 
 export async function getVehicleByRegnr(regnr: string): Promise<VehicleData> {
@@ -77,16 +94,15 @@ export async function getVehicleByRegnr(regnr: string): Promise<VehicleData> {
     throw new BiluppgifterError('Unexpected response shape from biluppgifter (no vehicle.make)');
   }
 
-  const fuelRaw = v.technical?.drive?.[0]?.fuel ?? v.fuel ?? v.fuel_type;
   const year = Number(v.model_year ?? v.vehicle_year ?? v.year ?? 0) || new Date().getFullYear();
-  const co2 = v.technical?.environment?.co2 ?? v.co2;
-  const weight = v.technical?.dimensions?.service_weight ?? v.weight ?? v.kerb_weight ?? v.service_weight;
+  const co2 = v.technical?.drive?.[0]?.co2 ?? v.technical?.environment?.co2 ?? v.co2;
+  const weight = v.technical?.kerb_weight ?? v.technical?.ready_weight ?? v.weight;
 
   return {
     brand: String(v.make).trim(),
     model: String(v.model ?? '').trim(),
     year,
-    fuel: mapFuel(fuelRaw),
+    fuel: mapFuelFromTechnical(v.technical),
     gearbox: mapGearbox(v.transmission),
     co2: co2 != null ? Number(co2) : null,
     weight: weight != null ? Number(weight) : null,
