@@ -1,0 +1,516 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout
+  title="Billån-kalkylator | Beräkna månadskostnad — Begbilnorr"
+  description="Räkna ut månadskostnaden för ditt billån. Justera pris, kontantinsats, ränta och löptid. Jämför billån mot leasing och kontant — helt utan login."
+>
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        BILLÅN-KALKYLATOR
+      </div>
+      <h1>Räkna ut månadskostnaden</h1>
+      <p>Justera belopp, kontantinsats, löptid och ränta — se månadskostnad och total räntekostnad.</p>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <section class="calc-section">
+    <div class="container">
+      <div class="calc-card">
+        <div class="calc-grid">
+          <div class="calc-inputs">
+            <div class="slider-group">
+              <div class="slider-label">
+                <label>Bilpris</label>
+                <span class="slider-value" id="priceDisplay">200 000 kr</span>
+              </div>
+              <input type="range" id="priceSlider" min="20000" max="800000" step="5000" value="200000">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <label>Kontantinsats</label>
+                <span class="slider-value" id="downDisplay">20% (40 000 kr)</span>
+              </div>
+              <input type="range" id="downSlider" min="0" max="80" step="5" value="20">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <label>Löptid</label>
+                <span class="slider-value" id="termDisplay">6 år</span>
+              </div>
+              <input type="range" id="termSlider" min="12" max="144" step="12" value="72">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <label>Ränta (årlig)</label>
+                <span class="slider-value" id="rateDisplay">8,95%</span>
+              </div>
+              <input type="range" id="rateSlider" min="3" max="15" step="0.05" value="8.95">
+            </div>
+          </div>
+
+          <div class="calc-results">
+            <div class="result-label">Månadskostnad</div>
+            <div class="result-main" id="monthlyPayment">2 893 kr</div>
+            <div class="result-suffix">per månad</div>
+            <div class="result-divider"></div>
+            <div class="result-row">
+              <span class="row-label">Lånebelopp</span>
+              <span class="row-value" id="loanAmount">160 000 kr</span>
+            </div>
+            <div class="result-row">
+              <span class="row-label">Kontantinsats</span>
+              <span class="row-value" id="downPayment">40 000 kr</span>
+            </div>
+            <div class="result-row">
+              <span class="row-label">Total kostnad</span>
+              <span class="row-value" id="totalCost">208 296 kr</span>
+            </div>
+            <div class="result-row">
+              <span class="row-label">Varav ränta</span>
+              <span class="row-value" id="totalInterest">48 296 kr</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-bar">
+          <div class="compare-item">
+            <div class="compare-label">Lån</div>
+            <div class="compare-value" id="compareLoan">2 893 kr/mån</div>
+          </div>
+          <div class="compare-item">
+            <div class="compare-label">Privatleasing*</div>
+            <div class="compare-value" id="compareLease">3 950 kr/mån</div>
+          </div>
+          <div class="compare-item">
+            <div class="compare-label">Kontant</div>
+            <div class="compare-value" id="compareCash">0 kr/mån</div>
+          </div>
+        </div>
+        <p class="compare-note">*Privatleasing räknas som ca 1,8% av bilpriset per månad (riktvärde).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <div class="container">
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Tre sätt att finansiera bilen</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>💳 Billån</h3>
+          <p>Du äger bilen och betalar av lånet månadsvis. Total kostnad = lånebelopp + ränta. Vanlig ränta 5–10% beroende på kreditvärdighet.</p>
+          <ul>
+            <li>✓ Du äger bilen</li>
+            <li>✓ Kan lösas i förtid</li>
+            <li>✓ Inga begränsningar på miltal</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>📋 Privatleasing</h3>
+          <p>Du "hyr" bilen 2–3 år för en fast månadskostnad. Lämnar tillbaka när avtalet löper ut. Inkluderar ofta service och garanti.</p>
+          <ul>
+            <li>✓ Lägre risk för värdeminskning</li>
+            <li>✗ Miltalsbegränsning</li>
+            <li>✗ Du äger inte bilen</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>💵 Kontant</h3>
+          <p>Du betalar hela summan vid köpet. Ingen ränta, ingen månadskostnad — men hela kapitalet binds upp i bilen.</p>
+          <ul>
+            <li>✓ Ingen räntekostnad</li>
+            <li>✓ Inga månadsavgifter</li>
+            <li>✗ Stort kapital bundet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Klar med kalkylen?</h2>
+      <p>Ansök om billån hos Begbilnorr — snabbt besked, ofta samma dag.</p>
+      <div class="cta-buttons">
+        <a href="/finansiering" class="btn-primary">Ansök om billån</a>
+        <a href="/bilar" class="btn-outline">Se våra bilar</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .calc-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0 60px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .calc-card {
+    max-width: 980px;
+    margin: 0 auto;
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    padding: 48px 40px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 32px;
+  }
+
+  .calc-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .slider-label label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .slider-label .slider-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--red);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    border: 3px solid var(--bg-dark-4);
+    box-shadow: 0 2px 8px rgba(230, 46, 45, 0.35);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    border: 3px solid var(--bg-dark-4);
+  }
+
+  .calc-results {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--bg-dark-5);
+    border-radius: 12px;
+    padding: 36px 32px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .result-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .result-main {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -1px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .result-suffix {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 28px;
+  }
+
+  .result-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    margin-bottom: 24px;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .result-row .row-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .result-row .row-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .comparison-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .compare-item {
+    background: var(--bg-dark-5);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .compare-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .compare-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .compare-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  .info-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .info-card {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 32px 24px;
+  }
+
+  .info-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+
+  .info-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .info-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .info-card ul li {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    padding: 4px 0;
+  }
+
+  .cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1024px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+    .comparison-bar {
+      grid-template-columns: 1fr;
+    }
+    .calc-card {
+      padding: 32px 20px;
+    }
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    var priceSlider = document.getElementById('priceSlider');
+    var downSlider = document.getElementById('downSlider');
+    var termSlider = document.getElementById('termSlider');
+    var rateSlider = document.getElementById('rateSlider');
+
+    var priceDisplay = document.getElementById('priceDisplay');
+    var downDisplay = document.getElementById('downDisplay');
+    var termDisplay = document.getElementById('termDisplay');
+    var rateDisplay = document.getElementById('rateDisplay');
+
+    var monthlyPaymentEl = document.getElementById('monthlyPayment');
+    var loanAmountEl = document.getElementById('loanAmount');
+    var downPaymentEl = document.getElementById('downPayment');
+    var totalCostEl = document.getElementById('totalCost');
+    var totalInterestEl = document.getElementById('totalInterest');
+
+    var compareLoan = document.getElementById('compareLoan');
+    var compareLease = document.getElementById('compareLease');
+    var compareCash = document.getElementById('compareCash');
+
+    function formatNumber(num) {
+      return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function calculate() {
+      var price = parseInt(priceSlider.value);
+      var downPercent = parseInt(downSlider.value);
+      var months = parseInt(termSlider.value);
+      var annualRate = parseFloat(rateSlider.value) / 100;
+
+      var downAmount = Math.round(price * downPercent / 100);
+      var principal = price - downAmount;
+
+      priceDisplay.textContent = formatNumber(price) + ' kr';
+      downDisplay.textContent = downPercent + '% (' + formatNumber(downAmount) + ' kr)';
+      var years = Math.floor(months / 12);
+      var extraMonths = months % 12;
+      termDisplay.textContent = years + ' år' + (extraMonths > 0 ? ' ' + extraMonths + ' mån' : '');
+      rateDisplay.textContent = (annualRate * 100).toFixed(2).replace('.', ',') + '%';
+
+      var monthlyPayment = 0;
+      var totalPayment = 0;
+      if (principal > 0 && months > 0) {
+        var monthlyRate = annualRate / 12;
+        if (monthlyRate > 0) {
+          monthlyPayment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+        } else {
+          monthlyPayment = principal / months;
+        }
+        totalPayment = monthlyPayment * months;
+      }
+
+      var totalInterest = totalPayment - principal;
+      var leaseEstimate = price * 0.018;
+
+      monthlyPaymentEl.textContent = formatNumber(monthlyPayment) + ' kr';
+      loanAmountEl.textContent = formatNumber(principal) + ' kr';
+      downPaymentEl.textContent = formatNumber(downAmount) + ' kr';
+      totalCostEl.textContent = formatNumber(totalPayment + downAmount) + ' kr';
+      totalInterestEl.textContent = formatNumber(totalInterest) + ' kr';
+
+      compareLoan.textContent = formatNumber(monthlyPayment) + ' kr/mån';
+      compareLease.textContent = formatNumber(leaseEstimate) + ' kr/mån';
+      compareCash.textContent = formatNumber(price) + ' kr';
+
+      updateSliderTrack(priceSlider);
+      updateSliderTrack(downSlider);
+      updateSliderTrack(termSlider);
+      updateSliderTrack(rateSlider);
+    }
+
+    function updateSliderTrack(slider) {
+      var min = parseFloat(slider.min);
+      var max = parseFloat(slider.max);
+      var val = parseFloat(slider.value);
+      var percentage = ((val - min) / (max - min)) * 100;
+      slider.style.background = 'linear-gradient(to right, #E62E2D 0%, #E62E2D ' + percentage + '%, rgba(255,255,255,0.1) ' + percentage + '%, rgba(255,255,255,0.1) 100%)';
+    }
+
+    priceSlider.addEventListener('input', calculate);
+    downSlider.addEventListener('input', calculate);
+    termSlider.addEventListener('input', calculate);
+    rateSlider.addEventListener('input', calculate);
+
+    calculate();
+  })();
+</script>

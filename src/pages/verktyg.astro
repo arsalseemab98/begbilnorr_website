@@ -1,0 +1,194 @@
+---
+import Layout from '../components/Layout.astro';
+
+const tools = [
+  {
+    href: '/vardera-bil',
+    title: 'Värdera din bil',
+    description: 'Få ett snabbt prisestimat på din bil baserat på märke, år och miltal.',
+    icon: '<path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/><path d="M2 12h20"/>'
+  },
+  {
+    href: '/billan-kalkylator',
+    title: 'Billån-kalkylator',
+    description: 'Räkna ut månadskostnad. Justera pris, insats, löptid och ränta — se jämförelse mot leasing.',
+    icon: '<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>'
+  },
+  {
+    href: '/bilskatt-kollare',
+    title: 'Bilskatt-kollare',
+    description: 'Räkna ut den årliga fordonsskatten. Stödjer bonus-malus, viktbaserad skatt och elbilar.',
+    icon: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/><path d="M19 8v6"/>'
+  },
+  {
+    href: '/besiktning-datum',
+    title: 'Besiktning-kollare',
+    description: 'När ska din bil besiktas? Räkna ut nästa besiktningsperiod baserat på registreringsdatum.',
+    icon: '<rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/>'
+  }
+];
+---
+
+<Layout
+  title="Verktyg för bilägare | Värdera bil, billån, bilskatt — Begbilnorr"
+  description="Gratis verktyg för bilägare: värdera din bil, räkna månadskostnad, kolla bilskatt och besiktningsperiod. Helt utan inloggning."
+>
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        VERKTYG
+      </div>
+      <h1>Verktyg för bilägare</h1>
+      <p>Fyra kostnadsfria verktyg för dig som äger eller funderar på att köpa bil. Inga konton, ingen registrering — bara svaren du behöver.</p>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <section class="tools-list">
+    <div class="container">
+      <div class="tools-grid">
+        {tools.map(tool => (
+          <a href={tool.href} class="tool-card-link">
+            <div class="tool-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={tool.icon}></svg>
+            </div>
+            <h2>{tool.title}</h2>
+            <p>{tool.description}</p>
+            <div class="tool-cta">
+              Använd verktyget
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Saknar du något verktyg?</h2>
+      <p>Tipsa oss om vad du letar efter — vi bygger fler verktyg löpande.</p>
+      <div class="cta-buttons">
+        <a href="/kontakt" class="btn-primary">Kontakta oss</a>
+        <a href="/bilar" class="btn-outline">Se våra bilar</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tools-list {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .tool-card-link {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 36px 32px;
+    text-decoration: none;
+    color: var(--white);
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .tool-card-link:hover {
+    border-color: rgba(230,46,45,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  .tool-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(230,46,45,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+
+  .tool-card-link h2 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin: 0;
+  }
+
+  .tool-card-link p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .tool-cta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--red);
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  .tool-card-link:hover .tool-cta {
+    gap: 12px;
+  }
+
+  .cta-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
