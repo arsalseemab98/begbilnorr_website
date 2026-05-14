@@ -96,6 +96,38 @@ const breadcrumbSchema = {
   <Fragment slot="head">
     <StructuredData data={carSchema} />
     <StructuredData data={breadcrumbSchema} />
+    <script is:inline define:vars={{
+      carId: car.reg_no || car.slug,
+      carName: car.full_name,
+      carPrice: car.price,
+      carBrand: car.brand,
+      carModel: car.model,
+      carYear: car.year,
+    }}>
+      (function(){
+        function fireViewContent(){
+          if (typeof window.fbq !== 'function') return;
+          window.fbq('track', 'ViewContent', {
+            content_type: 'vehicle',
+            content_ids: [carId],
+            content_name: carName,
+            content_category: carBrand + ' ' + carModel,
+            value: carPrice,
+            currency: 'SEK',
+            make: carBrand,
+            model: carModel,
+            year: carYear,
+          });
+        }
+        if (typeof window.fbq === 'function') {
+          fireViewContent();
+        } else {
+          window.addEventListener('cookie-consent-accepted', function(){
+            setTimeout(fireViewContent, 200);
+          });
+        }
+      })();
+    </script>
   </Fragment>
 
   <!-- Breadcrumb -->

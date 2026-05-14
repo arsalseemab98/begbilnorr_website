@@ -94,6 +94,29 @@ const props = Astro.props;
         return JSON.parse(sessionStorage.getItem('utm_data') || '{}');
       } catch { return {}; }
     };
+
+    // Meta Pixel — delegated click tracking for tel:/mailto:/WhatsApp
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      const anchor = target?.closest?.('a[href]') as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const href = anchor.getAttribute('href') || '';
+      const fbq = (window as any).fbq;
+      if (typeof fbq !== 'function') return;
+
+      if (href.startsWith('tel:')) {
+        fbq('track', 'Contact', { content_name: 'Phone click', method: 'phone' });
+      } else if (href.startsWith('mailto:')) {
+        fbq('track', 'Contact', { content_name: 'Email click', method: 'email' });
+      } else if (/(^https?:\/\/)?(api\.)?(wa\.me|whatsapp\.com)/i.test(href)) {
+        const carMatch = decodeURIComponent(href).match(/intresserad av ([^(]+)\(/i);
+        const carName = carMatch ? carMatch[1].trim() : '';
+        fbq('track', 'Lead', {
+          content_name: carName ? 'WhatsApp: ' + carName : 'WhatsApp click',
+          method: 'whatsapp',
+        });
+      }
+    }, { capture: true });
   </script>
 
   <script>

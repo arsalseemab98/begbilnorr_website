@@ -419,7 +419,12 @@ const year = new Date().getFullYear();
         body: JSON.stringify({ ...data, source: 'kontakt-footer', utm_data: (window as any).getUtmData?.() }),
       });
       if (typeof window.fbq === 'function') {
-        window.fbq('track', 'Lead', { content_name: 'Kontakt Footer' });
+        window.fbq('track', 'Lead', {
+          content_name: 'Kontakt Footer',
+          content_category: 'contact_form',
+          value: 500,
+          currency: 'SEK',
+        });
       }
     } catch {}
 
@@ -458,7 +463,12 @@ const year = new Date().getFullYear();
         }),
       });
       if (typeof window.fbq === 'function') {
-        window.fbq('track', 'Lead', { content_name: 'Sälj Bil Footer' });
+        window.fbq('track', 'Lead', {
+          content_name: 'Sälj Bil Footer',
+          content_category: 'sell_valuation',
+          value: 800,
+          currency: 'SEK',
+        });
       }
     } catch {}
 
@@ -532,7 +542,12 @@ const year = new Date().getFullYear();
         }),
       });
       if (typeof window.fbq === 'function') {
-        window.fbq('track', 'Lead', { content_name: 'Bevakning' });
+        window.fbq('track', 'CompleteRegistration', {
+          content_name: 'Bevakning: ' + (data.carName || 'okänd bil'),
+          content_category: 'watchlist',
+          value: 200,
+          currency: 'SEK',
+        });
       }
     } catch {}
 
