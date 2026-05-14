@@ -2,10 +2,13 @@
 //
 // Wraps biluppgifter.se vehicle lookup.
 //
-// Required env var: BILUPPGIFTER_API_KEY
-//
-// If the endpoint URL or auth scheme differs from what's below, update only
-// this file — callers use the typed return value and don't care.
+// API verified against working impl in begbilnorr admin app (Supabase Edge
+// Function `biluppgifter-proxy` + `CarInspectionForm.tsx`):
+//   - Base URL: https://data.biluppgifter.se/api/v1
+//   - Endpoint: /vehicle/regno/{regnr}
+//   - Auth:     Authorization: Bearer ${BILUPPGIFTER_API_KEY}
+//   - Response: { vehicle: { make, model, model_year, transmission,
+//                  technical: { drive: [{ fuel }] }, ... } }
 
 export interface VehicleData {
   brand: string;          // e.g. "Volvo"
@@ -24,21 +27,21 @@ export class BiluppgifterError extends Error {
   }
 }
 
-const BASE_URL = 'https://api.biluppgifter.se/v1';
+const BASE_URL = 'https://data.biluppgifter.se/api/v1';
 
 function normaliseRegnr(input: string): string {
   return input.toUpperCase().replace(/[\s-]/g, '');
 }
 
-function mapFuel(raw: string | undefined): VehicleData['fuel'] {
+function mapFuel(raw: string | undefined | null): VehicleData['fuel'] {
   const v = (raw ?? '').toLowerCase();
-  if (v.includes('el') && !v.includes('hybrid')) return 'electric';
   if (v.includes('hybrid')) return 'hybrid';
+  if (v.includes('el') && !v.includes('etanol')) return 'electric';
   if (v.includes('diesel')) return 'diesel';
   return 'petrol';
 }
 
-function mapGearbox(raw: string | undefined): VehicleData['gearbox'] {
+function mapGearbox(raw: string | undefined | null): VehicleData['gearbox'] {
   return (raw ?? '').toLowerCase().includes('automat') ? 'automatic' : 'manual';
 }
 
@@ -49,12 +52,13 @@ export async function getVehicleByRegnr(regnr: string): Promise<VehicleData> {
   }
 
   const reg = normaliseRegnr(regnr);
-  const url = `${BASE_URL}/vehicle/${encodeURIComponent(reg)}`;
+  const url = `${BASE_URL}/vehicle/regno/${encodeURIComponent(reg)}`;
 
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       Accept: 'application/json',
+      'User-Agent': 'Begbilnorr-Website/1.0',
     },
   });
 
@@ -63,20 +67,24 @@ export async function getVehicleByRegnr(regnr: string): Promise<VehicleData> {
   }
 
   const data: any = await res.json();
-  // Be defensive — biluppgifter's response shape may vary by plan.
-  const v = data.vehicle ?? data.data ?? data;
+  const v = data?.vehicle;
 
-  if (!v.brand && !v.make) {
-    throw new BiluppgifterError('Unexpected response shape from biluppgifter');
+  if (!v || !v.make) {
+    throw new BiluppgifterError('Unexpected response shape from biluppgifter (no vehicle.make)');
   }
 
+  const fuelRaw = v.technical?.drive?.[0]?.fuel ?? v.fuel ?? v.fuel_type;
+  const year = Number(v.model_year ?? v.vehicle_year ?? v.year ?? 0) || new Date().getFullYear();
+  const co2 = v.technical?.environment?.co2 ?? v.co2;
+  const weight = v.technical?.dimensions?.service_weight ?? v.weight ?? v.kerb_weight ?? v.service_weight;
+
   return {
-    brand: String(v.brand ?? v.make).trim(),
+    brand: String(v.make).trim(),
     model: String(v.model ?? '').trim(),
-    year: Number(v.model_year ?? v.year ?? v.first_registration_year ?? 0) || new Date().getFullYear(),
-    fuel: mapFuel(v.fuel ?? v.fuel_type),
-    gearbox: mapGearbox(v.gearbox ?? v.transmission),
-    co2: v.co2 != null ? Number(v.co2) : null,
-    weight: v.weight ?? v.kerb_weight ?? v.service_weight ?? null,
+    year,
+    fuel: mapFuel(fuelRaw),
+    gearbox: mapGearbox(v.transmission),
+    co2: co2 != null ? Number(co2) : null,
+    weight: weight != null ? Number(weight) : null,
   };
 }
