@@ -35,7 +35,7 @@ import Layout from '../components/Layout.astro';
             </div>
           </div>
 
-          <div class="input-group">
+          <div class="input-group" id="skickSection" style="display:none;">
             <label>Skick *</label>
             <div class="skick-grid" role="radiogroup" aria-label="Bilens skick">
               <input type="radio" name="skick" id="skick-som_ny" value="som_ny" class="skick-radio" />
@@ -77,7 +77,7 @@ import Layout from '../components/Layout.astro';
             <small class="input-hint">Påverkar värderingen — var ärlig för bästa estimat.</small>
           </div>
 
-          <button type="button" id="continueBtn" class="btn-primary tool-btn">Få värdering →</button>
+          <button type="button" id="continueBtn" class="btn-primary tool-btn" style="display:none;">Få värdering →</button>
 
           <div id="contactSection" style="display:none;">
             <h2 class="tool-h2" style="margin-top:8px;">Kontaktuppgifter</h2>
@@ -310,7 +310,9 @@ import Layout from '../components/Layout.astro';
     }
   }
 
-  #contactSection {
+  #contactSection,
+  #skickSection,
+  #continueBtn {
     animation: fadeSlideIn 0.4s ease-out;
   }
 
@@ -593,6 +595,26 @@ import Layout from '../components/Layout.astro';
       var checked = document.querySelector('input[name="skick"]:checked');
       return checked ? checked.value : '';
     }
+
+    // ── Progressive disclosure: reveal Skick + Continue after regnr+miltal are filled ──
+    var regnrInputEl = document.getElementById('regnr');
+    var miltalInputEl = document.getElementById('miltal');
+    var skickSection = document.getElementById('skickSection');
+
+    function maybeRevealSkick() {
+      var regnr = (regnrInputEl.value || '').trim().replace(/\s/g, '');
+      var miltal = parseInt(miltalInputEl.value, 10);
+      var regnrValid = REGNR_RE.test(regnr);
+      var miltalValid = Number.isFinite(miltal) && miltal > 0;
+      if (regnrValid && miltalValid && skickSection.style.display === 'none') {
+        skickSection.style.display = '';
+        continueBtn.style.display = '';
+      }
+    }
+
+    regnrInputEl.addEventListener('input', maybeRevealSkick);
+    miltalInputEl.addEventListener('input', maybeRevealSkick);
+    miltalInputEl.addEventListener('change', maybeRevealSkick);
 
     continueBtn.addEventListener('click', function() {
       hideError();
