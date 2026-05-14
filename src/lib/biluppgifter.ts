@@ -46,7 +46,11 @@ function mapGearbox(raw: string | undefined | null): VehicleData['gearbox'] {
 }
 
 export async function getVehicleByRegnr(regnr: string): Promise<VehicleData> {
-  const apiKey = import.meta.env.BILUPPGIFTER_API_KEY;
+  // Read from both import.meta.env (build-time) and process.env (runtime fallback).
+  // Vercel serverless functions reliably expose env vars via process.env.
+  const apiKey =
+    import.meta.env.BILUPPGIFTER_API_KEY ??
+    (typeof process !== 'undefined' ? process.env.BILUPPGIFTER_API_KEY : undefined);
   if (!apiKey) {
     throw new BiluppgifterError('BILUPPGIFTER_API_KEY missing in env');
   }
