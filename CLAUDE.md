@@ -145,6 +145,20 @@ Hanteras via `redirects`-tabellen i Supabase + `[...slug].astro` catch-all (301)
 ## Footer
 - "Skapat av swiftcore.se" med SwiftCore-favicon (`/images/swiftcore-favicon.png`)
 
+## Värderingsverktyg (/vardera-bil)
+Email-gated lead form med regnr-uppslag via biluppgifter.se.
+- API route: `src/pages/api/vardera.ts`
+- Algoritm: `src/lib/valuation.ts` (pure function)
+- Regnr-lookup: `src/lib/biluppgifter.ts` (kräver `BILUPPGIFTER_API_KEY`)
+- Rate limit: 5/IP/24h via `vardering_lookups`-tabellen (`src/lib/rate-limit.ts`)
+- Kund-mejl: dark Begbilnorr-design (`src/lib/email-templates/vardering-customer.ts`)
+- Dealer-mejl: notis till `info@begbilnorr.se` (`src/lib/email-templates/vardering-dealer.ts`)
+- Source-label i `contact_submissions` och `leads`: `vardering-v2`
+- Fallback: om biluppgifter-uppslag misslyckas → kund får "vi värderar manuellt inom 24h"-mejl, dealer får manuell-hantering-notis
+- Skick-multipliers: som_ny=+10%, mycket_bra=0%, bra=-8%, sliten=-20%
+- Spec: `docs/superpowers/specs/2026-05-14-vardera-bil-email-flow-design.md`
+- Plan: `docs/superpowers/plans/2026-05-14-vardera-bil-email-flow.md`
+
 ## Kommandon
 ```bash
 npm run dev      # Starta dev-server (port 4321)
