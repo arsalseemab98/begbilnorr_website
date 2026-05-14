@@ -21,13 +21,13 @@ export interface ValuationResult {
 }
 
 const BASE_PRICES: Record<string, number> = {
-  Volvo: 220000,
+  Volvo: 265000,
   Volkswagen: 180000,
   Audi: 240000,
   BMW: 250000,
   'Mercedes-Benz': 260000,
-  Toyota: 170000,
-  Kia: 150000,
+  Toyota: 215000,
+  Kia: 180000,
   Hyundai: 145000,
   Ford: 130000,
   Skoda: 160000,
