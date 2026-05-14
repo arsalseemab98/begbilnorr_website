@@ -47,30 +47,35 @@ import Layout from '../components/Layout.astro';
             <small class="input-hint">Påverkar värderingen — var ärlig för bästa estimat.</small>
           </div>
 
-          <h2 class="tool-h2" style="margin-top:8px;">Kontaktuppgifter</h2>
+          <button type="button" id="continueBtn" class="btn-primary tool-btn">Få värdering →</button>
 
-          <div class="input-group">
-            <label for="namn">Namn *</label>
-            <input type="text" id="namn" name="namn" class="tool-input" placeholder="Anna Andersson" required autocomplete="name" />
-          </div>
+          <div id="contactSection" style="display:none;">
+            <h2 class="tool-h2" style="margin-top:8px;">Kontaktuppgifter</h2>
+            <p class="contact-hint">Vart vill du ha värderingen skickad?</p>
 
-          <div class="input-row">
             <div class="input-group">
-              <label for="email">E-post *</label>
-              <input type="email" id="email" name="email" class="tool-input" placeholder="din@mejl.se" required autocomplete="email" />
+              <label for="namn">Namn *</label>
+              <input type="text" id="namn" name="namn" class="tool-input" placeholder="Anna Andersson" autocomplete="name" />
             </div>
-            <div class="input-group">
-              <label for="phone">Telefon (valfritt)</label>
-              <input type="tel" id="phone" name="phone" class="tool-input" placeholder="070-123 45 67" autocomplete="tel" />
+
+            <div class="input-row">
+              <div class="input-group">
+                <label for="email">E-post *</label>
+                <input type="email" id="email" name="email" class="tool-input" placeholder="din@mejl.se" autocomplete="email" />
+              </div>
+              <div class="input-group">
+                <label for="phone">Telefon (valfritt)</label>
+                <input type="tel" id="phone" name="phone" class="tool-input" placeholder="070-123 45 67" autocomplete="tel" />
+              </div>
             </div>
+
+            <label class="gdpr-row">
+              <input type="checkbox" id="gdpr" name="gdpr" />
+              <span>Jag godkänner <a href="/integritetspolicy" target="_blank" rel="noopener">integritetspolicyn</a> och att Begbilnorr kontaktar mig via e-post/telefon.</span>
+            </label>
+
+            <button type="submit" id="submitBtn" class="btn-primary tool-btn">Få värderingen på mejl</button>
           </div>
-
-          <label class="gdpr-row">
-            <input type="checkbox" id="gdpr" name="gdpr" required />
-            <span>Jag godkänner <a href="/integritetspolicy" target="_blank" rel="noopener">integritetspolicyn</a> och att Begbilnorr kontaktar mig via e-post/telefon.</span>
-          </label>
-
-          <button type="submit" id="submitBtn" class="btn-primary tool-btn">Få värderingen på mejl</button>
 
           <p class="form-error" id="formError" style="display:none;"></p>
         </form>
@@ -183,6 +188,22 @@ import Layout from '../components/Layout.astro';
     font-size: 12px;
     color: rgba(255,255,255,0.4);
     margin-top: 2px;
+  }
+
+  .contact-hint {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    margin: 0 0 8px;
+    line-height: 1.6;
+  }
+
+  #contactSection {
+    animation: fadeSlideIn 0.4s ease-out;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .tool-input {
@@ -449,6 +470,31 @@ import Layout from '../components/Layout.astro';
     function hideError() {
       errorBox.style.display = 'none';
     }
+
+    // ── Step 1: Reveal contact section after car-info validated ──
+    var continueBtn = document.getElementById('continueBtn');
+    var contactSection = document.getElementById('contactSection');
+    var REGNR_RE = /^[A-ZÅÄÖ]{3}[0-9]{2}[A-Z0-9]$/i;
+
+    continueBtn.addEventListener('click', function() {
+      hideError();
+      var regnr = (document.getElementById('regnr').value || '').trim();
+      var miltal = parseInt(document.getElementById('miltal').value, 10);
+      var skick = document.getElementById('skick').value;
+
+      if (!regnr) { showError('Ange registreringsnummer.'); return; }
+      if (!REGNR_RE.test(regnr.replace(/\s/g, ''))) { showError('Ogiltigt registreringsnummer (ex: ABC123).'); return; }
+      if (!miltal || miltal <= 0) { showError('Ange ett giltigt miltal.'); return; }
+      if (!skick) { showError('Välj bilens skick.'); return; }
+
+      continueBtn.style.display = 'none';
+      contactSection.style.display = 'block';
+      setTimeout(function() {
+        var namnInput = document.getElementById('namn');
+        if (namnInput) namnInput.focus();
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    });
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
