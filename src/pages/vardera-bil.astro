@@ -1,0 +1,510 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout
+  title="Värdera din bil gratis | Begbilnorr Luleå"
+  description="Fyll i regnr och miltal — vi mejlar en värdering av din bil baserad på marknadsdata i Norrland. Gratis och utan registrering."
+>
+  <section class="page-hero">
+    <div class="container">
+      <div class="hero-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/><path d="M2 12h20"/></svg>
+        VÄRDERINGSVERKTYG
+      </div>
+      <h1>Värdera din bil gratis</h1>
+      <p>Fyll i uppgifterna — vi mejlar värderingen direkt till dig.</p>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <section class="tool-section">
+    <div class="container">
+      <div class="tool-card" id="formCard">
+        <form id="varderaForm" class="vardera-form" novalidate>
+          <h2 class="tool-h2">Din bil</h2>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label for="regnr">Registreringsnummer *</label>
+              <input type="text" id="regnr" name="regnr" class="tool-input" placeholder="ABC123" required autocomplete="off" />
+            </div>
+            <div class="input-group">
+              <label for="miltal">Miltal (mil) *</label>
+              <input type="number" id="miltal" name="miltal" class="tool-input" placeholder="12 000" min="0" max="500000" step="100" required />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="skick">Skick *</label>
+            <select id="skick" name="skick" class="tool-input" required>
+              <option value="">Välj skick…</option>
+              <option value="som_ny">✨ Som ny (≤2 år, servicebok, inga repor)</option>
+              <option value="mycket_bra">👍 Mycket bra (skötselbok, småskador möjliga)</option>
+              <option value="bra">👌 Bra (normalt slitage, fungerar bra)</option>
+              <option value="sliten">🔧 Sliten (synliga skador eller mekaniska problem)</option>
+            </select>
+            <small class="input-hint">Påverkar värderingen — var ärlig för bästa estimat.</small>
+          </div>
+
+          <h2 class="tool-h2" style="margin-top:8px;">Kontaktuppgifter</h2>
+
+          <div class="input-group">
+            <label for="namn">Namn *</label>
+            <input type="text" id="namn" name="namn" class="tool-input" placeholder="Anna Andersson" required autocomplete="name" />
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label for="email">E-post *</label>
+              <input type="email" id="email" name="email" class="tool-input" placeholder="din@mejl.se" required autocomplete="email" />
+            </div>
+            <div class="input-group">
+              <label for="phone">Telefon (valfritt)</label>
+              <input type="tel" id="phone" name="phone" class="tool-input" placeholder="070-123 45 67" autocomplete="tel" />
+            </div>
+          </div>
+
+          <label class="gdpr-row">
+            <input type="checkbox" id="gdpr" name="gdpr" required />
+            <span>Jag godkänner <a href="/integritetspolicy" target="_blank" rel="noopener">integritetspolicyn</a> och att Begbilnorr kontaktar mig via e-post/telefon.</span>
+          </label>
+
+          <button type="submit" id="submitBtn" class="btn-primary tool-btn">Få värderingen på mejl</button>
+
+          <p class="form-error" id="formError" style="display:none;"></p>
+        </form>
+      </div>
+
+      <!-- Success state -->
+      <div class="success-card" id="successCard" style="display:none;">
+        <div class="success-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <h2>Värderingen är på väg!</h2>
+        <p>Vi har skickat värderingen till <strong id="successEmail">din e-post</strong>. Kolla även skräpposten.</p>
+        <p class="success-sub" id="successSub"></p>
+        <a href="/bilar" class="btn-outline">Se våra bilar</a>
+      </div>
+
+      <div class="disclaimer">
+        <p>⚠️ Värderingen är ett estimat baserat på årsmodell, miltal, märke, drivmedel och skick. Faktiskt pris avgörs efter besiktning hos oss i Luleå. Max 5 värderingar per IP per dygn.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <div class="container">
+      <h2 class="section-heading" style="text-align:center;margin-bottom:48px;">Så fungerar värderingen</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="step-number">1</div>
+          <h3>Fordonsuppslag</h3>
+          <p>Vi slår upp ditt regnr mot Sveriges fordonsregister för att få märke, modell och årsmodell.</p>
+        </div>
+        <div class="info-card">
+          <div class="step-number">2</div>
+          <h3>Marknadsdata</h3>
+          <p>Vi använder data från tusentals bilannonser i Norrbotten och Västerbotten för att räkna ut grundvärdet.</p>
+        </div>
+        <div class="info-card">
+          <div class="step-number">3</div>
+          <h3>Justering för skick + miltal</h3>
+          <p>Värderingen justeras för bilens skick (som ny → sliten) och om miltalet är högre/lägre än förväntat.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Vill du sälja bilen direkt?</h2>
+      <p>Vi köper bilar i hela Norrland — snabbt, enkelt och utan mellanhand.</p>
+      <div class="cta-buttons">
+        <a href="/salj-bil" class="btn-primary">Sälj din bil</a>
+        <a href="/kontakt" class="btn-outline">Kontakta oss</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tool-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .tool-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    padding: 48px 40px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .tool-h2 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .vardera-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .input-hint {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
+
+  .tool-input {
+    background: var(--bg-dark-5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 15px;
+    color-scheme: dark;
+    transition: border-color 0.2s;
+  }
+
+  .tool-input:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  select.tool-input {
+    cursor: pointer;
+  }
+
+  #regnr {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .gdpr-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .gdpr-row input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--red);
+  }
+
+  .gdpr-row a {
+    color: var(--red);
+  }
+
+  .tool-btn {
+    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tool-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .form-error {
+    background: rgba(230,46,45,0.1);
+    border: 1px solid rgba(230,46,45,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #fda4a4;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  .success-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    padding: 48px 40px;
+    border: 1px solid rgba(46,204,113,0.3);
+    text-align: center;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: rgba(46,204,113,0.1);
+    color: #2ecc71;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .success-card h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .success-card p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .success-sub {
+    font-size: 13px !important;
+    color: rgba(255,255,255,0.5) !important;
+    margin-bottom: 28px !important;
+  }
+
+  .disclaimer {
+    max-width: 640px;
+    margin: 24px auto 0;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+  }
+
+  .disclaimer p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .info-section {
+    background: var(--bg-dark-2);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .info-card {
+    background: var(--bg-dark-4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 40px 28px 32px;
+    text-align: center;
+    position: relative;
+  }
+
+  .step-number {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    background: var(--red);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .info-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin: 16px 0 12px;
+  }
+
+  .info-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  .cta-section {
+    background: var(--bg-dark-3);
+    padding: 80px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cta-section h2 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .cta-section p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .input-row {
+      grid-template-columns: 1fr;
+    }
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+    .tool-section {
+      padding: 48px 0 32px;
+    }
+    .tool-card,
+    .success-card {
+      padding: 32px 20px;
+    }
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    var form = document.getElementById('varderaForm');
+    var formCard = document.getElementById('formCard');
+    var successCard = document.getElementById('successCard');
+    var successEmail = document.getElementById('successEmail');
+    var successSub = document.getElementById('successSub');
+    var submitBtn = document.getElementById('submitBtn');
+    var errorBox = document.getElementById('formError');
+
+    function getUtmData() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        return {
+          utm_source: params.get('utm_source') || null,
+          utm_medium: params.get('utm_medium') || null,
+          utm_campaign: params.get('utm_campaign') || null,
+          gclid: params.get('gclid') || null,
+          fbclid: params.get('fbclid') || null,
+          referrer: document.referrer || null,
+          landing_page: window.location.pathname,
+        };
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.style.display = 'block';
+    }
+
+    function hideError() {
+      errorBox.style.display = 'none';
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      hideError();
+
+      var payload = {
+        regnr: (document.getElementById('regnr').value || '').trim(),
+        miltal: parseInt(document.getElementById('miltal').value, 10),
+        skick: document.getElementById('skick').value,
+        namn: (document.getElementById('namn').value || '').trim(),
+        email: (document.getElementById('email').value || '').trim(),
+        phone: (document.getElementById('phone').value || '').trim() || null,
+        gdpr: document.getElementById('gdpr').checked,
+        utm_data: getUtmData(),
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Skickar…';
+
+      try {
+        var res = await fetch('/api/vardera', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        var data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Något gick fel. Försök igen.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Få värderingen på mejl';
+          return;
+        }
+
+        successEmail.textContent = payload.email;
+        successSub.textContent = data.autoValuation
+          ? 'Värderingen är skickad till din mejl.'
+          : 'Vi värderar din bil personligen och återkommer inom 24 timmar.';
+
+        formCard.style.display = 'none';
+        successCard.style.display = 'block';
+        successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        showError('Något gick fel. Kontrollera din internetanslutning och försök igen.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Få värderingen på mejl';
+      }
+    });
+
+    // Live-uppercase regnr while typing
+    var regnrInput = document.getElementById('regnr');
+    regnrInput.addEventListener('input', function() {
+      var pos = regnrInput.selectionStart;
+      regnrInput.value = regnrInput.value.toUpperCase().replace(/\s/g, '');
+      regnrInput.setSelectionRange(pos, pos);
+    });
+  })();
+</script>
