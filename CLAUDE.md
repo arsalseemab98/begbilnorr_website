@@ -146,18 +146,39 @@ Hanteras via `redirects`-tabellen i Supabase + `[...slug].astro` catch-all (301)
 - "Skapat av swiftcore.se" med SwiftCore-favicon (`/images/swiftcore-favicon.png`)
 
 ## Värderingsverktyg (/vardera-bil)
-Email-gated lead form med regnr-uppslag via biluppgifter.se.
+Email-gated lead form med regnr-uppslag via biluppgifter.se + marknadsdata från fordonlista.
+
+### Filer
 - API route: `src/pages/api/vardera.ts`
-- Algoritm: `src/lib/valuation.ts` (pure function)
+- Statisk algoritm (fallback): `src/lib/valuation.ts` → `calculateValuation()`
+- Marknadsdata-algoritm: `src/lib/valuation.ts` → `calculateFromMarketData()`
+- Fordonlista-klient: `src/lib/fordonlista-client.ts`
 - Regnr-lookup: `src/lib/biluppgifter.ts` (kräver `BILUPPGIFTER_API_KEY`)
-- Rate limit: 5/IP/24h via `vardering_lookups`-tabellen (`src/lib/rate-limit.ts`)
+- Rate limit: 5/IP/24h via `vardering_lookups` (`src/lib/rate-limit.ts`)
 - Kund-mejl: dark Begbilnorr-design (`src/lib/email-templates/vardering-customer.ts`)
 - Dealer-mejl: notis till `info@begbilnorr.se` (`src/lib/email-templates/vardering-dealer.ts`)
-- Source-label i `contact_submissions` och `leads`: `vardering-v2`
-- Fallback: om biluppgifter-uppslag misslyckas → kund får "vi värderar manuellt inom 24h"-mejl, dealer får manuell-hantering-notis
-- Skick-multipliers: som_ny=+10%, mycket_bra=0%, bra=-8%, sliten=-20%
-- Spec: `docs/superpowers/specs/2026-05-14-vardera-bil-email-flow-design.md`
-- Plan: `docs/superpowers/plans/2026-05-14-vardera-bil-email-flow.md`
+
+### Värderings-flöde
+1. biluppgifter.se → märke, modell, år, drivmedel, växellåda
+2. POST till `fordonlista.vercel.app/api/v1/valuation` (kräver `FORDONLISTA_VALUATION_KEY` + `FORDONLISTA_VALUATION_URL`)
+3. Om `confidence` ∈ {high, medium, low} → använd `basePrice` från Norrland-marknadsdata + miltal/skick-justering
+4. Om `insufficient` eller API-fel → fallback till statisk algoritm (`BASE_PRICES`-map)
+5. Mejl till kund inkluderar "Baserat på N liknande bilar (YYYY-YYYY)" när marknadsdata användes
+
+### Skick-multipliers (båda algoritmerna)
+- ✨ Som ny: +10%
+- 👍 Mycket bra: 0%
+- 👌 Bra: −8%
+- 🔧 Sliten: −20%
+
+### Source-labels
+- `contact_submissions.source = 'vardering-v2'`
+- `leads.form_labels` inkluderar `'Värdering (auto)'`
+- Dealer-mejl visar "Värderings-källa: Fordonlista (N liknande, confidence X)" eller "Statisk algoritm"
+
+### Specs + planer
+- Email-gated flow: `docs/superpowers/specs/2026-05-14-vardera-bil-email-flow-design.md` (plan: `docs/superpowers/plans/2026-05-14-vardera-bil-email-flow.md`)
+- Fordonlista-integration: `docs/superpowers/specs/2026-05-16-fordonlista-valuation-integration-design.md` (plan: `docs/superpowers/plans/2026-05-16-fordonlista-valuation-integration.md`)
 
 ## Kommandon
 ```bash
