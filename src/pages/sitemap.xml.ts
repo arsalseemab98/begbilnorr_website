@@ -24,6 +24,12 @@ export const GET: APIRoute = async () => {
     { url: '/om-oss', priority: '0.6', changefreq: 'monthly' },
     { url: '/finansiering', priority: '0.7', changefreq: 'monthly' },
     { url: '/salj-bil', priority: '0.7', changefreq: 'monthly' },
+    // Tools (added 2026-05-16) — feature pages with SEO value
+    { url: '/vardera-bil', priority: '0.8', changefreq: 'monthly' },
+    { url: '/verktyg', priority: '0.7', changefreq: 'monthly' },
+    { url: '/billan-kalkylator', priority: '0.7', changefreq: 'monthly' },
+    { url: '/bilskatt-kollare', priority: '0.7', changefreq: 'monthly' },
+    { url: '/besiktning-datum', priority: '0.7', changefreq: 'monthly' },
     { url: '/swish', priority: '0.6', changefreq: 'monthly' },
     { url: '/hoja-swish-grans', priority: '0.6', changefreq: 'monthly' },
     { url: '/fragor-och-svar', priority: '0.6', changefreq: 'monthly' },
