@@ -107,14 +107,6 @@ export function renderCustomerEmail(input: CustomerEmailInput): { subject: strin
             ${detailRow('Skick', skickLabel(skick), true)}
           </table>
 
-          <!-- Three price levels -->
-          <p style="margin:24px 0 10px;font-family:${SANS};font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.55);text-transform:uppercase;font-weight:700;">Tre möjliga pris-nivåer</p>
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#151515;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:32px;">
-            ${detailRow('Inbytespris (cirka)', `${fmt(valuation.tradeIn)} kr`)}
-            ${detailRow('Försäljning privat', `${fmt(valuation.privateSale)} kr`)}
-            ${detailRow('Begbilnorr-bud', `<strong style="color:#FFFFFF;font-weight:700;">${fmt(valuation.bgnBud)} kr</strong>`, true)}
-          </table>
-
           <!-- CTA — matches site's .btn-primary -->
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:8px;">
             <tr><td align="center">
