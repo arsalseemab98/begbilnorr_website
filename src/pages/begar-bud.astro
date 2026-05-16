@@ -1,7 +1,7 @@
 ---
 import Layout from '../components/Layout.astro';
 
-// Read pre-fill data from URL params (sent from valuation email link)
+// Pre-fill data from URL params (sent from valuation email link)
 const url = Astro.url;
 const namn = url.searchParams.get('namn') ?? '';
 const email = url.searchParams.get('email') ?? '';
@@ -14,91 +14,62 @@ const skick = url.searchParams.get('skick') ?? '';
 const estimate = url.searchParams.get('estimate') ?? '';
 
 const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
+const firstName = namn.split(' ')[0] || '';
 ---
 
 <Layout
   title="Begär konkret bud | Begbilnorr"
-  description="Begär ett konkret bud på din bil från Begbilnorr — vi återkommer inom 24 timmar."
+  description="Begär konkret bud på din bil."
   noindex={true}
 >
   <section class="bud-section">
-    <div class="bud-container">
-      <a href="/" class="back-link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Tillbaka till begbilnorr.se
-      </a>
-
-      <div class="bud-card" id="formCard">
-        <div class="bud-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/><path d="M19 8v6"/></svg>
-        </div>
-
-        <p class="bud-label">KONKRET BUD INOM 24H</p>
-        <h1 class="bud-h1">{namn ? `Hej ${namn},` : 'Hej!'}</h1>
-
-        {carLine && (
-          <p class="bud-intro">
-            Vill du ha ett <strong>konkret bud</strong> på din <strong>{carLine}</strong>?
-            Fyll i ditt telefonnummer så ringer vi inom 24 timmar med ett pris du kan godkänna direkt.
-          </p>
-        )}
-        {!carLine && (
-          <p class="bud-intro">
-            Fyll i dina uppgifter så återkommer vi inom 24 timmar med ett konkret bud.
-          </p>
-        )}
-
-        {(regnr || miltal) && (
-          <div class="car-summary">
-            {regnr && <div><span>Regnr:</span> <strong>{regnr}</strong></div>}
-            {miltal && <div><span>Miltal:</span> <strong>{miltal} mil</strong></div>}
-            {skick && <div><span>Skick:</span> <strong>{skick.replace('_', ' ')}</strong></div>}
-            {estimate && <div><span>Värdering:</span> <strong>{estimate} kr</strong></div>}
-          </div>
-        )}
-
-        <form id="budForm" class="bud-form" novalidate>
-          <div class="input-group">
-            <label for="bud-namn">Namn</label>
-            <input type="text" id="bud-namn" class="bud-input" value={namn} required autocomplete="name" />
-          </div>
-
-          <div class="input-group">
-            <label for="bud-email">E-post</label>
-            <input type="email" id="bud-email" class="bud-input" value={email} required autocomplete="email" />
-          </div>
-
-          <div class="input-group">
-            <label for="bud-phone">Telefonnummer *</label>
-            <input type="tel" id="bud-phone" class="bud-input" placeholder="070-123 45 67" required autocomplete="tel" />
-            <small class="input-hint">Vi ringer inom 24 timmar med ett konkret pris.</small>
-          </div>
-
-          <div class="input-group">
-            <label for="bud-message">Meddelande (valfritt)</label>
-            <textarea id="bud-message" class="bud-input" rows="3" placeholder="Något särskilt vi bör veta om bilen?"></textarea>
-          </div>
-
-          <label class="gdpr-row">
-            <input type="checkbox" id="bud-gdpr" required />
-            <span>Jag godkänner <a href="/integritetspolicy" target="_blank" rel="noopener">integritetspolicyn</a>.</span>
-          </label>
-
-          <button type="submit" id="budSubmitBtn" class="btn-primary bud-btn">Skicka bud-förfrågan</button>
-
-          <p class="form-error" id="budError" style="display:none;"></p>
-        </form>
+    <div class="bud-card" id="formCard">
+      <div class="bud-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       </div>
 
-      <!-- Success state -->
-      <div class="success-card" id="successCard" style="display:none;">
-        <div class="success-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+      <p class="bud-label">KONKRET BUD INOM 24H</p>
+      <h1 class="bud-h1">{firstName ? `Hej ${firstName}!` : 'Hej!'}</h1>
+
+      {carLine && (
+        <p class="bud-intro">
+          Ange ditt telefonnummer så ringer vi inom 24 timmar med ett konkret bud på din <strong>{carLine}</strong>.
+        </p>
+      )}
+      {!carLine && (
+        <p class="bud-intro">
+          Ange ditt telefonnummer så ringer vi inom 24 timmar med ett konkret bud.
+        </p>
+      )}
+
+      <form id="budForm" class="bud-form" novalidate>
+        <!-- Hidden: pre-filled from URL, sent to backend -->
+        <input type="hidden" id="bud-namn" value={namn} />
+        <input type="hidden" id="bud-email" value={email} />
+
+        <div class="phone-group">
+          <label for="bud-phone">Telefonnummer</label>
+          <input type="tel" id="bud-phone" class="phone-input" placeholder="070 123 45 67" required autocomplete="tel" autofocus />
         </div>
-        <h2>Tack — vi hör av oss!</h2>
-        <p>Vi ringer dig på <strong id="successPhone"></strong> inom 24 timmar med ett konkret bud.</p>
-        <a href="/bilar" class="btn-outline">Se våra bilar</a>
+
+        <button type="submit" id="budSubmitBtn" class="btn-primary bud-btn">Begär bud →</button>
+
+        <p class="form-error" id="budError" style="display:none;"></p>
+
+        <p class="bud-meta">
+          {email && <>Vi mejlar bekräftelse till <strong>{email}</strong>. </>}
+          Genom att skicka godkänner du <a href="/integritetspolicy" target="_blank" rel="noopener">integritetspolicyn</a>.
+        </p>
+      </form>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-card" id="successCard" style="display:none;">
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
+      <h2>Tack!</h2>
+      <p>Vi ringer dig på <strong id="successPhone"></strong> inom 24 timmar.</p>
     </div>
   </section>
 </Layout>
@@ -106,54 +77,38 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
 <style>
   .bud-section {
     background: var(--bg-dark-1);
-    min-height: calc(100vh - 80px);
-    padding: 60px 16px 80px;
+    min-height: 100vh;
+    padding: 40px 16px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
   }
 
-  .bud-container {
+  .bud-card,
+  .success-card {
     width: 100%;
-    max-width: 560px;
-  }
-
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: rgba(255,255,255,0.55);
-    text-decoration: none;
-    font-size: 14px;
-    margin-bottom: 24px;
-    transition: color 0.2s;
-  }
-
-  .back-link:hover {
-    color: var(--white);
-  }
-
-  .bud-card {
+    max-width: 440px;
     background: var(--bg-dark-3);
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
-    padding: 40px 36px;
+    padding: 36px 32px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
   }
 
   .bud-icon {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     border-radius: 12px;
-    background: rgba(230, 46, 45, 0.1);
+    background: rgba(230, 46, 45, 0.12);
     color: var(--red);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .bud-label {
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     font-size: 11px;
     letter-spacing: 2.5px;
     color: var(--red);
@@ -165,40 +120,20 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
     font-family: var(--serif);
     font-style: italic;
     font-weight: 400;
-    font-size: 32px;
+    font-size: 28px;
     color: var(--white);
-    margin: 0 0 16px;
+    margin: 0 0 14px;
     letter-spacing: -0.3px;
   }
 
   .bud-intro {
     font-size: 15px;
-    color: rgba(255,255,255,0.7);
-    line-height: 1.7;
-    margin: 0 0 24px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.6;
+    margin: 0 0 28px;
   }
 
-  .car-summary {
-    background: var(--bg-dark-4);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 28px;
-    display: grid;
-    gap: 8px;
-  }
-
-  .car-summary > div {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-  }
-
-  .car-summary span {
-    color: rgba(255,255,255,0.55);
-  }
-
-  .car-summary strong {
+  .bud-intro strong {
     color: var(--white);
     font-weight: 500;
   }
@@ -206,68 +141,53 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
   .bud-form {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
   }
 
-  .input-group {
+  .phone-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
-  .input-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.7);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .input-hint {
+  .phone-group label {
     font-size: 12px;
-    color: rgba(255,255,255,0.4);
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
-  .bud-input {
+  .phone-input {
     background: var(--bg-dark-5);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 16px 18px;
     color: var(--white);
     font-family: var(--sans);
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
     color-scheme: dark;
-    transition: border-color 0.2s;
-    resize: vertical;
+    transition: border-color 0.2s, background 0.2s;
   }
 
-  .bud-input:focus {
+  .phone-input::placeholder {
+    color: rgba(255,255,255,0.25);
+    font-weight: 400;
+  }
+
+  .phone-input:focus {
     outline: none;
     border-color: var(--red);
-  }
-
-  .gdpr-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.65);
-    line-height: 1.5;
-    cursor: pointer;
-  }
-
-  .gdpr-row input[type="checkbox"] {
-    margin-top: 2px;
-    accent-color: var(--red);
-  }
-
-  .gdpr-row a {
-    color: var(--red);
+    background: var(--bg-dark-4);
   }
 
   .bud-btn {
     width: 100%;
     justify-content: center;
+    padding: 16px 24px;
+    font-size: 16px;
     margin-top: 4px;
   }
 
@@ -280,25 +200,40 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
     background: rgba(230,46,45,0.1);
     border: 1px solid rgba(230,46,45,0.3);
     border-radius: 8px;
-    padding: 12px 16px;
+    padding: 10px 14px;
     color: #fda4a4;
-    font-size: 14px;
+    font-size: 13px;
+    margin: 0;
   }
 
-  .success-card {
-    background: var(--bg-dark-3);
-    border: 1px solid rgba(46,204,113,0.3);
-    border-radius: 16px;
-    padding: 48px 36px;
+  .bud-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+    margin: 8px 0 0;
     text-align: center;
   }
 
+  .bud-meta a {
+    color: rgba(255,255,255,0.6);
+  }
+
+  .bud-meta strong {
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+  }
+
+  .success-card {
+    text-align: center;
+    border-color: rgba(46, 204, 113, 0.3);
+  }
+
   .success-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 24px;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
     border-radius: 50%;
-    background: rgba(46,204,113,0.1);
+    background: rgba(46, 204, 113, 0.12);
     color: #2ecc71;
     display: flex;
     align-items: center;
@@ -309,25 +244,25 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
     font-family: var(--serif);
     font-style: italic;
     font-weight: 400;
-    font-size: 28px;
+    font-size: 32px;
     color: var(--white);
-    margin-bottom: 16px;
+    margin: 0 0 12px;
   }
 
   .success-card p {
     font-size: 15px;
     color: rgba(255,255,255,0.7);
-    line-height: 1.7;
-    margin-bottom: 28px;
+    line-height: 1.6;
+    margin: 0;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 480px) {
     .bud-card,
     .success-card {
-      padding: 32px 20px;
+      padding: 28px 24px;
     }
     .bud-h1 {
-      font-size: 26px;
+      font-size: 24px;
     }
   }
 </style>
@@ -349,32 +284,32 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
       errorBox.style.display = 'none';
     }
 
+    function carContext() {
+      var p = new URLSearchParams(window.location.search);
+      var bits = [];
+      if (p.get('regnr')) bits.push('Regnr: ' + p.get('regnr'));
+      if (p.get('brand') || p.get('model') || p.get('year')) {
+        bits.push('Bil: ' + [p.get('brand'), p.get('model'), p.get('year')].filter(Boolean).join(' '));
+      }
+      if (p.get('miltal')) bits.push('Miltal: ' + p.get('miltal') + ' mil');
+      if (p.get('skick')) bits.push('Skick (uppgivet): ' + p.get('skick'));
+      if (p.get('estimate')) bits.push('Tidigare värdering: ' + p.get('estimate') + ' kr');
+      return bits.join('\n');
+    }
+
     function getUtmData() {
       try {
-        var params = new URLSearchParams(window.location.search);
+        var p = new URLSearchParams(window.location.search);
         return {
-          utm_source: params.get('utm_source') || 'email',
-          utm_medium: params.get('utm_medium') || 'vardering',
-          utm_campaign: params.get('utm_campaign') || 'bud-request',
+          utm_source: p.get('utm_source') || 'email',
+          utm_medium: p.get('utm_medium') || 'vardering',
+          utm_campaign: p.get('utm_campaign') || 'bud-request',
           referrer: document.referrer || null,
           landing_page: window.location.pathname,
         };
       } catch (e) {
         return {};
       }
-    }
-
-    function carContext() {
-      var params = new URLSearchParams(window.location.search);
-      var bits = [];
-      if (params.get('regnr')) bits.push('Regnr: ' + params.get('regnr'));
-      if (params.get('brand') || params.get('model') || params.get('year')) {
-        bits.push('Bil: ' + [params.get('brand'), params.get('model'), params.get('year')].filter(Boolean).join(' '));
-      }
-      if (params.get('miltal')) bits.push('Miltal: ' + params.get('miltal') + ' mil');
-      if (params.get('skick')) bits.push('Skick (uppgivet): ' + params.get('skick'));
-      if (params.get('estimate')) bits.push('Tidigare värdering: ' + params.get('estimate') + ' kr');
-      return bits.join('\n');
     }
 
     form.addEventListener('submit', async function(e) {
@@ -384,18 +319,16 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
       var namn = document.getElementById('bud-namn').value.trim();
       var email = document.getElementById('bud-email').value.trim();
       var phone = document.getElementById('bud-phone').value.trim();
-      var message = document.getElementById('bud-message').value.trim();
-      var gdpr = document.getElementById('bud-gdpr').checked;
 
-      if (!namn) { showError('Ange ditt namn.'); return; }
-      if (!email) { showError('Ange din e-postadress.'); return; }
-      if (!phone) { showError('Telefonnummer krävs så vi kan ringa dig.'); return; }
-      if (!gdpr) { showError('Du måste godkänna integritetspolicyn.'); return; }
+      if (!phone || phone.replace(/\D/g, '').length < 6) {
+        showError('Ange ett giltigt telefonnummer.');
+        return;
+      }
 
-      var context = carContext();
+      var ctx = carContext();
       var fullMessage = 'KUND BEGÄR KONKRET BUD INOM 24H\n\n' +
-        (context ? context + '\n\n' : '') +
-        (message ? 'Kundens meddelande:\n' + message : '(inget extra meddelande)');
+        (ctx ? ctx + '\n\n' : '') +
+        'Kunden vill bli uppringd på ' + phone + '.';
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Skickar…';
@@ -405,8 +338,8 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: namn,
-            email: email,
+            name: namn || 'Okänd',
+            email: email || null,
             phone: phone,
             message: fullMessage,
             source: 'bud-request',
@@ -417,17 +350,16 @@ const carLine = [brand, model, year && `(${year})`].filter(Boolean).join(' ');
         if (!res.ok) {
           showError(data.error || 'Något gick fel. Försök igen.');
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Skicka bud-förfrågan';
+          submitBtn.textContent = 'Begär bud →';
           return;
         }
         successPhone.textContent = phone;
         formCard.style.display = 'none';
         successCard.style.display = 'block';
-        successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch (err) {
-        showError('Något gick fel. Kontrollera din internetanslutning.');
+        showError('Något gick fel. Kontrollera internetanslutningen.');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Skicka bud-förfrågan';
+        submitBtn.textContent = 'Begär bud →';
       }
     });
   })();
