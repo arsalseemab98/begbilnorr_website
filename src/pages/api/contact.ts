@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { sendEmail } from '../../lib/email';
 import { supabase } from '../../lib/supabase';
+import { wrapBranded } from '../../lib/email-templates/branded-wrapper';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -41,21 +42,36 @@ export const POST: APIRoute = async ({ request }) => {
               ? `Bevakning: ${carName || senderName}`
               : `Begbilnorr.se: ${senderName}`;
 
+      // Branded internal notification — dark theme matching site
+      const lblStyle = 'color:rgba(255,255,255,0.55);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin:0 0 4px;';
+      const valStyle = 'color:#FFFFFF;margin:0 0 18px;font-size:15px;';
+      const innerHtml = `
+        <p style="margin:0 0 6px;font-size:11px;letter-spacing:2.5px;color:#E62E2D;text-transform:uppercase;font-weight:700;">${sourceLabel}</p>
+        <h1 style="margin:0 0 24px;font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-weight:400;font-size:26px;color:#FFFFFF;line-height:1.2;">Nytt meddelande</h1>
+
+        ${carName ? `<p style="${lblStyle}">Bil</p><p style="${valStyle}">${carName}</p>` : ''}
+        <p style="${lblStyle}">Namn</p><p style="${valStyle}">${senderName}</p>
+        ${senderEmail ? `<p style="${lblStyle}">E-post</p><p style="${valStyle}"><a href="mailto:${senderEmail}" style="color:#FFFFFF;text-decoration:underline;">${senderEmail}</a></p>` : ''}
+        ${phone ? `<p style="${lblStyle}">Telefon</p><p style="${valStyle}"><a href="tel:${phone}" style="color:#FFFFFF;text-decoration:underline;">${phone}</a></p>` : ''}
+        <p style="${lblStyle}">Meddelande</p>
+        <div style="background:#151515;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:16px 18px;color:rgba(255,255,255,0.85);font-size:14px;line-height:1.7;white-space:pre-wrap;">${message.replace(/\n/g, '<br>')}</div>
+        ${utm_data ? `
+          <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);font-size:12px;">
+            <strong style="color:rgba(255,255,255,0.65);">Trafikkälla:</strong>
+            ${utm_data.utm_source || '-'} / ${utm_data.utm_medium || '-'}${utm_data.utm_campaign ? ` / ${utm_data.utm_campaign}` : ''}${utm_data.landing_page ? ` (${utm_data.landing_page})` : ''}
+          </div>
+        ` : ''}
+      `;
+
       await sendEmail({
         to: ['info@begbilnorr.se'],
         replyTo: senderEmail || undefined,
         subject,
-        html: `
-          <h2>Nytt meddelande från begbilnorr.se</h2>
-          <p><strong>Källa:</strong> ${sourceLabel}</p>
-          ${carName ? `<p><strong>Bil:</strong> ${carName}</p>` : ''}
-          <p><strong>Namn:</strong> ${senderName}</p>
-          ${senderEmail ? `<p><strong>E-post:</strong> ${senderEmail}</p>` : ''}
-          ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ''}
-          <p><strong>Meddelande:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
-          ${utm_data ? `<hr><p><strong>Trafikkälla:</strong> ${utm_data.utm_source || '-'} / ${utm_data.utm_medium || '-'}${utm_data.utm_campaign ? ` / ${utm_data.utm_campaign}` : ''}${utm_data.landing_page ? ` (${utm_data.landing_page})` : ''}</p>` : ''}
-        `,
+        html: wrapBranded({
+          title: subject,
+          preheader: `${sourceLabel} — ${senderName}${phone ? ` (${phone})` : ''}`,
+          innerHtml,
+        }),
       });
       sentSuccessfully = true;
     } catch (emailError) {
