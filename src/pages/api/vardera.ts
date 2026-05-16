@@ -132,16 +132,16 @@ export const POST: APIRoute = async ({ request }) => {
       // ---- Manual review: biluppgifter failed OR fordonlista insufficient ----
       const reason = !vehicle
         ? `biluppgifter.se-uppslag misslyckades: ${lookupError ?? 'okänt fel'}`
-        : 'För lite marknadsdata för automatisk värdering';
+        : 'Vi behöver mer uppgifter från kunden';
       const carDescription = vehicle
         ? `${vehicle.brand} ${displayModel} (${vehicle.year})`
         : `regnr ${cleanRegnr}`;
 
-      customerSubject = 'Vi värderar din bil personligen';
+      customerSubject = 'Vi behöver mer uppgifter från dig';
       customerHtml = `
         <p>Hej ${namn.trim()},</p>
         <p>Tack för att du vill värdera din bil hos oss.</p>
-        <p>Vi behöver lite mer information för att göra en exakt värdering av din <strong>${carDescription}</strong>. En av våra säljare kommer att kontakta dig inom 24 timmar för att gå igenom uppgifterna och ge dig en konkret värdering.</p>
+        <p>Vi behöver mer uppgifter från dig för att göra en exakt värdering av din <strong>${carDescription}</strong>. En av våra säljare kommer att kontakta dig inom 24 timmar för att gå igenom uppgifterna tillsammans med dig och ge dig en konkret värdering.</p>
         ${cleanPhone ? `<p>Vi ringer dig på <strong>${cleanPhone}</strong>.</p>` : `<p>Vi mejlar dig på <strong>${email}</strong>.</p>`}
         <p>Med vänliga hälsningar,<br>Begbilnorr — Luleå</p>
       `;
