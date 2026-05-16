@@ -70,11 +70,17 @@ export function calculateValuation(input: ValuationInput): ValuationResult {
     depreciation *= i === 0 ? 0.85 : 0.90;
   }
 
+  const raw = basePrice * depreciation * FUEL_MULT[input.fuel] * GEARBOX_MULT[input.gearbox];
+
+  // Miltal adjustment — capped at ±35% of `raw` to prevent extreme miltal
+  // (e.g. 30 000 mil on a 5-year car) from driving the estimate negative.
   const expectedMileageMil = age * 1200;
   const mileageDiffMil = input.miltalMil - expectedMileageMil;
-  const mileageAdjustment = -mileageDiffMil * 10;
+  const rawMileageAdj = -mileageDiffMil * 6;
+  const maxPenalty = raw * 0.35;
+  const maxBonus = raw * 0.15;
+  const mileageAdjustment = Math.max(-maxPenalty, Math.min(maxBonus, rawMileageAdj));
 
-  const raw = basePrice * depreciation * FUEL_MULT[input.fuel] * GEARBOX_MULT[input.gearbox];
   const estimate = Math.max(5000, Math.round((raw + mileageAdjustment) * SKICK_MULT[input.skick]));
 
   return {
@@ -109,7 +115,7 @@ export interface MarketAdjustmentInput {
   skick: Skick;
 }
 
-const MILEAGE_PENALTY_KR_PER_MIL = 8;
+const MILEAGE_PENALTY_KR_PER_MIL = 6;
 
 export function calculateFromMarketData(input: MarketAdjustmentInput): ValuationResult {
   const { market, miltalMil, skick } = input;
@@ -119,7 +125,12 @@ export function calculateFromMarketData(input: MarketAdjustmentInput): Valuation
 
   const expectedMileage = market.avgMileage ?? 13000;
   const mileageDiff = miltalMil - expectedMileage;
-  const mileageAdjustment = -mileageDiff * MILEAGE_PENALTY_KR_PER_MIL;
+  const rawMileageAdj = -mileageDiff * MILEAGE_PENALTY_KR_PER_MIL;
+  // Cap the adjustment at ±35% / 15% of basePrice so extreme miltal can't
+  // drive the estimate to the 5 000 kr floor.
+  const maxPenalty = market.basePrice * 0.35;
+  const maxBonus = market.basePrice * 0.15;
+  const mileageAdjustment = Math.max(-maxPenalty, Math.min(maxBonus, rawMileageAdj));
 
   const skickMultiplier = ({
     som_ny: 1.10,

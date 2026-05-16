@@ -111,6 +111,27 @@ import Layout from '../components/Layout.astro';
         </form>
       </div>
 
+      <!-- Loading state — shown while API processes -->
+      <div class="loading-card" id="loadingCard" style="display:none;">
+        <div class="spinner"></div>
+        <h2 id="loadingTitle">Värderar din bil…</h2>
+        <p id="loadingStep">Hämtar bil-uppgifter</p>
+        <ul class="loading-steps">
+          <li id="step-1" class="active">
+            <span class="step-dot"></span>
+            <span>Hämtar bil-uppgifter från Transportstyrelsen</span>
+          </li>
+          <li id="step-2">
+            <span class="step-dot"></span>
+            <span>Jämför med marknadsdata från Norrland</span>
+          </li>
+          <li id="step-3">
+            <span class="step-dot"></span>
+            <span>Skickar värderingen till din mejl</span>
+          </li>
+        </ul>
+      </div>
+
       <!-- Success state -->
       <div class="success-card" id="successCard" style="display:none;">
         <div class="success-icon">
@@ -388,6 +409,99 @@ import Layout from '../components/Layout.astro';
     margin-top: 4px;
   }
 
+  /* ===== Loading card ===== */
+  .loading-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--bg-dark-4);
+    border-radius: 12px;
+    padding: 56px 40px 48px;
+    border: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+
+  .spinner {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 28px;
+    border: 4px solid rgba(255,255,255,0.08);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loading-card h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--white);
+    margin: 0 0 12px;
+  }
+
+  .loading-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    margin: 0 0 32px;
+  }
+
+  .loading-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 380px;
+    text-align: left;
+  }
+
+  .loading-steps li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    color: rgba(255,255,255,0.35);
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  .loading-steps li.active {
+    color: var(--white);
+  }
+
+  .loading-steps li.done {
+    color: rgba(255,255,255,0.55);
+  }
+
+  .step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .loading-steps li.active .step-dot {
+    background: var(--red);
+    border-color: var(--red);
+    box-shadow: 0 0 0 4px rgba(230,46,45,0.18);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .loading-steps li.done .step-dot {
+    background: #2ecc71;
+    border-color: #2ecc71;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(230,46,45,0.18); }
+    50% { box-shadow: 0 0 0 8px rgba(230,46,45,0.08); }
+  }
+
   .success-card {
     max-width: 640px;
     margin: 0 auto;
@@ -654,6 +768,44 @@ import Layout from '../components/Layout.astro';
       submitBtn.disabled = true;
       submitBtn.textContent = 'Skickar…';
 
+      // Show loading card with stepped progress while API runs
+      var loadingCard = document.getElementById('loadingCard');
+      formCard.style.display = 'none';
+      loadingCard.style.display = 'block';
+      loadingCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      var step1 = document.getElementById('step-1');
+      var step2 = document.getElementById('step-2');
+      var step3 = document.getElementById('step-3');
+      var stepText = document.getElementById('loadingStep');
+
+      // Step animation runs independently of API; gives perceived progress
+      var stepTimers = [];
+      stepTimers.push(setTimeout(function() {
+        step1.classList.remove('active');
+        step1.classList.add('done');
+        step2.classList.add('active');
+        stepText.textContent = 'Jämför med marknadsdata';
+      }, 1200));
+      stepTimers.push(setTimeout(function() {
+        step2.classList.remove('active');
+        step2.classList.add('done');
+        step3.classList.add('active');
+        stepText.textContent = 'Skickar värderingen till din mejl';
+      }, 2400));
+
+      function resetLoading() {
+        stepTimers.forEach(function(t) { clearTimeout(t); });
+        loadingCard.style.display = 'none';
+        formCard.style.display = 'block';
+        step1.className = 'active';
+        step2.className = '';
+        step3.className = '';
+        stepText.textContent = 'Hämtar bil-uppgifter';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Få värderingen på mejl';
+      }
+
       try {
         var res = await fetch('/api/vardera', {
           method: 'POST',
@@ -664,24 +816,31 @@ import Layout from '../components/Layout.astro';
         var data = await res.json();
 
         if (!res.ok) {
+          resetLoading();
           showError(data.error || 'Något gick fel. Försök igen.');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Få värderingen på mejl';
           return;
         }
+
+        // Mark all steps done before transition
+        stepTimers.forEach(function(t) { clearTimeout(t); });
+        step1.classList.remove('active'); step1.classList.add('done');
+        step2.classList.remove('active'); step2.classList.add('done');
+        step3.classList.remove('active'); step3.classList.add('done');
 
         successEmail.textContent = payload.email;
         successSub.textContent = data.autoValuation
           ? 'Värderingen är skickad till din mejl.'
           : 'Vi värderar din bil personligen och återkommer inom 24 timmar.';
 
-        formCard.style.display = 'none';
-        successCard.style.display = 'block';
-        successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Brief pause so user sees completion, then swap to success
+        setTimeout(function() {
+          loadingCard.style.display = 'none';
+          successCard.style.display = 'block';
+          successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 400);
       } catch (err) {
+        resetLoading();
         showError('Något gick fel. Kontrollera din internetanslutning och försök igen.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Få värderingen på mejl';
       }
     });
 
