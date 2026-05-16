@@ -127,14 +127,10 @@ export function renderCustomerEmail(input: CustomerEmailInput): { subject: strin
           </table>`;
           })()}
 
-          ${input.marketSampleSize && input.marketYears && input.marketYears.length > 0 ? `
-          <p style="margin:32px 0 0;font-family:${SANS};font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;text-align:center;">
-            Baserat på <strong style="color:rgba(255,255,255,0.8);font-weight:600;">${input.marketSampleSize} liknande bilar</strong>
-            (${input.marketYears[0]}–${input.marketYears[input.marketYears.length - 1]})
-            i Norrland-marknaden.
-            ${input.marketConfidence === 'low' ? '<br><span style="color:#f59e0b;">⚠️ Få liknande bilar i datan — räkna med ±20% osäkerhet.</span>' : ''}
+          <p style="margin:28px 0 0;font-family:${SANS};font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;text-align:center;">
+            Vill du ha en mer detaljerad värdering?
+            <a href="https://begbilnorr.se/kontakt" style="color:#E62E2D;text-decoration:none;font-weight:600;">Kontakta oss →</a>
           </p>
-          ` : ''}
 
           <!-- Divider -->
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin:32px 0 20px;">
