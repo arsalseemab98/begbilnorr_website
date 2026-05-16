@@ -74,44 +74,23 @@ export const POST: APIRoute = async ({ request }) => {
     let dealerSubject = '';
     let dealerHtml = '';
 
+    // Localize model name for Swedish display (Estate → Kombi, etc).
+    const displayModel = vehicle ? localizeModelSv(vehicle.model) : '';
+
+    // Try fordonlista market data if biluppgifter succeeded
+    let market: Awaited<ReturnType<typeof fetchMarketValuation>> = null;
     if (vehicle) {
-      // Try fordonlista market data first
-      let valuation;
-      let valuationSource: 'market' | 'static' = 'static';
-      let marketSampleSize: number | undefined;
-      let marketConfidence: string | undefined;
-      let marketYears: number[] | undefined;
+      market = await fetchMarketValuation(vehicle.brand, vehicle.model, vehicle.year);
+    }
+    const hasMarket = !!(market && market.confidence !== 'insufficient' && market.basePrice != null);
 
-      const market = await fetchMarketValuation(
-        vehicle.brand,
-        vehicle.model,
-        vehicle.year,
-      );
-
-      if (market && market.confidence !== 'insufficient' && market.basePrice != null) {
-        valuation = calculateFromMarketData({
-          market,
-          miltalMil: miltalNum,
-          skick: skick as Skick,
-        });
-        valuationSource = 'market';
-        marketSampleSize = market.sampleSize;
-        marketConfidence = market.confidence;
-        marketYears = market.matchedYears;
-      } else {
-        valuation = calculateValuation({
-          brand: vehicle.brand,
-          year: vehicle.year,
-          miltalMil: miltalNum,
-          fuel: vehicle.fuel,
-          gearbox: vehicle.gearbox,
-          skick: skick as Skick,
-        });
-      }
-
-      // Localize model name for Swedish display (Estate → Kombi, etc).
-      // Keeps raw vehicle.model for queries; displayModel for user-facing text.
-      const displayModel = localizeModelSv(vehicle.model);
+    if (vehicle && hasMarket && market) {
+      // ---- Market-data valuation ----
+      const valuation = calculateFromMarketData({
+        market,
+        miltalMil: miltalNum,
+        skick: skick as Skick,
+      });
 
       const c = renderCustomerEmail({
         namn: namn.trim(),
@@ -123,9 +102,9 @@ export const POST: APIRoute = async ({ request }) => {
         fuel: vehicle.fuel,
         skick: skick as Skick,
         valuation,
-        marketSampleSize,
-        marketConfidence,
-        marketYears,
+        marketSampleSize: market.sampleSize,
+        marketConfidence: market.confidence,
+        marketYears: market.matchedYears,
       });
       customerSubject = c.subject;
       customerHtml = c.html;
@@ -143,31 +122,43 @@ export const POST: APIRoute = async ({ request }) => {
         skick: skick as Skick,
         valuation,
         utmData: utm_data ?? null,
-        valuationSource,
-        marketSampleSize,
-        marketConfidence,
+        valuationSource: 'market',
+        marketSampleSize: market.sampleSize,
+        marketConfidence: market.confidence,
       });
       dealerSubject = d.subject;
       dealerHtml = d.html;
     } else {
-      // ---- Fallback: manual review ----
-      customerSubject = 'Tack för din värderingsförfrågan';
+      // ---- Manual review: biluppgifter failed OR fordonlista insufficient ----
+      const reason = !vehicle
+        ? `biluppgifter.se-uppslag misslyckades: ${lookupError ?? 'okänt fel'}`
+        : 'För lite marknadsdata för automatisk värdering';
+      const carDescription = vehicle
+        ? `${vehicle.brand} ${displayModel} (${vehicle.year})`
+        : `regnr ${cleanRegnr}`;
+
+      customerSubject = 'Vi värderar din bil personligen';
       customerHtml = `
         <p>Hej ${namn.trim()},</p>
-        <p>Tack för att du vill värdera din bil hos oss. Vi kunde inte göra en automatisk uppslagning av <strong>${cleanRegnr}</strong>, men vi värderar din bil personligen och återkommer inom 24 timmar.</p>
+        <p>Tack för att du vill värdera din bil hos oss.</p>
+        <p>Vi behöver lite mer information för att göra en exakt värdering av din <strong>${carDescription}</strong>. En av våra säljare kommer att kontakta dig inom 24 timmar för att gå igenom uppgifterna och ge dig en konkret värdering.</p>
+        ${cleanPhone ? `<p>Vi ringer dig på <strong>${cleanPhone}</strong>.</p>` : `<p>Vi mejlar dig på <strong>${email}</strong>.</p>`}
         <p>Med vänliga hälsningar,<br>Begbilnorr — Luleå</p>
       `;
       dealerSubject = `Manuell värdering krävs — ${namn.trim()} (${cleanRegnr})`;
       dealerHtml = `
         <h2>Värderingsförfrågan — manuell hantering krävs</h2>
-        <p><strong>Anledning:</strong> biluppgifter.se-uppslag misslyckades: ${lookupError}</p>
+        <p><strong>Anledning:</strong> ${reason}</p>
         <p>
           <strong>Kund:</strong> ${namn.trim()}<br>
-          <strong>E-post:</strong> ${email}<br>
-          <strong>Telefon:</strong> ${cleanPhone ?? '(ej angiven)'}<br>
+          <strong>E-post:</strong> <a href="mailto:${email}">${email}</a><br>
+          <strong>Telefon:</strong> ${cleanPhone ? `<a href="tel:${cleanPhone}">${cleanPhone}</a>` : '(ej angiven)'}<br>
         </p>
         <p>
           <strong>Regnr:</strong> ${cleanRegnr}<br>
+          ${vehicle ? `<strong>Bil:</strong> ${vehicle.brand} ${displayModel} (${vehicle.year})<br>` : ''}
+          ${vehicle ? `<strong>Drivmedel:</strong> ${vehicle.fuel}<br>` : ''}
+          ${vehicle ? `<strong>Växellåda:</strong> ${vehicle.gearbox}<br>` : ''}
           <strong>Miltal:</strong> ${miltalNum} mil<br>
           <strong>Skick (uppgivet):</strong> ${skick}
         </p>
@@ -196,7 +187,7 @@ export const POST: APIRoute = async ({ request }) => {
         name: namn.trim(),
         email,
         phone: cleanPhone,
-        message: `Värderingsförfrågan: ${cleanRegnr}, ${miltalNum} mil, skick=${skick}${vehicle ? `. Auto-värdering skickad.` : `. MANUELL HANTERING KRÄVS (biluppgifter-fel: ${lookupError}).`}`,
+        message: `Värderingsförfrågan: ${cleanRegnr}, ${miltalNum} mil, skick=${skick}${hasMarket ? `. Auto-värdering skickad.` : !vehicle ? `. MANUELL HANTERING KRÄVS (biluppgifter-fel: ${lookupError}).` : `. MANUELL HANTERING KRÄVS (för lite marknadsdata).`}`,
         source: 'vardering-v2',
         sent_successfully: customerEmailSent && dealerEmailSent,
         utm_data: utm_data ?? {},
@@ -242,7 +233,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, autoValuation: !!vehicle }),
+      JSON.stringify({ success: true, autoValuation: hasMarket }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (err) {
