@@ -20,6 +20,21 @@ export interface VehicleData {
   weight: number | null;  // tjänstevikt kg, null if unknown
 }
 
+// Translates English body-type suffixes returned by biluppgifter to Swedish.
+// Toyota officially names cars in English ("Corolla Estate") but Swedish customers
+// say "Kombi". Applied only at display time — raw model name preserved internally.
+export function localizeModelSv(model: string): string {
+  if (!model) return model;
+  return model
+    .replace(/\bEstate\b/gi, 'Kombi')
+    .replace(/\bSaloon\b/gi, 'Sedan')
+    .replace(/\bSedan\b/g, 'Sedan')
+    .replace(/\bHatchback\b/gi, 'Halvkombi')
+    .replace(/\bConvertible\b/gi, 'Cabriolet')
+    .replace(/\bCoupe\b/gi, 'Coupé')
+    .trim();
+}
+
 export class BiluppgifterError extends Error {
   constructor(message: string, public statusCode?: number) {
     super(message);

@@ -3,7 +3,7 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase';
 import { sendEmail } from '../../lib/email';
-import { getVehicleByRegnr, BiluppgifterError } from '../../lib/biluppgifter';
+import { getVehicleByRegnr, BiluppgifterError, localizeModelSv } from '../../lib/biluppgifter';
 import { calculateValuation, calculateFromMarketData, type Skick } from '../../lib/valuation';
 import { fetchMarketValuation } from '../../lib/fordonlista-client';
 import { checkRateLimit, recordLookup, extractIP, RATE_LIMIT_PER_DAY } from '../../lib/rate-limit';
@@ -109,11 +109,15 @@ export const POST: APIRoute = async ({ request }) => {
         });
       }
 
+      // Localize model name for Swedish display (Estate → Kombi, etc).
+      // Keeps raw vehicle.model for queries; displayModel for user-facing text.
+      const displayModel = localizeModelSv(vehicle.model);
+
       const c = renderCustomerEmail({
         namn: namn.trim(),
         email,
         brand: vehicle.brand,
-        model: vehicle.model,
+        model: displayModel,
         year: vehicle.year,
         miltalMil: miltalNum,
         fuel: vehicle.fuel,
@@ -132,7 +136,7 @@ export const POST: APIRoute = async ({ request }) => {
         phone: cleanPhone,
         regnr: cleanRegnr,
         brand: vehicle.brand,
-        model: vehicle.model,
+        model: displayModel,
         year: vehicle.year,
         miltalMil: miltalNum,
         fuel: vehicle.fuel,
