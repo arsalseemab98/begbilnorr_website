@@ -44,27 +44,21 @@ export function renderCustomerEmail(input: CustomerEmailInput): { subject: strin
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <title>${subject}</title>
-  <!-- DM Sans + DM Serif Display from Google Fonts. Apple Mail/iOS Mail/Thunderbird honour these;
-       Gmail web + Outlook fall back to system serif/sans via the font-stack below. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
-    /* Reset for Outlook + dark-mode tweaks */
-    body { margin:0 !important; padding:0 !important; }
-    a { color: inherit; }
-  </style>
 </head>
+<!-- Preheader: shown by Gmail in the inbox preview but invisible in the body -->
+<div style="display:none;font-size:1px;color:#000;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">Värdering ${escapeHtml(brand)} ${escapeHtml(model)} ${year} — uppskattat marknadsvärde ${fmt(valuation.estimate)} kr</div>
 <body style="margin:0;padding:0;background:#000000;font-family:${SANS};color:#FFFFFF;">
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#000000;">
     <tr><td align="center" style="padding:32px 16px;">
 
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width:600px;width:100%;">
 
-        <!-- Header — navbar logo -->
-        <tr><td align="center" style="padding-bottom:28px;">
-          <img src="https://begbilnorr.se/images/begbilnorr-logo-nav.webp" alt="Begbilnorr" width="150" height="90" style="display:block;border:0;outline:none;text-decoration:none;width:150px;height:auto;">
+        <!-- Header — navbar logo (PNG for broadest email client support) -->
+        <tr><td align="center" style="padding:8px 0 28px 0;">
+          <img src="https://begbilnorr.se/images/begbilnorr-logo-nav.png" alt="Begbilnorr" width="150" height="90" style="display:block;margin:0 auto;border:0;outline:none;text-decoration:none;width:150px;height:90px;max-width:150px;">
         </td></tr>
 
         <!-- Body card — matches site's --bg-dark-3 -->
