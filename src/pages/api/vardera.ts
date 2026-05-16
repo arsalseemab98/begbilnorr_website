@@ -111,6 +111,7 @@ export const POST: APIRoute = async ({ request }) => {
 
       const c = renderCustomerEmail({
         namn: namn.trim(),
+        email,
         brand: vehicle.brand,
         model: vehicle.model,
         year: vehicle.year,

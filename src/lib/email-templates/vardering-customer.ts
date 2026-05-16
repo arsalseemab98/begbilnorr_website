@@ -12,6 +12,7 @@ import { skickLabel } from '../valuation';
 
 export interface CustomerEmailInput {
   namn: string;
+  email: string;
   brand: string;
   model: string;
   year: number;
@@ -36,7 +37,7 @@ const SANS = `'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetic
 const SERIF = `'DM Serif Display', Georgia, 'Times New Roman', serif`;
 
 export function renderCustomerEmail(input: CustomerEmailInput): { subject: string; html: string } {
-  const { namn, brand, model, year, miltalMil, fuel, skick, valuation } = input;
+  const { namn, email, brand, model, year, miltalMil, fuel, skick, valuation } = input;
   const subject = `Värdering av din ${brand} ${model} (${year})`;
 
   const html = `<!DOCTYPE html>
@@ -101,15 +102,30 @@ export function renderCustomerEmail(input: CustomerEmailInput): { subject: strin
             ${detailRow('Skick', skickLabel(skick), true)}
           </table>
 
-          <!-- CTA — matches site's .btn-primary -->
-          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:8px;">
+          <!-- CTA — links to /begar-bud with car + customer context pre-filled -->
+          ${(() => {
+            const params = new URLSearchParams({
+              namn: namn,
+              email: email,
+              brand: brand,
+              model: model,
+              year: String(year),
+              miltal: String(miltalMil),
+              skick: skick,
+              estimate: String(valuation.estimate),
+              utm_source: 'email',
+              utm_medium: 'vardering',
+              utm_campaign: 'bud-request',
+            });
+            return `<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:8px;">
             <tr><td align="center">
-              <a href="https://begbilnorr.se/salj-bil?utm_source=email&utm_medium=vardering&utm_campaign=vardering-customer"
+              <a href="https://begbilnorr.se/begar-bud?${params.toString()}"
                  style="display:inline-block;background:#E62E2D;color:#FFFFFF;text-decoration:none;font-family:${SANS};font-weight:600;font-size:15px;padding:16px 32px;border-radius:8px;letter-spacing:0.3px;">
                 Få ett konkret bud inom 24h →
               </a>
             </td></tr>
-          </table>
+          </table>`;
+          })()}
 
           ${input.marketSampleSize && input.marketYears && input.marketYears.length > 0 ? `
           <p style="margin:32px 0 0;font-family:${SANS};font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;text-align:center;">
