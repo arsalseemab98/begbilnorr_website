@@ -62,9 +62,9 @@ export function renderCustomerEmail(input: CustomerEmailInput): { subject: strin
 
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width:600px;width:100%;">
 
-        <!-- Header — logo -->
+        <!-- Header — navbar logo -->
         <tr><td align="center" style="padding-bottom:28px;">
-          <img src="https://begbilnorr.se/images/begbilnorr-logo.webp" alt="Begbilnorr" width="180" style="display:block;border:0;outline:none;text-decoration:none;height:auto;">
+          <img src="https://begbilnorr.se/images/begbilnorr-logo-nav.webp" alt="Begbilnorr" width="150" height="90" style="display:block;border:0;outline:none;text-decoration:none;width:150px;height:auto;">
         </td></tr>
 
         <!-- Body card — matches site's --bg-dark-3 -->
