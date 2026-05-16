@@ -1,5 +1,7 @@
 // src/lib/valuation.ts
 
+import type { MarketValuation } from './fordonlista-client';
+
 export type Skick = 'som_ny' | 'mycket_bra' | 'bra' | 'sliten';
 
 export interface ValuationInput {
@@ -94,4 +96,49 @@ const SKICK_LABELS: Record<Skick, string> = {
 
 export function skickLabel(s: Skick): string {
   return SKICK_LABELS[s];
+}
+
+// ─── Market-data variant ──────────────────────────────────────────────────
+// Appended in fordonlista integration (2026-05-16). Used when the
+// fordonlista API returns sufficient data; otherwise calculateValuation()
+// (the static algorithm above) is used as fallback.
+
+export interface MarketAdjustmentInput {
+  market: MarketValuation;        // confidence must NOT be 'insufficient'
+  miltalMil: number;
+  skick: Skick;
+}
+
+const MILEAGE_PENALTY_KR_PER_MIL = 8;
+
+export function calculateFromMarketData(input: MarketAdjustmentInput): ValuationResult {
+  const { market, miltalMil, skick } = input;
+  if (market.confidence === 'insufficient' || market.basePrice == null) {
+    throw new Error('calculateFromMarketData called with insufficient data');
+  }
+
+  const expectedMileage = market.avgMileage ?? 13000;
+  const mileageDiff = miltalMil - expectedMileage;
+  const mileageAdjustment = -mileageDiff * MILEAGE_PENALTY_KR_PER_MIL;
+
+  const skickMultiplier = ({
+    som_ny: 1.10,
+    mycket_bra: 1.00,
+    bra: 0.92,
+    sliten: 0.80,
+  } as const)[skick];
+
+  const estimate = Math.max(
+    5000,
+    Math.round((market.basePrice + mileageAdjustment) * skickMultiplier),
+  );
+
+  return {
+    estimate,
+    rangeLow: Math.round(estimate * 0.88),
+    rangeHigh: Math.round(estimate * 1.12),
+    tradeIn: Math.round(estimate * 0.85),
+    privateSale: estimate,
+    bgnBud: Math.round(estimate * 0.90),
+  };
 }
