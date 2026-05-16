@@ -4,7 +4,8 @@ import type { APIRoute } from 'astro';
 import { supabase } from '../../lib/supabase';
 import { sendEmail } from '../../lib/email';
 import { getVehicleByRegnr, BiluppgifterError } from '../../lib/biluppgifter';
-import { calculateValuation, type Skick } from '../../lib/valuation';
+import { calculateValuation, calculateFromMarketData, type Skick } from '../../lib/valuation';
+import { fetchMarketValuation } from '../../lib/fordonlista-client';
 import { checkRateLimit, recordLookup, extractIP, RATE_LIMIT_PER_DAY } from '../../lib/rate-limit';
 import { renderCustomerEmail } from '../../lib/email-templates/vardering-customer';
 import { renderDealerEmail } from '../../lib/email-templates/vardering-dealer';
@@ -74,14 +75,39 @@ export const POST: APIRoute = async ({ request }) => {
     let dealerHtml = '';
 
     if (vehicle) {
-      const valuation = calculateValuation({
-        brand: vehicle.brand,
-        year: vehicle.year,
-        miltalMil: miltalNum,
-        fuel: vehicle.fuel,
-        gearbox: vehicle.gearbox,
-        skick: skick as Skick,
-      });
+      // Try fordonlista market data first
+      let valuation;
+      let valuationSource: 'market' | 'static' = 'static';
+      let marketSampleSize: number | undefined;
+      let marketConfidence: string | undefined;
+      let marketYears: number[] | undefined;
+
+      const market = await fetchMarketValuation(
+        vehicle.brand,
+        vehicle.model,
+        vehicle.year,
+      );
+
+      if (market && market.confidence !== 'insufficient' && market.basePrice != null) {
+        valuation = calculateFromMarketData({
+          market,
+          miltalMil: miltalNum,
+          skick: skick as Skick,
+        });
+        valuationSource = 'market';
+        marketSampleSize = market.sampleSize;
+        marketConfidence = market.confidence;
+        marketYears = market.matchedYears;
+      } else {
+        valuation = calculateValuation({
+          brand: vehicle.brand,
+          year: vehicle.year,
+          miltalMil: miltalNum,
+          fuel: vehicle.fuel,
+          gearbox: vehicle.gearbox,
+          skick: skick as Skick,
+        });
+      }
 
       const c = renderCustomerEmail({
         namn: namn.trim(),
@@ -92,6 +118,9 @@ export const POST: APIRoute = async ({ request }) => {
         fuel: vehicle.fuel,
         skick: skick as Skick,
         valuation,
+        marketSampleSize,
+        marketConfidence,
+        marketYears,
       });
       customerSubject = c.subject;
       customerHtml = c.html;
@@ -109,6 +138,9 @@ export const POST: APIRoute = async ({ request }) => {
         skick: skick as Skick,
         valuation,
         utmData: utm_data ?? null,
+        valuationSource,
+        marketSampleSize,
+        marketConfidence,
       });
       dealerSubject = d.subject;
       dealerHtml = d.html;

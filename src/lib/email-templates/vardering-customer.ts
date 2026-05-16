@@ -12,6 +12,9 @@ export interface CustomerEmailInput {
   fuel: string;
   skick: Skick;
   valuation: ValuationResult;
+  marketSampleSize?: number;
+  marketConfidence?: string;
+  marketYears?: number[];
 }
 
 function fmt(n: number): string {
@@ -91,6 +94,15 @@ export function renderCustomerEmail(input: CustomerEmailInput): { subject: strin
               </a>
             </td></tr>
           </table>
+
+          ${input.marketSampleSize && input.marketYears && input.marketYears.length > 0 ? `
+          <p style="margin:24px 0 0;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
+            Baserat på <strong style="color:rgba(255,255,255,0.75);">${input.marketSampleSize} liknande bilar</strong>
+            (${input.marketYears[0]}-${input.marketYears[input.marketYears.length - 1]})
+            i Norrland-marknaden.
+            ${input.marketConfidence === 'low' ? '<br><span style="color:#f59e0b;">⚠️ Få liknande bilar i datan — räkna med ±20% osäkerhet.</span>' : ''}
+          </p>
+          ` : ''}
 
           <!-- Disclaimer -->
           <p style="margin:24px 0 0;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">

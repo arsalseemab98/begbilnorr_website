@@ -16,6 +16,9 @@ export interface DealerEmailInput {
   skick: Skick;
   valuation: ValuationResult;
   utmData: Record<string, unknown> | null;
+  valuationSource?: 'market' | 'static';
+  marketSampleSize?: number;
+  marketConfidence?: string;
 }
 
 function fmt(n: number): string {
@@ -61,6 +64,9 @@ export function renderDealerEmail(input: DealerEmailInput): { subject: string; h
       <strong>Begbilnorr-bud:</strong> ${fmt(valuation.bgnBud)} kr
     </p>
 
+    ${input.valuationSource ? `
+      <p><strong>Värderings-källa:</strong> ${input.valuationSource === 'market' ? `Fordonlista (${input.marketSampleSize ?? 0} liknande bilar, confidence: ${input.marketConfidence ?? '-'})` : 'Statisk algoritm (ingen marknadsdata)'}</p>
+    ` : ''}
     <hr>
     ${utmLine}
   `;
