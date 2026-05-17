@@ -22,7 +22,6 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
     ) : (
       <span style="font-size:64px;opacity:0.2;">&#128663;</span>
     )}
-    <div class="watermark">Begbilnorr</div>
     <span class="badge-fuel">{car.fuel_type}</span>
     {car.is_vat_deductible && (
       <span class="badge-vat">Moms</span>
