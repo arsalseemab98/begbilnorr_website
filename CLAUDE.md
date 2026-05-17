@@ -146,39 +146,70 @@ Hanteras via `redirects`-tabellen i Supabase + `[...slug].astro` catch-all (301)
 - "Skapat av swiftcore.se" med SwiftCore-favicon (`/images/swiftcore-favicon.png`)
 
 ## Värderingsverktyg (/vardera-bil)
-Email-gated lead form med regnr-uppslag via biluppgifter.se + marknadsdata från fordonlista.
+Email-gated lead form med 3-stegs progressive disclosure. Använder marknadsdata från fordonlista-projektet via secure API.
 
 ### Filer
 - API route: `src/pages/api/vardera.ts`
-- Statisk algoritm (fallback): `src/lib/valuation.ts` → `calculateValuation()`
 - Marknadsdata-algoritm: `src/lib/valuation.ts` → `calculateFromMarketData()`
+- Statisk algoritm (kvar i kod, EJ använd i live-flöde): `src/lib/valuation.ts` → `calculateValuation()`
 - Fordonlista-klient: `src/lib/fordonlista-client.ts`
 - Regnr-lookup: `src/lib/biluppgifter.ts` (kräver `BILUPPGIFTER_API_KEY`)
+- Model-localisering: `localizeModelSv()` i biluppgifter.ts (Estate → Kombi etc)
 - Rate limit: 5/IP/24h via `vardering_lookups` (`src/lib/rate-limit.ts`)
-- Kund-mejl: dark Begbilnorr-design (`src/lib/email-templates/vardering-customer.ts`)
-- Dealer-mejl: notis till `info@begbilnorr.se` (`src/lib/email-templates/vardering-dealer.ts`)
+- Kund-mejl: `src/lib/email-templates/vardering-customer.ts`
+- Dealer-mejl: `src/lib/email-templates/vardering-dealer.ts`
+- Branded wrapper för alla /api/contact-mejl: `src/lib/email-templates/branded-wrapper.ts`
 
-### Värderings-flöde
-1. biluppgifter.se → märke, modell, år, drivmedel, växellåda
-2. POST till `fordonlista.vercel.app/api/v1/valuation` (kräver `FORDONLISTA_VALUATION_KEY` + `FORDONLISTA_VALUATION_URL`)
-3. Om `confidence` ∈ {high, medium, low} → använd `basePrice` från Norrland-marknadsdata + miltal/skick-justering
-4. Om `insufficient` eller API-fel → fallback till statisk algoritm (`BASE_PRICES`-map)
-5. Mejl till kund inkluderar "Baserat på N liknande bilar (YYYY-YYYY)" när marknadsdata användes
+### Flöde
+1. **Form** — progressive disclosure: regnr + miltal → skick visas → "Få värdering" → kontaktuppgifter visas
+2. **Loading** — 3-stegs progress card medan API kör (~2-3s)
+3. **biluppgifter.se** → märke, modell, år, drivmedel, växellåda
+4. **fordonlista API** (POST `/api/v1/valuation`) → market-baserad basePrice
+5. **Resultat:**
+   - `confidence` ∈ {high, medium, low} → auto-värderingsmejl med marknadspris
+   - `confidence: insufficient` ELLER biluppgifter fail → manual review-mejl ("Vi behöver mer uppgifter från dig")
+6. **Dealer notis** till `info@begbilnorr.se` med all info + källa (auto/manuell)
 
-### Skick-multipliers (båda algoritmerna)
-- ✨ Som ny: +10%
-- 👍 Mycket bra: 0%
-- 👌 Bra: −8%
-- 🔧 Sliten: −20%
+### Algoritm-justeringar (calculateFromMarketData)
+- basePrice = viktad median från fordonlista (privat först, handlare × 0.75 om < 5 privata)
+- Miltal-cap: ±35% / ±15% av basePrice (skydd mot extrem miltal som drev ned värdet till floor)
+- Miltal penalty: 6 kr/mil deviation från sample avg
+- Skick: ✨ Som ny +10%, 👍 Mycket bra 0%, 👌 Bra −8%, 🔧 Sliten −20%
 
 ### Source-labels
 - `contact_submissions.source = 'vardering-v2'`
 - `leads.form_labels` inkluderar `'Värdering (auto)'`
-- Dealer-mejl visar "Värderings-källa: Fordonlista (N liknande, confidence X)" eller "Statisk algoritm"
+- Dealer-mejl visar "Värderings-källa: Fordonlista (N liknande, confidence X)" eller "Manuell hantering"
 
-### Specs + planer
-- Email-gated flow: `docs/superpowers/specs/2026-05-14-vardera-bil-email-flow-design.md` (plan: `docs/superpowers/plans/2026-05-14-vardera-bil-email-flow.md`)
-- Fordonlista-integration: `docs/superpowers/specs/2026-05-16-fordonlista-valuation-integration-design.md` (plan: `docs/superpowers/plans/2026-05-16-fordonlista-valuation-integration.md`)
+## /begar-bud — modal bid-request-sida
+Single-purpose sida som CTA i värderingsmejlet pekar till.
+- URL: `/begar-bud?regnr=X&brand=Y&model=Z&year=W&miltal=...&skick=...&estimate=...&namn=N&email=E`
+- Fil: `src/pages/begar-bud.astro`
+- Layout: noindex, focused modal-style card (max 440px), bara telefon-fält synligt
+- Namn + e-post pre-fyllda från URL (hidden inputs)
+- Submit → POST `/api/contact` med `source: 'bud-request'`
+- Dealer får branded mejl med all kund + bil-context
+
+## Övriga verktyg (/verktyg + specifika tool-sidor)
+- `/verktyg` — hub-sida som listar 4 tools
+- `/billan-kalkylator` — pris/insats/löptid/ränta-sliders + lån vs leasing vs kontant
+- `/bilskatt-kollare` — bonus-malus + viktbaserad fordonsskatt 2026
+- `/besiktning-datum` — räknar besiktningsperiod från reg-datum
+- Navbar-länk: "Verktyg" → `/verktyg`
+- Footer-länkar: alla 4 tools listade
+
+## Email-domän setup (DMARC + BIMI)
+- **SPF + DKIM**: ✅ Microsoft 365 (default)
+- **DMARC**: `v=DMARC1; p=quarantine; rua/ruf → info@begbilnorr.se` (DNS TXT på `_dmarc.begbilnorr.se`)
+- **BIMI**: TXT på `default._bimi.begbilnorr.se` → `https://begbilnorr.se/bimi-logo.svg`
+- **SVG-logo**: `public/bimi-logo.svg` (Tiny PS format, 403 bytes, röd kvadrat med vit "B"-monogram)
+- **Visning**: Logon syns hos Yahoo/Apple/Fastmail. **INTE Gmail** (kräver VMC/CMC-cert, ~3,500-15,000 kr/år)
+- **Skydd**: DMARC `p=quarantine` blockerar förfalskade mejl som påstår sig vara från begbilnorr.se
+
+## Specs + planer (superpowers)
+- Email-gated valuation flow: `docs/superpowers/specs/2026-05-14-vardera-bil-email-flow-design.md`
+- Fordonlista valuation integration: `docs/superpowers/specs/2026-05-16-fordonlista-valuation-integration-design.md`
+- Motsvarande planer i `docs/superpowers/plans/`
 
 ## Kommandon
 ```bash
