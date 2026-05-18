@@ -7,6 +7,7 @@
 
 ## 2026-05-18
 
+- **12:20 · incident(carcard)** · Bilbilderna försvann i prod efter förra commiten — Blocket CDN returnerar 404 för `/dynamic/800w/` och `/dynamic/1200w/`. Endast `320w/480w/640w/1600w` finns (verifierat via curl). Bytt till 640w (default) + 1600w (retina). Commit `2d5c686`. **Lärdom:** ALLTID verifiera CDN bucket-widths med `curl -I` innan deploy. Inget API doc fanns för Blocket CDN — antagandet att `800w/1200w` skulle finnas var fel.
 - **10:25 · perf(seo)** · Tre Lighthouse-fixar efter audit av prod (91/95/96/100 → mål 95+/100/100/100):
   1. **Three.js gating** (`src/pages/index.astro`): Laddar bara på desktop (≥769px), inte vid `prefers-reduced-motion`, inte utan WebGL, och via `requestIdleCallback`. Tar bort `THREE.WebGLRenderer: Error creating WebGL context` från console + sparar 87 KiB unused JS på mobil.
   2. **Blocket-bilder 1600w → 800w** (`src/components/CarCard.astro`): srcset med 800w/1200w + `sizes="(max-width:768px) 100vw, 400px"` + `decoding="async"`. Karusell-JS mirror:ar samma transform. Sparar ~180 KiB på första sidvisningen, LCP 3.46s → förväntat ~2.0-2.5s.
