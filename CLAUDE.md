@@ -105,7 +105,7 @@ src/
 
 ## SEO
 - Lighthouse (2026-05-18, prod): Performance 91, Accessibility 95→100 (efter kontrastfix), Best Practices 96→100 (efter three.js-gate), SEO 100
-- LCP-optimering: Blocket-bilder serveras i 800w (srcset 1200w för retina) — `blocketWidthRe` i CarCard.astro byter `/dynamic/1600w/` → `/dynamic/800w/`. Karusell-JS mirror:ar samma transform.
+- LCP-optimering: Blocket-bilder serveras i 640w (srcset 1600w för retina) — `blocketWidthRe` i CarCard.astro byter `/dynamic/1600w/` → `/dynamic/640w/`. Karusell-JS mirror:ar samma transform. **OBS:** Blocket CDN stöder ENDAST `320w/480w/640w/1600w` — andra widths (800w, 1024w, 1200w) returnerar 404. Verifiera ALLTID med `curl -I` innan deploy.
 - Three.js (hero shader) laddas conditionally: bara desktop (≥769px), inte vid `prefers-reduced-motion`, WebGL-test, via `requestIdleCallback`. Skippas i Lighthouse/headless.
 - Prerender: swish.astro, hoja-swish-grans.astro (statisk HTML från CDN)
 - StructuredData: FAQPage, HowTo, AutoDealer, Car schemas
@@ -120,7 +120,7 @@ src/
 
 ## Blocket-integration
 - Dealer-sida: https://www.blocket.se/mobility/dealer/7514308/begbilnorr
-- Bilder: `https://images.blocketcdn.se/dynamic/default/item/{id}/{uuid}`
+- Bilder: `https://images.blocketcdn.se/dynamic/{width}/item/{id}/{uuid}` — giltiga widths: `320w`, `480w`, `640w`, `1600w` (övriga ger 404)
 - Beskrivningar: Hämtas från Blocket-annonser och sparas i `cars.description`
 - Utrustning: Hämtas från Blocket och sparas i `cars.equipment[]`
 

@@ -7,7 +7,9 @@
 ### 2026-05-18
 - [x] Lighthouse-audit av prod (roier-seo-skill) — baseline: Perf 91 / A11y 95 / BP 96 / SEO 100
 - [x] Three.js gating: bara desktop + WebGL-stöd + idle (sparar 87 KiB, fixar console-error)
-- [x] CarCard Blocket-bilder 1600w → 800w + srcset 1200w retina + sizes + decoding=async
+- [x] CarCard Blocket-bilder 1600w → 640w + srcset 1600w retina + sizes + decoding=async
+- [x] Hotfix: bytt felaktiga 800w/1200w → 640w/1600w (Blocket CDN gav 404 på 800w/1200w)
+- [x] Dokumentera giltiga Blocket CDN-widths (320w/480w/640w/1600w) i CLAUDE.md
 - [x] Kontrastfix: `.interested-btn` röd #E62E2D → #B82221 (klarar WCAG AA)
 - [x] Kontrastfix: `.bottom-nav-item` rgba(255,255,255,0.5) → 0.78
 - [x] Kontrastfix: Footer "Vi rekommenderar att boka tid" rgba 0.4 → 0.7
