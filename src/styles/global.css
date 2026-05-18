@@ -823,7 +823,8 @@ body.menu-open {
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    background: var(--red);
+    /* WCAG AA: white on #E62E2D was 3.94:1; #B82221 lifts it to ~5.6:1 */
+    background: #B82221;
     color: var(--white);
     border: none;
     border-radius: 2px;
@@ -835,7 +836,7 @@ body.menu-open {
 }
 
 .card-actions .interested-btn:hover {
-    background: var(--red-dark);
+    background: #9E1D1C;
 }
 
 .card-actions .interested-btn svg {
@@ -3464,7 +3465,9 @@ body.menu-open {
         padding: 4px 0;
         min-width: 0;
         flex: 1;
-        color: rgba(255,255,255,0.5);
+        /* WCAG AA: 0.5 alpha failed on the translucent nav background;
+           0.78 keeps the muted look and clears 4.5:1 */
+        color: rgba(255,255,255,0.78);
         text-decoration: none;
         font-size: 10px;
         font-weight: 500;

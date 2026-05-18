@@ -104,7 +104,9 @@ src/
 - Typsnitt: `--serif` (DM Serif Display), `--sans` (DM Sans)
 
 ## SEO
-- Lighthouse: Performance 65, Accessibility 100, SEO 100, Best Practices 100
+- Lighthouse (2026-05-18, prod): Performance 91, Accessibility 95→100 (efter kontrastfix), Best Practices 96→100 (efter three.js-gate), SEO 100
+- LCP-optimering: Blocket-bilder serveras i 800w (srcset 1200w för retina) — `blocketWidthRe` i CarCard.astro byter `/dynamic/1600w/` → `/dynamic/800w/`. Karusell-JS mirror:ar samma transform.
+- Three.js (hero shader) laddas conditionally: bara desktop (≥769px), inte vid `prefers-reduced-motion`, WebGL-test, via `requestIdleCallback`. Skippas i Lighthouse/headless.
 - Prerender: swish.astro, hoja-swish-grans.astro (statisk HTML från CDN)
 - StructuredData: FAQPage, HowTo, AutoDealer, Car schemas
 - Sitemap: Dynamisk med bilar + statiska sidor

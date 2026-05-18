@@ -12,13 +12,21 @@ const images = car.images?.slice(0, 8) || [];
 const mainImage = images[0];
 const hasMultiple = images.length > 1;
 const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
+
+// Cards render at ~400px wide; Blocket CDN serves images at fixed width
+// buckets via the /dynamic/<W>w/ path segment. Swap 1600w to 800w (2x DPI)
+// to cut payload ~60% without visible quality loss in the card thumb.
+const blocketWidthRe = /\/dynamic\/\d+w\//;
+const mainImage800 = mainImage ? mainImage.replace(blocketWidthRe, '/dynamic/800w/') : mainImage;
+const mainImage1200 = mainImage ? mainImage.replace(blocketWidthRe, '/dynamic/1200w/') : mainImage;
+const mainSrcset = mainImage ? mainImage800 + ' 800w, ' + mainImage1200 + ' 1200w' : undefined;
 ---
 
 <div class="car-card" data-href={`/bilar/${car.slug}`}>
   <a href={`/bilar/${car.slug}`} class="car-card-link" aria-label={`Visa ${car.full_name}`}></a>
   <div class="car-card-image" data-images={hasMultiple ? JSON.stringify(images) : undefined}>
     {mainImage ? (
-      <img src={mainImage} alt={`Begagnad ${car.full_name} till salu Luleå`} loading={eager ? "eager" : "lazy"} width="400" height="220" class="carousel-img" {...(eager ? { fetchpriority: "high" as const } : {})} />
+      <img src={mainImage800} srcset={mainSrcset} sizes="(max-width: 768px) 100vw, 400px" alt={`Begagnad ${car.full_name} till salu Luleå`} loading={eager ? "eager" : "lazy"} decoding="async" width="400" height="220" class="carousel-img" fetchpriority={eager ? "high" : "auto"} />
     ) : (
       <span style="font-size:64px;opacity:0.2;">&#128663;</span>
     )}
@@ -108,7 +116,10 @@ const monthly = car.monthly_payment || calculateMonthlyPayment(car.price);
       if (el.dataset.carouselInit) return;
       el.dataset.carouselInit = '1';
 
-      const images: string[] = JSON.parse(el.dataset.images || '[]');
+      const rawImages: string[] = JSON.parse(el.dataset.images || '[]');
+      // Mirror the server-side blocketWidth() helper so carousel navigation
+      // also gets the smaller bucket variant.
+      const images: string[] = rawImages.map((u) => u.replace(/\/dynamic\/\d+w\//, '/dynamic/800w/'));
       if (images.length < 2) return;
 
       const img = el.querySelector('.carousel-img') as HTMLImageElement;

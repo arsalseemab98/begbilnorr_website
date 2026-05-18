@@ -4,6 +4,14 @@
 
 ## ✅ Klart (sorterat senast överst)
 
+### 2026-05-18
+- [x] Lighthouse-audit av prod (roier-seo-skill) — baseline: Perf 91 / A11y 95 / BP 96 / SEO 100
+- [x] Three.js gating: bara desktop + WebGL-stöd + idle (sparar 87 KiB, fixar console-error)
+- [x] CarCard Blocket-bilder 1600w → 800w + srcset 1200w retina + sizes + decoding=async
+- [x] Kontrastfix: `.interested-btn` röd #E62E2D → #B82221 (klarar WCAG AA)
+- [x] Kontrastfix: `.bottom-nav-item` rgba(255,255,255,0.5) → 0.78
+- [x] Kontrastfix: Footer "Vi rekommenderar att boka tid" rgba 0.4 → 0.7
+
 ### 2026-05-17
 - [x] Ta bort `Begbilnorr`-watermark-overlay från alla bil-bilder (CarCard + bilar/[slug] + CSS)
 - [x] Update CLAUDE.md + skapa TDD.md + DEVLOG.md

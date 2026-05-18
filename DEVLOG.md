@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-05-18
+
+- **10:25 · perf(seo)** · Tre Lighthouse-fixar efter audit av prod (91/95/96/100 → mål 95+/100/100/100):
+  1. **Three.js gating** (`src/pages/index.astro`): Laddar bara på desktop (≥769px), inte vid `prefers-reduced-motion`, inte utan WebGL, och via `requestIdleCallback`. Tar bort `THREE.WebGLRenderer: Error creating WebGL context` från console + sparar 87 KiB unused JS på mobil.
+  2. **Blocket-bilder 1600w → 800w** (`src/components/CarCard.astro`): srcset med 800w/1200w + `sizes="(max-width:768px) 100vw, 400px"` + `decoding="async"`. Karusell-JS mirror:ar samma transform. Sparar ~180 KiB på första sidvisningen, LCP 3.46s → förväntat ~2.0-2.5s.
+  3. **WCAG AA kontrast** (`src/styles/global.css` + `src/components/Footer.astro`): `.interested-btn` röd `#E62E2D` → `#B82221` (3.94:1 → 5.6:1). `.bottom-nav-item` `rgba(255,255,255,0.5)` → `0.78`. Footer "Vi rekommenderar att boka tid" `0.4` → `0.7`.
+- **10:24 · build** · Vite/esbuild parser-error på TypeScript union literal `width: 800 | 1200` i .astro frontmatter — bytt till plain regex-replace utan typad parameter. Klassisk Astro+esbuild-gotcha.
+- **09:46 · audit** · Lighthouse-audit mot https://begbilnorr.se via `roier-seo`-skill. Issues: console WebGL error från three.js, LCP 3.46s, color-contrast (bottom-nav, interested-btn, footer), uses-responsive-images (Blocket 1600w).
+
 ## 2026-05-17
 
 - **14:35 · style** · Tog bort `Begbilnorr`-watermark text-overlay från alla bil-bilder (CarCard + bilar/[slug] + 30 rader CSS i global.css). Commit `3f1f867`.
